@@ -86,7 +86,7 @@
 
 
     <div id="editExtensionDiv"></div>
-
+    <div id="modalDialogDiv"></div>
 </div>
 
 
@@ -298,6 +298,7 @@
 
                     if (prof.id === id){
                         Z.currentProfile = prof;
+                        Z.dirtyProfile = false;     //set true when the profile is changed
                         showCurrentProfile(Z);
                         //$('#workAreaProfile').html(Z.template.oneProfile(prof));
                         return false;
@@ -309,23 +310,68 @@
 
 
 function showCurrentProfile(Z) {
+    //use the BS template to lay out the profile...
     $('#workAreaProfile').html(Z.template.oneProfile(Z.currentProfile));
+
+    //show the save changes button if there have been changes...
+    if (! Z.dirtyProfile) {
+        $('#save_profile_changes').hide();
+
+    } else {
+        $('#save_profile_changes').on('click',function(){
+            alert('save');
+            console.log(Z.currentProfile);
+            var content = Z.currentProfile.content;
+
+            var ar = Z.currentProfile.id.split('/');
+            var id = ar[ar.length-1]
+            //uri = uri +id;
+
+            var uri = '/api/'+id;
+            var method = 'PUT';
+
+            $.ajax (uri,{
+                method : method,
+                data : JSON.stringify(content),
+                headers : {
+                    'content-type' : 'application/json'
+                },
+                complete : function(xhr,status){
+                    console.log(xhr);
+                    alert(status);
+                    //loadVS(Z);  //re-load the list of value sets.
+                }
+            })
+
+        })
+    }
+
 
     //the handler for when the valueSet detail link is selected.
     $('.vsInExt').on('click',function(ev){
         var vsURI = ev.currentTarget.getAttribute('data-code');
-        alert(encodeURIComponent(vsURI));
+        //alert(encodeURIComponent(vsURI));
 
-        //get teh resource. Note this is teh actual resource - not 
+        //get teh resource. Note this is the actual resource - not a bundle.entry
         $.get( "/api/valueset/id/"+encodeURIComponent(vsURI), function( vsResource ) {
-            alert(data);
-            console.log(data)
+            //alert(data);
+            console.log(vsResource)
+            var genDialogFrame = $('#generalModelDlg').html();      //the frams for the modal dialog
+            $('#modalDialogDiv').html(genDialogFrame);      //write the frame to the DOM
+
+            var model = {content:vsResource};
+            model.id = vsURI;
+            model.readOnly = true;
+
+            $('#genDlgContents').html(Z.template.oneVS(model));    //use the BS template to write out the dialog
+
+
+
+            //and show the modal...
+            $('#generalDlg').modal();
+
+
         });
-
-
-        //        $('#workAreaVS').html(Z.template.oneVS(Z.currentVS));
-
-
     })
 
     console.log(Z.currentProfile);
@@ -341,7 +387,7 @@ function showCurrentProfile(Z) {
 
         //the handler for when the save button is clicked.
         $('#eeSave').on('click',function(){
-
+            Z.dirtyProfile = true;     //show the 'save' button
             Z.currentExtension.definition.short=$('#eeShort').val();
             Z.currentExtension.definition.formal=$('#eeFormal').val();
             Z.currentExtension.definition.min=$('#eeMin').val();
@@ -464,17 +510,26 @@ function showOneExtension(Z,code) {
             <h5>Profile</h5>
             {{#with content}}
                 <div class="row">
-                    <div class="col-md-2">Profile name</div>
-                    <div class="col-md-10">{{name}}</div>
+                    <div class="col-md-10">
+                        <div class="row">
+                            <div class="col-md-2">Profile name</div>
+                            <div class="col-md-10">{{name}}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">Description</div>
+                            <div class="col-md-10">{{name}}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">Requirements</div>
+                            <div class="col-md-10">{{requirements}}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button id = 'save_profile_changes' class="btn btn-primary">Save Changes</button>
+                    </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-2">Description</div>
-                    <div class="col-md-10">{{name}}</div>
-                </div>
-                <div class="row">
-                    <div class="col-md-2">Requirements</div>
-                    <div class="col-md-10">{{requirements}}</div>
-                </div>
+
+
                 {{#each structure}}
                     <h5>Structure</h5>
                     <div class="row">
@@ -565,29 +620,38 @@ function showOneExtension(Z,code) {
                     <div class="col-md-4">Define Contents</div>
                     <div class="col-md-8">
                         <table class="table table-bordered table-condensed">
-                            <tr><th>Display</th><th>Code</th><td>Action</td></tr>
+                            <tr><th>Display</th><th>Code</th>
+                                {{#unless ../readOnly}}
+                                    <td>Action</td>
+                                {{/unless}}
+                            </tr>
                             {{#each define.concept}}
                                 <tr>
                                     <td>{{display}}</td>
                                     <td>{{code}}</td>
+                                    {{#unless ../../readOnly}}
                                     <td><a class="define_concept_del" data-code= "{{code}}" href="#">Delete</a> </td>
+                                    {{/unless}}
                                 </tr>
                             {{/each}}
+                            {{#unless ../readOnly}}
                             <tr>
                                 <td><input type='text' id='define_new_display'/> </td>
                                 <td><input type='text' id='define_new_code'/> </td>
                                 <td><a id="define_new_add" href="#">Add</a> </td>
                             </tr>
+                            {{/unless}}
                         </table>
                     </div>
                 </div>
             {{/with}}
+            {{#unless readOnly}}
             <div class="row">
                 <div class="col-md-12">
                     <a href='#' class="btn btn-primary pull-right" id='save_change_vs'>Save Changes</a>
                 </div>
             </div>
-
+            {{/unless}}
         </div>
 
     </div>
@@ -704,6 +768,26 @@ function showOneExtension(Z,code) {
 
 </script>
 
+
+<script id="generalModelDlg" type="text/x-handlebars-template">
+    <div class="modal fade" id="generalDlg">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">General Dialog</h4>
+                </div>
+                <div class="modal-body">
+                    <div id='genDlgContents'></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</script>
 
 
 </body>

@@ -43,6 +43,22 @@ app.get('/api/profile/:name/:publisher', function(req, res){
     })
 });
 
+
+//update a resource (the resource type is inside teh resource
+app.put('/api/:id', function(req, res){
+    var vsID = req.params.id;
+    var resource = req.body;
+
+    //console.log(resource,vsID)
+
+
+    putToFHIRServer(resource,vsID,function(resp){
+        resp.content = resource;
+        res.json(resp);
+    })
+
+});
+
 //get all profiles published by a specific publisher
 app.get('/api/profile/:publisher', function(req, res){
     var query = 'Profile?publisher=' + req.params.publisher;
