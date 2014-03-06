@@ -52,6 +52,22 @@ app.get('/api/profile/:publisher', function(req, res){
 });
 
 
+//retrieve a specific valueset
+app.get('/api/valueset/id/:id', function(req, res){
+    var vsID = req.params.id;
+    console.log(vsID);
+    //extrct out the logicalID
+    //todo - big assumption here - we are assuming that all resources come from the same server
+
+    var ar = vsID.split('/');
+    var ID = ar[ar.length-1];
+    console.log(ID)
+
+    var query = 'ValueSet/'+ ID;
+    performQueryAgainstFHIRServer(query,function(resp){
+        res.json(resp);
+    })
+})
 
 //add a new valueset
 app.post('/api/valueset', function(req, res){
@@ -83,6 +99,7 @@ app.put('/api/valueset/:id', function(req, res){
 
 });
 
+//get all the valuestes from a specific published
 app.get('/api/valueset/:publisher', function(req, res){
     var publisher = req.params.publisher;
 

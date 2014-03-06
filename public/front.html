@@ -44,6 +44,7 @@
             <ul>
                 <li>The Profile extensions are only against resources (not datatypes) and only for a single resource</li>
                 <li>Assume that the profiles only use ValueSets published by Orion</li>
+                <li>Assume that the reference to a valueset </li>
                 <li>Assume that the Orion ValueSets have a unique name property</li>
             </ul>
         </div>
@@ -52,9 +53,10 @@
             <div class="row">
                 <div class="col-md-2">
                     <h4>Profiles</h4>
-                    <ul>
-                        <li><a class="selProfile" data-name="patient" data-pub='FHIR Project'>Patient</a></li>
+                    <ul id="coreResourceList">
+                        <!--<li><a class="selProfile" data-name="patient" data-pub='FHIR Project'>Patient</a></li>-->
                     </ul>
+
                     <h4>Orion Profiles</h4>
                     <div id="orionProfilesDiv"></div>
                 </div>
@@ -101,8 +103,17 @@
         Z.template.editExtension = Handlebars.compile($('#editExtension').html());
 
         //list of resources - should be the compleet fhor list...
-        Z.resourceList = ['MedicationAdministration','Medication','Person'];
-        Z.dataTypeList = ['boolean','string','integer','Period']
+        Z.resourceList = ['MedicationAdministration','Medication','Patient'];
+
+
+        $.each(Z.resourceList,function(inx,res){
+            var lne = "<li><a class='selProfile' data-name='"+res+"' data-pub='FHIR Project'>"+res+"</a></li>";
+            $('#coreResourceList').append(lne);
+        })
+
+
+
+        Z.dataTypeList = ['boolean','code','string','integer','Coding','CodeableConcept','Period']
 
         loadVS(Z);              //load all the value sets where orion is the publisher
         loadOrionProfiles(Z);   //load the orion profiles
@@ -121,13 +132,19 @@
             $('#loading').hide();
             //console.log(data);
             if (data.entry.length > 1) {
+                //this will occur for something like 'medication' that can be in multiples names
+
+
                 alert('Error: More than one matching profile');
-            }
-            if (data.entry.length === 0) {
+            } else if (data.entry.length === 0) {
                 alert ('Error: No matching profile found');
+                return;
+            } else {
+                Z.currentProfile = data.entry[0];    //actually an entry...
             }
 
-            Z.currentProfile = data.entry[0];    //actually an entry...
+
+
             //console.log(Z.currentProfile);
             $('#workAreaProfile').html(Z.template.oneProfile(Z.currentProfile));
         })
@@ -268,7 +285,7 @@
     function loadOrionProfiles(Z) {
         $.get( "/api/profile/orion", function( data ) {
             //$('#loading').hide();
-            console.log(data)
+            ///console.log(data)
             Z.orionProfiles = data;
 
             $('#orionProfilesDiv').html(Z.template.orionProfileList(Z.orionProfiles));
@@ -277,112 +294,164 @@
                 var id = ev.currentTarget.getAttribute('data-id');
                 //alert(id)
                 $.each(Z.orionProfiles.entry,function(inx,prof){
-                    console.log(id,prof)
-                    Z.currentProfile = prof;
+                    //console.log(id,prof)
+
                     if (prof.id === id){
-                        $('#workAreaProfile').html(Z.template.oneProfile(prof));
+                        Z.currentProfile = prof;
+                        showCurrentProfile(Z);
+                        //$('#workAreaProfile').html(Z.template.oneProfile(prof));
+                        return false;
                     }
-                })
-
-                //the handler when an existing extension is selected for editing/display
-
-                $('.profile-extension').on('click',function(ev){
-                    var code = ev.currentTarget.getAttribute('data-code');      //the code of the extension
-
-                    //console.log(Z.currentProfile)
-                    //get the extension definition from the profile
-                    var extension;
-                    $.each(Z.currentProfile.content.extensionDefn,function(inx,ext){
-                        console.log(ext)
-                        if (ext.code === code) {
-                            extension = ext;
-                            return false;
-                        }
-                    })
-
-                    Z.currentExtension = extension;
-                    console.log(extension);
-
-                    //use the handlebars template to generate the modal dialog
-                    $('#editExtensionDiv').html(Z.template.editExtension(extension));
-
-                    //set the checkboxes  (probably a better way}
-                    console.log(extension.definition.isModifier);
-                    if (extension.definition.isModifier) {
-
-                        $("#eeIsModifier").attr('checked',true);
-                    }
-
-                    //add the options to the resource dropdown
-
-                    $.each(Z.resourceList,function(inx,name){
-                        var lne = "<option value='"+name + "'";
-                        //note that we only support one resource
-                        if (name === extension.context[0]) {
-                            lne += " selected='selected' ";
-                        }
-                        lne += ">"+name+"</option>";
-                        $("#eeContextResource").append(lne);
-                    })
-
-                    //set the datatype
-                    var dataType="";
-                    if (extension.definition.type) {
-                        dataType = extension.definition.type[0].code;     //current datatype (1 only)
-                    }
-
-                    $.each(Z.dataTypeList,function(inx,name){
-                        var lne = "<option value='"+name + "'";
-                        //note that we only support one resource
-                        if (name === dataType) {
-                            lne += " selected='selected' ";
-                        }
-                        lne += ">"+name+"</option>";
-                        $("#eeDataType").append(lne);
-                    })
-
-                    //set the valueset
-                    var vs = "";
-                    $.each(Z.valueSets,function(inx,vs){
-                        console.log(vs);
-                        var name=vs.content.name;
-                        var lne = "<option value='"+name + "'";
-                        //note that we only support one resource
-                        if (name === dataType) {
-                            lne += " selected='selected' ";
-                        }
-                        lne += ">"+name+"</option>";
-                        $("#eeValueSet").append(lne);
-                    })
-
-
-
-
-                    //and show the modal...
-                    $('#editExtensionDlg').modal();
-
-                    //the handler for when the save button is clicked
-                    $('#eeSave').on('click',function(){
-
-                        Z.currentExtension.definition.short=$('#eeShort').val();
-
-
-
-                        $('#editExtensionDlg').modal('hide');
-
-                    })
-
-
-
-
                 })
             })
         })
     }
 
 
+function showCurrentProfile(Z) {
+    $('#workAreaProfile').html(Z.template.oneProfile(Z.currentProfile));
+
+    //the handler for when the valueSet detail link is selected.
+    $('.vsInExt').on('click',function(ev){
+        var vsURI = ev.currentTarget.getAttribute('data-code');
+        alert(encodeURIComponent(vsURI));
+
+        //get teh resource. Note this is teh actual resource - not 
+        $.get( "/api/valueset/id/"+encodeURIComponent(vsURI), function( vsResource ) {
+            alert(data);
+            console.log(data)
+        });
+
+
+        //        $('#workAreaVS').html(Z.template.oneVS(Z.currentVS));
+
+
+    })
+
+    console.log(Z.currentProfile);
+
+    //the handler when an existing extension is selected for editing/display
+    $('.profile-extension').on('click',function(ev){
+        var code = ev.currentTarget.getAttribute('data-code');      //the code of the extension
+
+        showOneExtension(Z,code);       //displays the modal dialog for editing an extension
+
+
+
+
+        //the handler for when the save button is clicked.
+        $('#eeSave').on('click',function(){
+
+            Z.currentExtension.definition.short=$('#eeShort').val();
+            Z.currentExtension.definition.formal=$('#eeFormal').val();
+            Z.currentExtension.definition.min=$('#eeMin').val();
+            Z.currentExtension.definition.max=$('#eeMax').val();
+            Z.currentExtension.definition.type = [{code:$('#eeDataType').val()}];
+
+            if ($('#eeIsModifier').is(':checked')) {
+                Z.currentExtension.definition.isModifier = true;
+            } else {
+                Z.currentExtension.definition.isModifier = false;
+            }
+
+            console.log($('#eeIsModifier').is(':checked'))
+            //Z.currentExtension.definition.isModifier = $('#eeIsModifier').attr('checked');
+
+
+            //get the value set (if selected)
+            var vsValue = $('#eeValueSet').val();
+            if (vsValue) {
+                var vsText = $("#eeValueSet option:selected").text();
+                Z.currentExtension.definition.binding = {name:vsText,referenceResource: {reference :vsValue}};
+            } else {
+                delete Z.currentExtension.definition.binding ;
+            }
+
+            $('#editExtensionDlg').modal('hide');
+            showCurrentProfile(Z)
+        })
+    })
+
+}
+
 //displays the model edit screen for a single extension
-function showOneExtension() {
+function showOneExtension(Z,code) {
+
+    //console.log(Z.currentProfile)
+    //get the extension definition from the profile
+    var extension;
+    $.each(Z.currentProfile.content.extensionDefn,function(inx,ext){
+        console.log(ext)
+        if (ext.code === code) {
+            extension = ext;
+            return false;
+        }
+    })
+
+    Z.currentExtension = extension;
+    //console.log(extension);
+
+    //use the handlebars template to generate the modal dialog
+    $('#editExtensionDiv').html(Z.template.editExtension(extension));
+
+    //set the checkboxes  (probably a better way}
+    //console.log(extension.definition.isModifier);
+    if (extension.definition.isModifier) {
+
+        $("#eeIsModifier").attr('checked',true);
+    }
+
+    //add the options to the resource dropdown
+
+    $.each(Z.resourceList,function(inx,name){
+        var lne = "<option value='"+name + "'";
+        //note that we only support one resource
+        if (name === extension.context[0]) {
+            lne += " selected='selected' ";
+        }
+        lne += ">"+name+"</option>";
+        $("#eeContextResource").append(lne);
+    })
+
+    //set the datatype
+    var dataType="";
+    if (extension.definition.type) {
+        dataType = extension.definition.type[0].code;     //current datatype (1 only)
+    }
+
+    $.each(Z.dataTypeList,function(inx,name){
+        var lne = "<option value='"+name + "'";
+        //note that we only support one resource
+        if (name === dataType) {
+            lne += " selected='selected' ";
+        }
+        lne += ">"+name+"</option>";
+        $("#eeDataType").append(lne);
+    })
+
+    //set the valueset
+    var vsID = "";
+    if (extension.definition.binding) {
+        vsID = extension.definition.binding.referenceResource.reference;
+    }
+
+    $.each(Z.valueSets,function(inx,vs){
+        //console.log(vs);
+        var name=vs.content.name;
+        var lne = "<option value='"+vs.id + "'";
+        //note that we only support one resource
+        if (vs.id === vsID) {
+            lne += " selected='selected' ";
+        }
+        lne += ">"+name+"</option>";
+        $("#eeValueSet").append(lne);
+    })
+
+
+
+
+    //and show the modal...
+    $('#editExtensionDlg').modal();
 
 }
 
@@ -456,7 +525,8 @@ function showOneExtension() {
                                 </td>
                                 <td>
                                     {{#if definition.binding}}
-                                        yes
+                                        <div title='{{definition.binding.referenceResource.reference}}'>
+                                           <a class='vsInExt' data-code="{{definition.binding.referenceResource.reference}}" href='#'> {{definition.binding.name}}</a></div>
                                     {{/if}}
                                 </td>
                                 <td>{{definition.short}}</td>
@@ -554,10 +624,6 @@ function showOneExtension() {
                 </ul>
 
             </div>
-            <!--<div class="col-md-8">
-                <h4>Details of Value Set</h4>
-                <div  id="vsDetail"></div>
-            </div>-->
         </div>
 </script>
 
@@ -596,23 +662,12 @@ function showOneExtension() {
                             </div>
                         </div>
 
-<!--
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" id="eeIsModifier"/> isModifier
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
--->
                         <div class="form-group">
                             <div class="col-sm-2"><strong>Min/Max</strong></div>
                             <div class="col-sm-1">Min</div>
-                            <div class="col-sm-2"><input type="number" class="col-sm-6" id="eeMin" value="{{definition.min}}"/> </div>
+                            <div class="col-sm-2"><input type="text" class="col-sm-12" id="eeMin" value="{{definition.min}}"/> </div>
                             <div class="col-sm-1">Max</div>
-                            <div class="col-sm-2"><input type="number" class="col-sm-6" id="eeMax" value="{{definition.max}}"/> </div>
+                            <div class="col-sm-2"><input type="text" class="col-sm-12" id="eeMax" value="{{definition.max}}"/> </div>
                             <div class="col-sm-3">
                                 <div class="checkbox">
                                     <label>
