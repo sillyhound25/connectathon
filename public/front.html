@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="js/jquery-1.9.0.min.js"></script>
+    <script src="js/handlebars-v1.3.0.js"></script>
+    <script src="js/underscore-min.js"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="js/async.js"></script>
+    <script src="js/typeahead.bundle.js"></script>
+
+    <!-- Latest compiled and minified CSS-->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+
+</head>
+<body style="padding: 8px">
+
+<div id='loading' class="alert alert-warning">Loading...</div>
+
+
+<div class="container-fluid">
+
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#helpTab" data-toggle="tab">Help</a></li>
+        <li><a href="#profileTab" data-toggle="tab">Profile</a></li>
+        <li><a href="#vsTab" data-toggle="tab">ValueSet</a></li>
+
+    </ul>
+
+
+    <div class="tab-content">
+        <div class="tab-pane active" id="helpTab">
+            <h2>Orion Profile and ValueSet editor</h2>
+            <p>This application allows you to view and edit the profiles and valueSets created to support the
+            Orion FHIR interfaces. It is very much a sub-set of the full capability of these resources</p>
+            <h5>Notes</h5>
+            <ul>
+                <li>The Profile extensions are only against resources (not datatypes) and only for a single resource</li>
+                <li>Assume that the profiles only use ValueSets published by Orion</li>
+                <li>Assume that the Orion ValueSets have a unique name property</li>
+            </ul>
+        </div>
+
+        <div class="tab-pane" id="profileTab">
+            <div class="row">
+                <div class="col-md-2">
+                    <h4>Profiles</h4>
+                    <ul>
+                        <li><a class="selProfile" data-name="patient" data-pub='FHIR Project'>Patient</a></li>
+                    </ul>
+                    <h4>Orion Profiles</h4>
+                    <div id="orionProfilesDiv"></div>
+                </div>
+
+                <div class="col-md-10">
+                    <h4>Profile Detail</h4>
+                    <div id="workAreaProfile"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="tab-pane" id="vsTab">
+            <div class="row">
+                <div class="col-md-2">
+                    <h4>ValueSets</h4>
+                    <div id="display"></div>
+                </div>
+                <div class="col-md-10">
+                    <h4>ValueSet Detail</h4>
+                    <div id="workAreaVS"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div id="editExtensionDiv"></div>
+
+</div>
+
+
+
+
+<script>
+
+    $(document).ready(function(){
+        var Z = {template:{}};     //instead of Y
+        Z.template.oneVS = Handlebars.compile($('#oneVs').html());      //display a single valueset
+        Z.template.listVS = Handlebars.compile($('#vsList').html());
+        Z.template.oneProfile = Handlebars.compile($('#oneProfile').html());
+        Z.template.orionProfileList = Handlebars.compile($('#orionProfileList').html());
+        Z.template.editExtension = Handlebars.compile($('#editExtension').html());
+
+        //list of resources - should be the compleet fhor list...
+        Z.resourceList = ['MedicationAdministration','Medication','Person'];
+        Z.dataTypeList = ['boolean','string','integer','Period']
+
+        loadVS(Z);              //load all the value sets where orion is the publisher
+        loadOrionProfiles(Z);   //load the orion profiles
+
+        //load a profile
+        $('.selProfile').on('click',function(ev){
+            var name = ev.currentTarget.getAttribute('data-name');
+            var pub = ev.currentTarget.getAttribute('data-pub');
+            loadProfile(Z,name,pub);
+        })
+    })
+
+    function loadProfile(Z,name,pub){
+        $('#loading').show();
+        $.get( "/api/profile/"+name+"/"+pub, function( data ) {
+            $('#loading').hide();
+            //console.log(data);
+            if (data.entry.length > 1) {
+                alert('Error: More than one matching profile');
+            }
+            if (data.entry.length === 0) {
+                alert ('Error: No matching profile found');
+            }
+
+            Z.currentProfile = data.entry[0];    //actually an entry...
+            //console.log(Z.currentProfile);
+            $('#workAreaProfile').html(Z.template.oneProfile(Z.currentProfile));
+        })
+
+    }
+
+    function loadVS(Z) {
+        $('#loading').show();
+
+        $.get( "/api/valueset/orion", function( data ) {
+            $('#loading').hide();
+
+            Z.valueSets = data.content.response.entry;
+
+            $.each(Z.valueSets,function(inx,item){
+                item.inx = inx;
+
+            })
+            showVSList(Z)
+
+
+        });
+    }
+
+    function showVSList(Z){
+        //display the list of valuesets...
+        $('#display').html(Z.template.listVS({item: Z.valueSets}));
+
+        //handler for a new ValueSet
+        $('#new_vs').on('click',function(){
+            var vs = {'content':{ 'define' : {'concept' : []} }};
+
+            //content.define.concept.
+
+            Z.currentVS = vs;
+            showVS(Z)
+        })
+
+        //handler to show the details of a single valueset
+        $('.vsDetail').on('click',function(ev){
+            if (Z.dirtyVS) {
+                alert('dirty VS');
+                Z.dirtyVS = false
+            }
+            var inx = ev.currentTarget.getAttribute('data-inx');
+            Z.currentVS = Z.valueSets[inx];
+            showVS(Z);
+        })
+    }
+
+    function showVS(Z,inx){
+        //display the contents of a single ValueSet. Note that Z.valueSets actually contains
+        //atom.entry elements. This is because we need to retain the ID for updating
+
+        $('#workAreaVS').html(Z.template.oneVS(Z.currentVS));
+
+        //console.log(Z.currentVS);
+
+        if (! Z.dirtyVS) {
+            $('#save_change_vs').hide();
+        }
+
+        //handler when a text field is changed - sort of
+        $('.data').on('blur',function(){
+            Z.dirtyVS = true;
+            $('#save_change_vs').show();
+        })
+
+        //handler when a code is removed
+        $('.define_concept_del').on('click',function(ev){
+            var codeToRemove = ev.currentTarget.getAttribute('data-code');
+            var newConceptList = _.reject(Z.currentVS.content.define.concept,function(con) {return con.code===codeToRemove});
+            Z.currentVS.content.define.concept = newConceptList;
+            Z.dirtyVS = true;
+            showVS(Z,inx);
+        });
+
+        //handler to add a new entry
+        $('#define_new_add').on('click',function(){
+            var concept = {code:$('#define_new_code').val(),display:$('#define_new_display').val()};
+            Z.currentVS.content.define.concept.push(concept);
+            Z.dirtyVS = true;
+            showVS(Z,inx);
+        })
+
+        //handler to save changes
+        $('#save_change_vs').on('click',function(){
+
+            var vs = Z.currentVS;
+            var uri = '/api/valueset/';
+            var method = 'PUT';
+
+            var content = vs.content;
+            content.name = $('#vs_name').val();
+            content.description = $('#vs_description').val();
+
+            if ($('#vs_id').text()) {
+                //this is an update
+
+                //get the logical ID from the full ID
+                //WARNING: if the ID includes history this will break...
+                var ar = vs.id.split('/');
+                var id = ar[ar.length-1]
+                uri = uri +id;
+
+            } else {
+                //this is a new valueset
+                method='POST';
+                content.publisher = "Orion Health";
+                content.resourceType = "ValueSet";
+                content.identifier = content.identifier || 'oh'+new Date().getTime();
+                content.name = content.name || "No name";
+                content.description = content.description ||  "No Description";
+                content.status = "draft";
+                content.experimental = true;
+                content.extensible = false;
+                content.date = moment().format();
+                //alert('new');
+
+            }
+
+            $.ajax (uri,{
+                method : method,
+                data : JSON.stringify(content),
+                headers : {
+                    'content-type' : 'application/json'
+                },
+                complete : function(xhr,status){
+                    console.log(xhr);
+                    alert(status);
+                    loadVS(Z);  //re-load the list of value sets.
+                }
+            })
+        })
+    }
+
+
+    function loadOrionProfiles(Z) {
+        $.get( "/api/profile/orion", function( data ) {
+            //$('#loading').hide();
+            console.log(data)
+            Z.orionProfiles = data;
+
+            $('#orionProfilesDiv').html(Z.template.orionProfileList(Z.orionProfiles));
+
+            $('.orionProfileDetail').on('click',function(ev){
+                var id = ev.currentTarget.getAttribute('data-id');
+                //alert(id)
+                $.each(Z.orionProfiles.entry,function(inx,prof){
+                    console.log(id,prof)
+                    Z.currentProfile = prof;
+                    if (prof.id === id){
+                        $('#workAreaProfile').html(Z.template.oneProfile(prof));
+                    }
+                })
+
+                //the handler when an existing extension is selected for editing/display
+
+                $('.profile-extension').on('click',function(ev){
+                    var code = ev.currentTarget.getAttribute('data-code');      //the code of the extension
+
+                    //console.log(Z.currentProfile)
+                    //get the extension definition from the profile
+                    var extension;
+                    $.each(Z.currentProfile.content.extensionDefn,function(inx,ext){
+                        console.log(ext)
+                        if (ext.code === code) {
+                            extension = ext;
+                            return false;
+                        }
+                    })
+
+                    Z.currentExtension = extension;
+                    console.log(extension);
+
+                    //use the handlebars template to generate the modal dialog
+                    $('#editExtensionDiv').html(Z.template.editExtension(extension));
+
+                    //set the checkboxes  (probably a better way}
+                    console.log(extension.definition.isModifier);
+                    if (extension.definition.isModifier) {
+
+                        $("#eeIsModifier").attr('checked',true);
+                    }
+
+                    //add the options to the resource dropdown
+
+                    $.each(Z.resourceList,function(inx,name){
+                        var lne = "<option value='"+name + "'";
+                        //note that we only support one resource
+                        if (name === extension.context[0]) {
+                            lne += " selected='selected' ";
+                        }
+                        lne += ">"+name+"</option>";
+                        $("#eeContextResource").append(lne);
+                    })
+
+                    //set the datatype
+                    var dataType="";
+                    if (extension.definition.type) {
+                        dataType = extension.definition.type[0].code;     //current datatype (1 only)
+                    }
+
+                    $.each(Z.dataTypeList,function(inx,name){
+                        var lne = "<option value='"+name + "'";
+                        //note that we only support one resource
+                        if (name === dataType) {
+                            lne += " selected='selected' ";
+                        }
+                        lne += ">"+name+"</option>";
+                        $("#eeDataType").append(lne);
+                    })
+
+                    //set the valueset
+                    var vs = "";
+                    $.each(Z.valueSets,function(inx,vs){
+                        console.log(vs);
+                        var name=vs.content.name;
+                        var lne = "<option value='"+name + "'";
+                        //note that we only support one resource
+                        if (name === dataType) {
+                            lne += " selected='selected' ";
+                        }
+                        lne += ">"+name+"</option>";
+                        $("#eeValueSet").append(lne);
+                    })
+
+
+
+
+                    //and show the modal...
+                    $('#editExtensionDlg').modal();
+
+                    //the handler for when the save button is clicked
+                    $('#eeSave').on('click',function(){
+
+                        Z.currentExtension.definition.short=$('#eeShort').val();
+
+
+
+                        $('#editExtensionDlg').modal('hide');
+
+                    })
+
+
+
+
+                })
+            })
+        })
+    }
+
+
+//displays the model edit screen for a single extension
+function showOneExtension() {
+
+}
+
+</script>
+
+
+<script id="oneProfile" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-md-12">
+            <h5>Profile</h5>
+            {{#with content}}
+                <div class="row">
+                    <div class="col-md-2">Profile name</div>
+                    <div class="col-md-10">{{name}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">Description</div>
+                    <div class="col-md-10">{{name}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">Requirements</div>
+                    <div class="col-md-10">{{requirements}}</div>
+                </div>
+                {{#each structure}}
+                    <h5>Structure</h5>
+                    <div class="row">
+                        <div class="col-md-2">Type</div>
+                        <div class="col-md-10">{{type}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">Elements</div>
+                        <div class="col-md-10">
+                            <table class="table table-bordered table-condensed">
+                                <tr><th>Path</th><th>isMod</th><th>min/max</th><th>Type</th></tr>
+                                {{#each element}}
+                                    <tr>
+                                        <td><div title='{{definition.formal}}'>{{path}}</div></td>
+                                        <td>{{definition.isModifier}}</td>
+                                        <td>{{definition.min}}/{{definition.max}}</td>
+                                        <td>
+                                            {{#each definition.type}}
+                                                <div>{{code}}</div>
+                                            {{/each}}
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            </table>
+                        </div>
+                    </div>
+
+                {{/each}}
+                {{#if extensionDefn}}
+                    <h5>Extensions</h5>
+                    <table class="table table-bordered">
+                        <tr><th>Code</th><th colspan="2">Context</th><th>isMod</th><th>Min/Max</th><th>Type</th><th>ValueSet</th><th>Brief Description</th></tr>
+                        {{#each extensionDefn}}
+                            <tr>
+                                <td><a href='#' class='profile-extension' data-code='{{code}}'>{{code}}</a></td>
+                                <td>{{contextType}}</td>
+                                <td>
+                                    {{#each context}}
+                                        {{this}}
+                                    {{/each}}
+                                </td>
+                                <td>{{definition.isModifier}}</td>
+                                <td>{{definition.min}}/{{definition.max}}</td>
+                                <td>
+                                    {{#each definition.type}}
+                                        <div>{{code}}</div>
+                                    {{/each}}
+                                </td>
+                                <td>
+                                    {{#if definition.binding}}
+                                        yes
+                                    {{/if}}
+                                </td>
+                                <td>{{definition.short}}</td>
+                            </tr>
+                        {{/each}}
+                    </table>
+
+
+                {{/if}}
+
+            {{/with}}
+        </div>
+    </div>
+</script>
+
+
+
+<script id="oneVs" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="row">
+                <div class="col-md-4">ID</div>
+                <div class="col-md-8"><div id='vs_id'>{{id}}</div></div>
+            </div>
+            {{#with content}}
+                <div class="row">
+                    <div class="col-md-4">Name</div>
+                    <div class="col-md-8"><input id = 'vs_name' class="data form-control" type='text' value='{{name}}'/></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">Description</div>
+                    <div class="col-md-8"><textarea id='vs_description' class="data form-control" >{{description}}</textarea></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">Define Contents</div>
+                    <div class="col-md-8">
+                        <table class="table table-bordered table-condensed">
+                            <tr><th>Display</th><th>Code</th><td>Action</td></tr>
+                            {{#each define.concept}}
+                                <tr>
+                                    <td>{{display}}</td>
+                                    <td>{{code}}</td>
+                                    <td><a class="define_concept_del" data-code= "{{code}}" href="#">Delete</a> </td>
+                                </tr>
+                            {{/each}}
+                            <tr>
+                                <td><input type='text' id='define_new_display'/> </td>
+                                <td><input type='text' id='define_new_code'/> </td>
+                                <td><a id="define_new_add" href="#">Add</a> </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            {{/with}}
+            <div class="row">
+                <div class="col-md-12">
+                    <a href='#' class="btn btn-primary pull-right" id='save_change_vs'>Save Changes</a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</script>
+
+
+<script id="vsList" type="text/x-handlebars-template">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <ul>
+                    {{#each item}}
+                    <li><a class="vsDetail" data-inx="{{inx}}" href='#'>{{content.name}}</a></li>
+                    {{/each}}
+                </ul>
+                <div><a href="#" id="new_vs">New ValueSet</a></div>
+            </div>
+            <!--<div class="col-md-8">
+                <h4>Details of Value Set</h4>
+                <div  id="vsDetail"></div>
+            </div>-->
+        </div>
+    </div>
+</script>
+
+
+<script id="orionProfileList" type="text/x-handlebars-template">
+        <div class="row">
+            <div class="col-md-12">
+                <ul>
+                    {{#each entry}}
+                    <li><a class="orionProfileDetail" data-id="{{id}}"  href='#'>{{content.name}}</a></li>
+                    {{/each}}
+                </ul>
+
+            </div>
+            <!--<div class="col-md-8">
+                <h4>Details of Value Set</h4>
+                <div  id="vsDetail"></div>
+            </div>-->
+        </div>
+</script>
+
+
+<script id="editExtension" type="text/x-handlebars-template">
+    <div class="modal fade" id="editExtensionDlg">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Editing extension code: {{code}}</h4>
+                </div>
+                <div class="modal-body">
+                    <form role="form" class="form-horizontal">
+
+                        <div class="form-group">
+                            <label for="eeShort" class="col-sm-2 control-label">Short Description</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="eeShort" placeholder="Short Description">{{definition.short}}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eeFormal" class="col-sm-2 control-label">Formal Description</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" rows=4 id="eeFormal" placeholder="Formal Description">{{definition.formal}}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eeContextResource" class="col-sm-2 control-label">Context Resource</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="eeContextResource">
+
+                                </select>
+                            </div>
+                        </div>
+
+<!--
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" id="eeIsModifier"/> isModifier
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+-->
+                        <div class="form-group">
+                            <div class="col-sm-2"><strong>Min/Max</strong></div>
+                            <div class="col-sm-1">Min</div>
+                            <div class="col-sm-2"><input type="number" class="col-sm-6" id="eeMin" value="{{definition.min}}"/> </div>
+                            <div class="col-sm-1">Max</div>
+                            <div class="col-sm-2"><input type="number" class="col-sm-6" id="eeMax" value="{{definition.max}}"/> </div>
+                            <div class="col-sm-3">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" id="eeIsModifier"/> isModifier
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eeDataType" class="col-sm-2 control-label">Data Type</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" id="eeDataType">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <label for="eeValueSet" class="col-sm-2 control-label">Value Set</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" id="eeValueSet">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="eeSave">Save changes</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</script>
+
+
+
+</body>
+</html>

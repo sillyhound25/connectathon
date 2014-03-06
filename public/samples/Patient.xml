@@ -1,0 +1,39 @@
+<Patient xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://hl7.org/fhir ../fhir-all-xsd/patient.xsd"
+ xmlns="http://hl7.org/fhir">
+    <text>
+        <status value="generated" />
+        <div 
+            xmlns="http://www.w3.org/1999/xhtml">Everyman, Adam. SSN:
+            444333333
+            assignedID :3214842
+        </div>
+    </text>
+    <identifier>
+        <label value="SSN" />
+        <system value="http://orionhealth.com/mrn" />
+        <value value="PRP1666" />
+    </identifier>
+    <name>
+        <use value="official" />
+        <family value="Cardinal" />
+        <given value="John" />
+    </name>
+    <telecom>
+        <system value="phone" />
+        <value value="555-555-2004" />
+        <use value="work" />
+    </telecom>
+    <gender>
+        <coding>
+            <system value="http://hl7.org/fhir/v3/AdministrativeGender" />
+            <code value="M" />
+        </coding>
+    </gender>
+    <address>
+        <use value="home" />
+        <line value="2222 Home Street" />
+    </address>
+    
+    <active value="true" />
+</Patient>
