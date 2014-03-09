@@ -34,6 +34,19 @@ app.configure(function(){
 });
 
 
+app.get('/resource/:name', function(req, res){
+    //var query = 'Profile?name='+req.params.name + '&publisher=' + req.params.publisher;
+    var url = "http://hl7.org/implement/standards/fhir/"+req.params.name+".html";
+console.log(url)
+    request(url,function(error,response,body){
+
+        res.end(body);
+
+    });
+});
+
+
+
 
 //get a specific profile by name and publisher
 app.get('/api/profile/:name/:publisher', function(req, res){
@@ -86,7 +99,7 @@ app.get('/api/valueset/id/:id', function(req, res){
 })
 
 //add a new valueset
-app.post('/api/valueset', function(req, res){
+app.post('/api/valuesetXXXXX', function(req, res){
     var vsID = req.params.id;
     var resource = req.body;
 
@@ -97,8 +110,24 @@ app.post('/api/valueset', function(req, res){
         resp.content = resource;
         res.json(resp);
     })
-
 });
+
+
+//the resource name is in the resource. todo - change
+app.post('/api', function(req, res){
+    //var vsID = req.params.id;
+    var resource = req.body;
+
+    console.log('saving',resource)
+
+
+    postToFHIRServer(resource,function(resp){
+        resp.content = resource;
+        res.json(resp.body,resp.statusCode);
+
+    })
+});
+
 
 //update a valueset
 app.put('/api/valueset/:id', function(req, res){
@@ -205,7 +234,11 @@ function postToFHIRServer(resource,callback) {
         uri : FHIRServerUrl + resourceType
     }
 
+    console.log(JSON.stringify(options));
+
     request(options,function(error,response,body){
+        console.log(response.statusCode);
+        console.log(body)
         var resp = {};
         resp.id = response.headers.location;
         resp.statusCode = response.statusCode;

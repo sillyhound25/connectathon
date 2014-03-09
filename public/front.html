@@ -26,14 +26,12 @@
 
 <div class="container-fluid">
 
-
     <ul class="nav nav-tabs">
         <li class="active"><a href="#helpTab" data-toggle="tab">Help</a></li>
         <li><a href="#profileTab" data-toggle="tab">Profile</a></li>
         <li><a href="#vsTab" data-toggle="tab">ValueSet</a></li>
 
     </ul>
-
 
     <div class="tab-content">
         <div class="tab-pane active" id="helpTab">
@@ -51,8 +49,8 @@
 
         <div class="tab-pane" id="profileTab">
             <div class="row">
-                <div class="col-md-2">
-                    <h4>Profiles</h4>
+                <div class="col-md-2 well">
+                    <h4>Resources</h4>
                     <ul id="coreResourceList">
                         <!--<li><a class="selProfile" data-name="patient" data-pub='FHIR Project'>Patient</a></li>-->
                     </ul>
@@ -62,16 +60,36 @@
                 </div>
 
                 <div class="col-md-10">
-                    <h4>Profile Detail</h4>
+
                     <div id="workAreaProfile"></div>
+                    <!--
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#profileDetailSubTab" data-toggle="tab">Detail</a></li>
+                        <li><a href="#profileSummarySubTab" data-toggle="tab">Summary</a></li>
+                    </ul>
+
+
+                    <div class="tab-pane" id="profileDetailSubTab">
+                        <h4>Profile Detail</h4>
+                        <div id="workAreaProfile"></div>
+                    </div>
+
+                    <div class="tab-pane" id="profileSummarySubTab">
+                        <div id="workAreaSummaryProfile"></div>
+                    </div>
+
+-->
+
+
+
+
                 </div>
             </div>
         </div>
 
-
         <div class="tab-pane" id="vsTab">
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-2 well">
                     <h4>ValueSets</h4>
                     <div id="display"></div>
                 </div>
@@ -89,9 +107,6 @@
     <div id="modalDialogDiv"></div>
 </div>
 
-
-
-
 <script>
 
     $(document).ready(function(){
@@ -103,9 +118,7 @@
         Z.template.editExtension = Handlebars.compile($('#editExtension').html());
 
         //list of resources - should be the compleet fhor list...
-        Z.resourceList = ['MedicationAdministration','Medication','Patient'];
-
-
+        Z.resourceList = ['Encounter','MedicationAdministration','Medication','Observation','Patient','Practitioner'];
         $.each(Z.resourceList,function(inx,res){
             var lne = "<li><a class='selProfile' data-name='"+res+"' data-pub='FHIR Project'>"+res+"</a></li>";
             $('#coreResourceList').append(lne);
@@ -113,10 +126,16 @@
 
 
 
+
+
+
+
         Z.dataTypeList = ['boolean','code','string','integer','Coding','CodeableConcept','Period']
 
         loadVS(Z);              //load all the value sets where orion is the publisher
         loadOrionProfiles(Z);   //load the orion profiles
+
+
 
         //load a profile
         $('.selProfile').on('click',function(ev){
@@ -130,6 +149,7 @@
         $('#loading').show();
         $.get( "/api/profile/"+name+"/"+pub, function( data ) {
             $('#loading').hide();
+
             //console.log(data);
             if (data.entry.length > 1) {
                 //this will occur for something like 'medication' that can be in multiples names
@@ -147,6 +167,7 @@
 
             //console.log(Z.currentProfile);
             $('#workAreaProfile').html(Z.template.oneProfile(Z.currentProfile));
+            $('#updatingProfileMsg').hide();
         })
 
     }
@@ -234,7 +255,8 @@
         $('#save_change_vs').on('click',function(){
 
             var vs = Z.currentVS;
-            var uri = '/api/valueset/';
+            //var uri = '/api/valueset/';
+            var uri = '/api/';
             var method = 'PUT';
 
             var content = vs.content;
@@ -281,7 +303,6 @@
         })
     }
 
-
     function loadOrionProfiles(Z) {
         $.get( "/api/profile/orion", function( data ) {
             //$('#loading').hide();
@@ -290,6 +311,18 @@
 
             $('#orionProfilesDiv').html(Z.template.orionProfileList(Z.orionProfiles));
 
+            //new profile
+            $('#new_profile').on('click',function(){
+                //alert('new');
+                Z.currentProfile = {content : {}};
+                Z.currentProfile.content.publisher='Orion Health'
+                Z.currentProfile.content.extensionDefn=[];
+                showCurrentProfile(Z);
+
+            })
+
+
+            //show a single profile
             $('.orionProfileDetail').on('click',function(ev){
                 var id = ev.currentTarget.getAttribute('data-id');
                 //alert(id)
@@ -312,40 +345,96 @@
 function showCurrentProfile(Z) {
     //use the BS template to lay out the profile...
     $('#workAreaProfile').html(Z.template.oneProfile(Z.currentProfile));
+    $('#updatingProfileMsg').hide();
 
-
-    //add a new extension
-    $('#add_new_extension').on('click',function(){
-
-        showOneExtension(Z,'newcode');
-        /*
-        //the handler for when the save button is clicked. This is a different handler to the edit option,
-        //though it calls the same functions...
-        $('#eeSave').on('click',function(){
-            //create a new 'blank'extension
-            updateExtension(Z);
-            showCurrentProfile(Z)
+    $('.remove_ext').on('click',function(ev){
+        //remove an extension
+        var code = ev.currentTarget.getAttribute('data-code');
+        var inx = -1;
+        $.each(Z.currentProfile.content.extensionDefn,function(pos,ext){
+            if (ext.code === code){
+                inx=pos;
+            }
         })
-*/
+        if (inx > -1){
+            Z.currentProfile.content.extensionDefn.splice(inx,1);
+            Z.dirtyProfile = true;
+            showCurrentProfile(Z);
+        }
+    });
+
+        //add a new extension
+    $('#add_new_extension').on('click',function(){
+        showOneExtension(Z,'newcode');
     })
+
+
+    //show the 'save' button for editing in the profile 'header'
+    $('.profile_header').on('blur',function(){
+        $('#save_profile_changes').show();
+        Z.dirtyProfile = true;
+    })
+
+
+    //the user selects a resource within an extension. List all the properties of that resource.
+    $('.resource_in_extension').on('click',function(ev){
+        var resourcename = ev.currentTarget.getAttribute('data-code');
+
+        getProfiledResource(Z,resourcename);
+
+        //alert(resourcename);
+/*
+        var genDialogFrame = $('#generalModelDlg').html();      //the frams for the modal dialog
+        $('#modalDialogDiv').html(genDialogFrame);      //write the frame to the DOM
+
+        //var url = "http://hl7.org/implement/standards/fhir/"+resourcename+".html";
+        var url = "resource/"+resourcename;
+        $("#generalDlg").modal({remote:url})
+
+*/
+    });
 
     //show the save changes button if there have been changes...
     if (! Z.dirtyProfile) {
         $('#save_profile_changes').hide();
 
-    } else {
+    }
         $('#save_profile_changes').on('click',function(){
-            alert('save');
-            console.log(Z.currentProfile);
+            //alert('save');
+            //console.log(Z.currentProfile);
+            var isNewProfile = false;
             var content = Z.currentProfile.content;
 
-            var ar = Z.currentProfile.id.split('/');
-            var id = ar[ar.length-1]
-            //uri = uri +id;
+            //set the value for the profile 'header' contents...
+            content.name = $('#profileName').val();
+            content.description = $('#profileDescription').val();
+            content.requirements = $('#profileRequirements').val();
 
-            var uri = '/api/'+id;
+            if (! content.name || !content.description || !content.requirements) {
+                alert('The profile name, description and requirements are all required');
+                return;
+            }
+
             var method = 'PUT';
+            var uri;
+            if (Z.currentProfile.id) {
+                //this is an existing profile
+                var ar = Z.currentProfile.id.split('/');
+                var id = ar[ar.length-1]
+                uri = '/api/'+id;
+            } else {
+                //this is a new profile
+                method='POST';
+                uri = '/api'
+                content.resourceType = "Profile";
+                content.identifier = content.identifier || 'oh'+new Date().getTime();
+                content.status = "draft";
+                content.experimental = true;
+                content.date = moment().format();
+                isNewProfile = true;
+            }
 
+            $('#updatingProfileMsg').show();
             $.ajax (uri,{
                 method : method,
                 data : JSON.stringify(content),
@@ -353,14 +442,24 @@ function showCurrentProfile(Z) {
                     'content-type' : 'application/json'
                 },
                 complete : function(xhr,status){
-                    console.log(xhr);
-                    alert(status);
+                    $('#updatingProfileMsg').hide();
+                    // - keep to remind me!console.log(xhr.responseText);
+                    //alert(status);
+                    Z.dirtyProfile = false;     //set true when the profile is changed
+
+                    if (isNewProfile) {
+                        loadOrionProfiles(Z);
+                    }
+
+
+
+                    showCurrentProfile(Z);
                     //loadVS(Z);  //re-load the list of value sets.
                 }
             })
 
         })
-    }
+
 
 
     //the handler for when the valueSet detail link is selected.
@@ -379,7 +478,7 @@ function showCurrentProfile(Z) {
             model.id = vsURI;
             model.readOnly = true;
 
-            $('#genDlgContents').html(Z.template.oneVS(model));    //use the BS template to write out the dialog
+            $('#modal-content').html(Z.template.oneVS(model));    //use the BS template to write out the dialog
 
 
 
@@ -395,23 +494,8 @@ function showCurrentProfile(Z) {
     //the handler when an existing extension is selected for editing/display
     $('.profile-extension').on('click',function(ev){
         var code = ev.currentTarget.getAttribute('data-code');      //the code of the extension
-
         showOneExtension(Z,code);       //displays the modal dialog for editing an extension
-
-/*
-
-
-        //the handler for when the save button is clicked.
-        $('#eeSave').on('click',function(){
-
-            updateExtension(Z);
-            showCurrentProfile(Z)
-        })
-
-        */
     })
-
-
 
 }
 
@@ -425,6 +509,7 @@ function showCurrentProfile(Z) {
         if (! Z.currentExtension.context) {
             //this is a new extension. Add it to the current profile.
             Z.currentExtension.contextType = 'resource';
+            Z.currentProfile.content.extensionDefn = Z.currentProfile.content.extensionDefn || []
             Z.currentProfile.content.extensionDefn.push(Z.currentExtension);
         }
 
@@ -467,13 +552,18 @@ function showOneExtension(Z,code) {
     //console.log(Z.currentProfile)
     //get the extension definition from the profile
     var extension;
-    $.each(Z.currentProfile.content.extensionDefn,function(inx,ext){
-        //console.log(ext)
-        if (ext.code === code) {
-            extension = ext;
-            return false;
-        }
-    })
+
+    if (Z.currentProfile.content.extensionDefn) {
+        //test needed as if a new profile is saved with no extensions, subsequent retrievals have extensionDefn empty...
+        $.each(Z.currentProfile.content.extensionDefn,function(inx,ext){
+            //console.log(ext)
+            if (ext.code === code) {
+                extension = ext;
+                return false;
+            }
+        })
+    }
+
 
     if (! extension) {
         //this is a new extension
@@ -566,28 +656,120 @@ function showOneExtension(Z,code) {
 
 }
 
+
+//show all the properties of a resource as altered by this profile.
+    //for the moment, assume that profiles are only adding properties...
+function getProfiledResource(Z,resourceName){
+
+    $('#loading').show();
+    $.get( "/api/profile/"+resourceName+"/FHIR Project", function( data ) {
+        $('#loading').hide();
+
+        var arProperties = [];
+
+        console.log(data);
+        if (data.entry.length === 0) {
+            alert("Couldn't find the resource: " + resourceName);
+            return;
+        }
+        var resource = data.entry[0].content;
+        $.each(resource.structure[0].element, function(inx,el){
+            console.log(el);
+            if (el.definition.type) {
+                //only include elements with a type (ie a datatype). 'header' properties (like medicationAdministration.dosage) aren't neeed (I think)
+                var type = el.definition.type[0].code;
+                //don't include extensions on the standard profile - they all have them and it's clutter at the moment...
+                if (type.toLowerCase() !== 'extension') {
+                    arProperties.push({path : el.path, description: el.definition.short,type:type})
+                }
+
+            } else {
+                //just add the name...
+                arProperties.push({path : el.path, description: el.definition.short,type:"----------"})
+            }
+
+        })
+        console.log(arProperties);
+
+        //now add the extensions that this profile defines for this resource...
+        arProperties.push({path : '-------', description: '-------',type:"----------"})
+        console.log(Z.currentProfile);
+        $.each(Z.currentProfile.content.extensionDefn,function(inx,ext){
+            console.log(ext)
+
+            if (ext.context[0] === resourceName) {
+                //only the extensions that apply to this profile
+                var type = '?????';
+                if (ext.definition.type) {
+                    type = ext.definition.type[0].code;
+                }
+
+                arProperties.push({path : ext.code, description: ext.definition.short,type:type})
+            }
+
+
+        })
+
+
+
+        var genDialogFrame = $('#generalModelDlg').html();      //the frams for the modal dialog
+        $('#modalDialogDiv').html(genDialogFrame);      //write the frame to the DOM
+
+        var template = Handlebars.compile($('#profiledResourceProperties').html());
+
+        $('#modal-content').html(template({item:arProperties}));
+
+        $("#generalDlg").modal()
+
+
+
+    });
+
+}
+
 </script>
 
 
 <script id="oneProfile" type="text/x-handlebars-template">
+    <div id='updatingProfileMsg' class="alert alert-warning">Updating...</div>
+
     <div class="row">
         <div class="col-md-12">
             {{#with content}}
                 <div class="row">
                     <div class="col-md-10">
-                        <div class="row">
-                            <div class="col-md-2"><strong>Profile name</strong></div>
-                            <div class="col-md-10">{{name}}</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-2"><strong>Description</strong></div>
-                            <div class="col-md-10">{{name}}</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-2"><strong>Requirements</strong></div>
-                            <div class="col-md-10">{{requirements}}</div>
-                        </div>
+
+                        <form role="form" class="form-horizontal">
+
+
+
+                            <div class="form-group">
+                                <label for="profileName" class="col-sm-2 ">Profile name</label>
+                                <div class="col-sm-10">
+                                    <input type='text' class="form-control profile_header" value = '{{name}}' id="profileName" placeholder="Name of Profile"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="profileDescription" class="col-sm-2 ">Description</label>
+                                <div class="col-sm-10">
+                                    <input type='text' class="form-control profile_header" value = '{{description}}' id="profileDescription" placeholder="Description of Profile"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="profileRequirements" class="col-sm-2 ">Requirements</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control profile_header"  id="profileRequirements" placeholder="Requirements for Profile">{{requirements}}</textarea>
+                                </div>
+                            </div>
+
+                        </form>
+
+
                     </div>
+
+
                     <div class="col-md-2">
                         <div><button id = 'add_new_extension' class="btn btn-success btn-block">Add Extension</button></div>
                         <div style="padding-top:5px"><button id = 'save_profile_changes' class="btn btn-primary btn-block">Update Profile</button></div>
@@ -626,18 +808,18 @@ function showOneExtension(Z,code) {
                 {{#if extensionDefn}}
                     <h5>Extensions</h5>
                     <table class="table table-bordered">
-                        <tr><th>Code</th><th colspan="2">Context</th><th>isMod</th><th>Min/Max</th><th>Type</th><th>ValueSet</th><th>Brief Description</th></tr>
+                        <tr><th>Code</th><th colspan="2">Context</th><th>isMod</th><th>Min/Max</th><th>Type</th><th>ValueSet</th><th>Brief Description</th><th></th></tr>
                         {{#each extensionDefn}}
                             <tr>
                                 <td><a href='#' class='profile-extension' data-code='{{code}}'>{{code}}</a></td>
                                 <td>{{contextType}}</td>
                                 <td>
                                     {{#each context}}
-                                        {{this}}
+                                        <a href='#' class='resource_in_extension' data-code="{{this}}">{{this}}</a>
                                     {{/each}}
                                 </td>
                                 <td>{{definition.isModifier}}</td>
-                                <td>{{definition.min}}/{{definition.max}}</td>
+                                <td>{{definition.min}}:{{definition.max}}</td>
                                 <td>
                                     {{#each definition.type}}
                                         <div>{{code}}</div>
@@ -650,6 +832,7 @@ function showOneExtension(Z,code) {
                                     {{/if}}
                                 </td>
                                 <td>{{definition.short}}</td>
+                                <td><a href='#' class="remove_ext" data-code="{{code}}"><i class="glyphicon glyphicon-remove"></i></a> </td>
                             </tr>
                         {{/each}}
 
@@ -752,11 +935,28 @@ function showOneExtension(Z,code) {
                     <li><a class="orionProfileDetail" data-id="{{id}}"  href='#'>{{content.name}}</a></li>
                     {{/each}}
                 </ul>
-
+                <div><a href="#" id="new_profile">New Profile</a></div>
             </div>
         </div>
 </script>
 
+
+<script id="profiledResourceProperties" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-md-12">
+            <table>
+                {{#each item}}
+                    <tr>
+                        <td>{{path}}</td>
+                        <td>{{type}}</td>
+                        <td>{{description}}</td>
+                    </tr>
+                {{/each}}
+            </table>
+
+        </div>
+    </div>
+</script>
 
 <script id="editExtension" type="text/x-handlebars-template">
     <div class="modal fade" id="editExtensionDlg">
@@ -837,14 +1037,14 @@ function showOneExtension(Z,code) {
 
 <script id="generalModelDlg" type="text/x-handlebars-template">
     <div class="modal fade" id="generalDlg">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">General Dialog</h4>
                 </div>
                 <div class="modal-body">
-                    <div id='genDlgContents'></div>
+                    <div id='modal-content'></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
