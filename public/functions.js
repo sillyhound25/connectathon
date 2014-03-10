@@ -3,8 +3,21 @@ function localFunctionsSetup(Z) {
 
     //generate a summary object of the profile suitable for a summary
     //dependency on jquery and async
-    Z.localFunctions.profileSummary = function() {
+    //messageElement is the name of the 'waiting' element to hide &
+    Z.localFunctions.profileSummary = function(callback) {
         //$('#loading').show();
+
+        if (!Z.currentProfile) {
+            callback('There is no Profile being edited');
+            return;
+        }
+
+        if (! Z.currentProfile.content.extensionDefn) {
+            callback('No extensions have been defined yet');
+            return;
+        }
+
+
 
         //find all the resources that this profile refrences...
         var summary = {resources : {}}
@@ -12,7 +25,7 @@ function localFunctionsSetup(Z) {
             //console.log(ext)
             var resource = ext.context[0].toLowerCase();
             if ( ! summary.resources[resource]) {
-                summary.resources[resource] = {properties : []}
+                summary.resources[resource] = {properties : [],name:resource}
             }
         })
         console.log(summary);
@@ -26,12 +39,11 @@ function localFunctionsSetup(Z) {
                 //console.log('here',resourceName)
                 $.get( "/api/profile/"+resourceName+"/FHIR Project", function( data ) {
                     summary.resources[resourceName].raw = data;
-                    console.log('back')
+                    //console.log('back')
                     //pulls the properties from the resource and from the profile into the summary
-                    getStructures(summary.resources[resourceName].properties,data,resourceName,function(){
+                    getStructures(resourceName,data,function(){
                         cb();       //and tell async we're done...
                     })
-
                 });
             })
         })
@@ -39,14 +51,20 @@ function localFunctionsSetup(Z) {
         //now execute all teh tasks in parallel...
         async.parallel(arTasks,function(){
             //at this point the summary is complete
-            console.log(summary);
+            console.log('completed')
+            console.log(callback)
+            if (callback) {
+                callback(null,summary);
+            }
+            //console.log(summary);
         });
         //console.log(arTasks);
 
 
         //get all the structures that are defined in this profile, and all extensions for this resorucetype
-        function getStructures(arStructures,profileBundle,resourceName,cb){
+        function getStructures(resourceName,profileBundle,cb){
 
+            var arStructures = summary.resources[resourceName].properties;
             var resource = profileBundle.entry[0].content;
             $.each(resource.structure[0].element, function(inx,el){
                 //console.log(el);
@@ -55,7 +73,9 @@ function localFunctionsSetup(Z) {
                     var type = el.definition.type[0].code;
                     //don't include extensions on the standard profile - they all have them and it's clutter at the moment...
                     if (type.toLowerCase() !== 'extension') {
-                        arStructures.push({path : el.path, description: el.definition.short,type:type})
+                        arStructures.push({path : el.path, description: el.definition.short,type:type,min:el.definition.min,max:el.definition.max})
+
+                        console.log(el);
                     }
 
                 } else {
@@ -79,7 +99,7 @@ function localFunctionsSetup(Z) {
                         type = ext.definition.type[0].code;
                     }
 
-                    arStructures.push({path : ext.code, description: ext.definition.short,type:type})
+                    arStructures.push({path : ext.code, description: ext.definition.short,type:type,min:ext.definition.min,max:ext.definition.max})
                 }
 
 

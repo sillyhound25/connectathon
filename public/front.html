@@ -35,14 +35,14 @@
 
     <div class="tab-content">
         <div class="tab-pane active" id="helpTab">
-            <h2>Orion Profile and ValueSet editor</h2>
+            <div class="bg-primary container text-center"> <h2>Orion Profile and ValueSet editor</h2></div>
             <p>This application allows you to view and edit the profiles and valueSets created to support the
             Orion FHIR interfaces. It is very much a sub-set of the full capability of these resources</p>
             <h5>Notes</h5>
             <ul>
                 <li>The Profile extensions are only against resources (not datatypes) and only for a single resource</li>
                 <li>Assume that the profiles only use ValueSets published by Orion</li>
-                <li>Assume that the reference to a valueset </li>
+                <li>Assume that the reference to a valueset is to an external one - no Contained sets</li>
                 <li>Assume that the Orion ValueSets have a unique name property</li>
             </ul>
         </div>
@@ -75,6 +75,10 @@
                     </div>
 
                     <div class="tab-pane" id="profileSummarySubTab">
+                        <button  class="btn btn-success pull-right" id="btnCreateSummary">Generate summary</button>
+
+                        <div id='updatingProfileSummaryMsg' style="display:none" class="alert alert-warning">Reading data for the summary. This can take a while...</div>
+
                         <div id="workAreaSummaryProfile"></div>
                     </div>
                         </div>
@@ -117,6 +121,7 @@
         Z.template.oneProfile = Handlebars.compile($('#oneProfile').html());
         Z.template.orionProfileList = Handlebars.compile($('#orionProfileList').html());
         Z.template.editExtension = Handlebars.compile($('#editExtension').html());
+        Z.template.profileSummary = Handlebars.compile($('#profileSummary').html());
 
         //list of resources - should be the compleet fhor list...
         Z.resourceList = ['Encounter','MedicationAdministration','Medication','Observation','Patient','Practitioner'];
@@ -130,6 +135,20 @@
         //Z.localFuntions.profileSummary
         localFunctionsSetup(Z);
 
+        //handler for when the user wants to generate a summary
+        $('#btnCreateSummary').on('click',function(){
+            $('#updatingProfileSummaryMsg').show();
+            Z.localFunctions.profileSummary(function(err,summary){
+                $('#updatingProfileSummaryMsg').hide();
+                if (err) {
+                    alert(err)
+                } else {
+                    $('#workAreaSummaryProfile').html(Z.template.profileSummary(summary));
+
+                }
+
+            })
+        })
 
 
 
@@ -350,10 +369,20 @@ function showCurrentProfile(Z) {
     $('#workAreaProfile').html(Z.template.oneProfile(Z.currentProfile));
     $('#updatingProfileMsg').hide();
 
+    /*
 
     //temp - generate the summary - there will be a better place to call this I suspect...
-    Z.localFunctions.profileSummary();
+    Z.localFunctions.profileSummary(function(err,summary){
+        $('#updatingProfileSummaryMsg').hide();
+        if (err) {
+            alert(err)
+        } else {
+            $('#workAreaSummaryProfile').html(Z.template.profileSummary(summary));
 
+        }
+    });
+
+    */
 
     $('.remove_ext').on('click',function(ev){
         //remove an extension
@@ -786,6 +815,30 @@ function showOneExtension(Z,code) {
 </script>
 
 
+
+
+<script id="profileSummary" type="text/x-handlebars-template">
+    <h4>Profile Summary</h4>
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-condensed table-bordered">
+                    <tr><th>Path</th><th>Mult</th><th>DataType</th><th>Description</th></tr>
+                    {{#each resources}}
+                        <h4><tr class="info"><td colspan="4">{{@key}}</td> </h4>
+                        {{#each this.properties}}
+                            <tr>
+                                <td>{{path}}</td>
+                                <td>{{min}}:{{max}}</td>
+                                <td>{{type}}</td>
+                                <td>{{description}}</td>
+                            </tr>
+                        {{/each}}
+                    {{/each}}
+                </table>
+            </div>
+        </div>
+
+</script>
 
 <script id="oneVs" type="text/x-handlebars-template">
     <div class="row">
