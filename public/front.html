@@ -8,7 +8,7 @@
     <script src="js/moment.min.js"></script>
     <script src="js/async.js"></script>
     <script src="js/typeahead.bundle.js"></script>
-
+    <script src="functions.js"></script>
     <!-- Latest compiled and minified CSS-->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <!-- Optional theme -->
@@ -60,16 +60,16 @@
                 </div>
 
                 <div class="col-md-10">
-
-                    <div id="workAreaProfile"></div>
                     <!--
+                                        <div id="workAreaProfile"></div>-->
+
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#profileDetailSubTab" data-toggle="tab">Detail</a></li>
-                        <li><a href="#profileSummarySubTab" data-toggle="tab">Summary</a></li>
+                        <li class="active pull-right"><a href="#profileDetailSubTab" data-toggle="tab">Detail</a></li>
+                        <li class="pull-right"><a href="#profileSummarySubTab" data-toggle="tab">Summary</a></li>
                     </ul>
 
-
-                    <div class="tab-pane" id="profileDetailSubTab">
+                    <div class="tab-content">
+                    <div class="tab-pane active" id="profileDetailSubTab">
                         <h4>Profile Detail</h4>
                         <div id="workAreaProfile"></div>
                     </div>
@@ -77,8 +77,9 @@
                     <div class="tab-pane" id="profileSummarySubTab">
                         <div id="workAreaSummaryProfile"></div>
                     </div>
+                        </div>
 
--->
+
 
 
 
@@ -110,7 +111,7 @@
 <script>
 
     $(document).ready(function(){
-        var Z = {template:{}};     //instead of Y
+        var Z = {template:{},localFunctions : {}};     //instead of Y
         Z.template.oneVS = Handlebars.compile($('#oneVs').html());      //display a single valueset
         Z.template.listVS = Handlebars.compile($('#vsList').html());
         Z.template.oneProfile = Handlebars.compile($('#oneProfile').html());
@@ -125,7 +126,9 @@
         })
 
 
-
+        //create the various local functions - defined in functions.js
+        //Z.localFuntions.profileSummary
+        localFunctionsSetup(Z);
 
 
 
@@ -347,6 +350,11 @@ function showCurrentProfile(Z) {
     $('#workAreaProfile').html(Z.template.oneProfile(Z.currentProfile));
     $('#updatingProfileMsg').hide();
 
+
+    //temp - generate the summary - there will be a better place to call this I suspect...
+    Z.localFunctions.profileSummary();
+
+
     $('.remove_ext').on('click',function(ev){
         //remove an extension
         var code = ev.currentTarget.getAttribute('data-code');
@@ -489,7 +497,7 @@ function showCurrentProfile(Z) {
         });
     })
 
-    console.log(Z.currentProfile);
+    //console.log(Z.currentProfile);
 
     //the handler when an existing extension is selected for editing/display
     $('.profile-extension').on('click',function(ev){
@@ -657,75 +665,6 @@ function showOneExtension(Z,code) {
 }
 
 
-//show all the properties of a resource as altered by this profile.
-    //for the moment, assume that profiles are only adding properties...
-function getProfiledResource(Z,resourceName){
-
-    $('#loading').show();
-    $.get( "/api/profile/"+resourceName+"/FHIR Project", function( data ) {
-        $('#loading').hide();
-
-        var arProperties = [];
-
-        console.log(data);
-        if (data.entry.length === 0) {
-            alert("Couldn't find the resource: " + resourceName);
-            return;
-        }
-        var resource = data.entry[0].content;
-        $.each(resource.structure[0].element, function(inx,el){
-            console.log(el);
-            if (el.definition.type) {
-                //only include elements with a type (ie a datatype). 'header' properties (like medicationAdministration.dosage) aren't neeed (I think)
-                var type = el.definition.type[0].code;
-                //don't include extensions on the standard profile - they all have them and it's clutter at the moment...
-                if (type.toLowerCase() !== 'extension') {
-                    arProperties.push({path : el.path, description: el.definition.short,type:type})
-                }
-
-            } else {
-                //just add the name...
-                arProperties.push({path : el.path, description: el.definition.short,type:"----------"})
-            }
-
-        })
-        console.log(arProperties);
-
-        //now add the extensions that this profile defines for this resource...
-        arProperties.push({path : '-------', description: '-------',type:"----------"})
-        console.log(Z.currentProfile);
-        $.each(Z.currentProfile.content.extensionDefn,function(inx,ext){
-            console.log(ext)
-
-            if (ext.context[0] === resourceName) {
-                //only the extensions that apply to this profile
-                var type = '?????';
-                if (ext.definition.type) {
-                    type = ext.definition.type[0].code;
-                }
-
-                arProperties.push({path : ext.code, description: ext.definition.short,type:type})
-            }
-
-
-        })
-
-
-
-        var genDialogFrame = $('#generalModelDlg').html();      //the frams for the modal dialog
-        $('#modalDialogDiv').html(genDialogFrame);      //write the frame to the DOM
-
-        var template = Handlebars.compile($('#profiledResourceProperties').html());
-
-        $('#modal-content').html(template({item:arProperties}));
-
-        $("#generalDlg").modal()
-
-
-
-    });
-
-}
 
 </script>
 
