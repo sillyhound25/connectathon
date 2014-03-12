@@ -51,14 +51,10 @@ function localFunctionsSetup(Z) {
         //now execute all teh tasks in parallel...
         async.parallel(arTasks,function(){
             //at this point the summary is complete
-            console.log('completed')
-            console.log(callback)
             if (callback) {
                 callback(null,summary);
             }
-            //console.log(summary);
         });
-        //console.log(arTasks);
 
 
         //get all the structures that are defined in this profile, and all extensions for this resorucetype
@@ -75,7 +71,7 @@ function localFunctionsSetup(Z) {
                     if (type.toLowerCase() !== 'extension') {
                         arStructures.push({path : el.path, description: el.definition.short,type:type,min:el.definition.min,max:el.definition.max})
 
-                        console.log(el);
+                        //console.log(el);
                     }
 
                 } else {

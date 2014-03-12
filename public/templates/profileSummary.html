@@ -1,0 +1,19 @@
+<h4>Profile Summary</h4>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-condensed table-bordered">
+            <tr><th>Path</th><th>Mult</th><th>DataType</th><th>Description</th></tr>
+            {{#each resources}}
+            <h4><tr class="info"><td colspan="4">{{@key}}</td> </h4>
+            {{#each this.properties}}
+            <tr>
+                <td>{{path}}</td>
+                <td>{{min}}..{{max}}</td>
+                <td>{{type}}</td>
+                <td>{{description}}</td>
+            </tr>
+            {{/each}}
+            {{/each}}
+        </table>
+    </div>
+</div>

@@ -37,7 +37,7 @@ app.configure(function(){
 app.get('/resource/:name', function(req, res){
     //var query = 'Profile?name='+req.params.name + '&publisher=' + req.params.publisher;
     var url = "http://hl7.org/implement/standards/fhir/"+req.params.name+".html";
-console.log(url)
+//console.log(url)
     request(url,function(error,response,body){
 
         res.end(body);
@@ -84,13 +84,13 @@ app.get('/api/profile/:publisher', function(req, res){
 //retrieve a specific valueset
 app.get('/api/valueset/id/:id', function(req, res){
     var vsID = req.params.id;
-    console.log(vsID);
+    //console.log(vsID);
     //extrct out the logicalID
     //todo - big assumption here - we are assuming that all resources come from the same server
 
     var ar = vsID.split('/');
     var ID = ar[ar.length-1];
-    console.log(ID)
+    //console.log(ID)
 
     var query = 'ValueSet/'+ ID;
     performQueryAgainstFHIRServer(query,function(resp){
@@ -118,7 +118,7 @@ app.post('/api', function(req, res){
     //var vsID = req.params.id;
     var resource = req.body;
 
-    console.log('saving',resource)
+    //console.log('saving',resource)
 
 
     postToFHIRServer(resource,function(resp){
@@ -175,7 +175,7 @@ app.get('/api/patient/:patientID', function(req, res){
 })
 
 app.post('/api/createSamples', function(req, res){
-    console.log('/api/createSamples')
+    //console.log('/api/createSamples')
 
     var samPatientEntry = Patient.getSample({identifier:"orion1"});
     var samEncounterEntry = Encounter.getSample({});
@@ -234,11 +234,11 @@ function postToFHIRServer(resource,callback) {
         uri : FHIRServerUrl + resourceType
     }
 
-    console.log(JSON.stringify(options));
+    //console.log(JSON.stringify(options));
 
     request(options,function(error,response,body){
-        console.log(response.statusCode);
-        console.log(body)
+        //console.log(response.statusCode);
+        //console.log(body)
         var resp = {};
         resp.id = response.headers.location;
         resp.statusCode = response.statusCode;

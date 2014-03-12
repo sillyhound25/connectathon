@@ -1,0 +1,59 @@
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="row">
+            <div class="col-md-4">ID</div>
+            <div class="col-md-8"><div id='vs_id'>{{id}}</div></div>
+        </div>
+        {{#with content}}
+        <div class="row">
+            <div class="col-md-4">Name</div>
+            <div class="col-md-8"><input id = 'vs_name' class="data form-control" type='text' value='{{name}}'/></div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">Description</div>
+            <div class="col-md-8"><textarea id='vs_description' class="data form-control" >{{description}}</textarea></div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">System</div>
+            <div class="col-md-8"><input type="test" id='vs_system' class="data form-control"  value="{{define.system}}"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">Define Contents</div>
+            <div class="col-md-8">
+                <table class="table table-bordered table-condensed">
+                    <tr><th>Display</th><th>Code</th>
+                        {{#unless ../readOnly}}
+                        <td>Action</td>
+                        {{/unless}}
+                    </tr>
+                    {{#each define.concept}}
+                    <tr>
+                        <td>{{display}}</td>
+                        <td>{{code}}</td>
+                        {{#unless ../../readOnly}}
+                        <td><a class="define_concept_del" data-code= "{{code}}" href="#">Delete</a> </td>
+                        {{/unless}}
+                    </tr>
+                    {{/each}}
+                    {{#unless ../readOnly}}
+                    <tr>
+                        <td><input type='text' id='define_new_display'/> </td>
+                        <td><input type='text' id='define_new_code'/> </td>
+                        <td><a id="define_new_add" href="#">Add</a> </td>
+                    </tr>
+                    {{/unless}}
+                </table>
+            </div>
+        </div>
+        {{/with}}
+        {{#unless readOnly}}
+        <div class="row">
+            <div class="col-md-12">
+                <a href='#' class="btn btn-primary pull-right" id='save_change_vs'>Save Changes</a>
+            </div>
+        </div>
+        {{/unless}}
+    </div>
+
+</div>

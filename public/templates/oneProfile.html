@@ -1,0 +1,115 @@
+<div id='updatingProfileMsg' class="alert alert-warning">Updating...</div>
+
+<div class="row">
+    <div class="col-md-12">
+        {{#with content}}
+        <div class="row">
+            <div class="col-md-10">
+
+                <form role="form" class="form-horizontal">
+
+
+
+                    <div class="form-group">
+                        <label for="profileName" class="col-sm-2 ">Profile name</label>
+                        <div class="col-sm-10">
+                            <input type='text' class="form-control profile_header" value = '{{name}}' id="profileName" placeholder="Name of Profile"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profileDescription" class="col-sm-2 ">Description</label>
+                        <div class="col-sm-10">
+                            <input type='text' class="form-control profile_header" value = '{{description}}' id="profileDescription" placeholder="Description of Profile"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profileRequirements" class="col-sm-2 ">Requirements</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control profile_header"  id="profileRequirements" placeholder="Requirements for Profile">{{requirements}}</textarea>
+                        </div>
+                    </div>
+
+                </form>
+
+
+            </div>
+
+
+            <div class="col-md-2">
+                <div><button id = 'add_new_extension' class="btn btn-success btn-block">Add ExtensionDef</button></div>
+                <div style="padding-top:5px"><button id = 'save_profile_changes' class="btn btn-primary btn-block">Update Profile</button></div>
+            </div>
+        </div>
+
+
+        {{#each structure}}
+        <h5>Structure</h5>
+        <div class="row">
+            <div class="col-md-2">Type</div>
+            <div class="col-md-10">{{type}}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Elements</div>
+            <div class="col-md-10">
+                <table class="table table-bordered table-condensed">
+                    <tr><th>Path</th><th>isMod</th><th>min..max</th><th>Type</th></tr>
+                    {{#each element}}
+                    {{#unless hide}}
+                    <tr>
+                        <td><div title='{{definition.formal}}'>{{path}}</div></td>
+                        <td>{{definition.isModifier}}</td>
+                        <td>{{definition.min}}..{{definition.max}}</td>
+                        <td>
+                            {{#each definition.type}}
+                            <div>{{code}}</div>
+                            {{/each}}
+                        </td>
+                    </tr>
+                    {{/unless}}
+                    {{/each}}
+                </table>
+            </div>
+        </div>
+
+        {{/each}}
+        {{#if extensionDefn}}
+        <h5>Extensions</h5>
+        <table class="table table-bordered">
+            <tr><th>Code</th><th colspan="2">Context</th><th>isMod</th><th>Min..Max</th><th>Type</th><th>ValueSet</th><th>Brief Description</th><th></th></tr>
+            {{#each extensionDefn}}
+            <tr>
+                <td><a href='#' class='profile-extension' data-code='{{code}}'>{{code}}</a></td>
+                <td>{{contextType}}</td>
+                <td>
+                    {{#each context}}
+                    <a href='#' class='resource_in_extension' data-code="{{this}}">{{this}}</a>
+                    {{/each}}
+                </td>
+                <td>{{definition.isModifier}}</td>
+                <td>{{definition.min}}..{{definition.max}}</td>
+                <td>
+                    {{#each definition.type}}
+                    <div>{{code}}</div>
+                    {{/each}}
+                </td>
+                <td>
+                    {{#if definition.binding}}
+                    <div title='{{definition.binding.referenceResource.reference}}'>
+                        <a class='vsInExt' data-code="{{definition.binding.referenceResource.reference}}" href='#'> {{definition.binding.name}}</a></div>
+                    {{/if}}
+                </td>
+                <td>{{definition.short}}</td>
+                <td><a href='#' class="remove_ext" data-code="{{code}}"><i class="glyphicon glyphicon-remove"></i></a> </td>
+            </tr>
+            {{/each}}
+
+        </table>
+
+
+        {{/if}}
+
+        {{/with}}
+    </div>
+</div>
