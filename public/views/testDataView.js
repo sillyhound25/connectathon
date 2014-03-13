@@ -28,6 +28,7 @@ var testDataView = Backbone.View.extend({
             }
 
         })
+        console.log(sampleData);
         //post the sample to the server
         $.ajax({
             type: "POST",
@@ -38,7 +39,7 @@ var testDataView = Backbone.View.extend({
             data: JSON.stringify(sampleData),
             success: function(data,status,xhr) {
                 console.log(data);
-                //alert('The resources have been successfully saved.')
+               //alert('The resources have been successfully saved.')
 
                 $('#td_success').show();
                 //now update the ID's that were created by the server...

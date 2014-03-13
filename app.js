@@ -43,6 +43,8 @@ app.get('/api/coreResourceTestParams', function(req, res){
     params.patient.push({code:'fname',display:'First Name',default:'John'})
     params.patient.push({code:'lname',display:'Last Name',default:'Cardinal'})
     params.patient.push({code:'identifier',display:'Identifier',default:'PRP1660'})
+    params.practitioner = [];
+    params.practitioner.push({code:'name',display:'Full Name',default:'Marcus Welby'})
     res.json(params);
 });
 

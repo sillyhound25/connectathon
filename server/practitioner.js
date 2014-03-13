@@ -3,10 +3,7 @@ var moment = require('moment');
 
 //get a sample in simple format
 function getSample(vo) {
-
-    vo.fname = vo.fname || "John";
-    vo.lname = vo.lname || "Kildaire";
-    vo.identifier = vo.identifier || "PRP1660"
+    vo.name = vo.name || "John Kildaire";
 
     var entry = {};
     entry.title='Practitioner';
@@ -17,7 +14,7 @@ function getSample(vo) {
     var sam = {};
     sam.resourceType = "Practitioner";
     sam.identifier = [{use:"Usual",value:"11889",system:"http://moh.govt.nz/fhir/mcnumber"}];
-    sam.name = {family:[vo.lname],given:[vo.fname]};
+    sam.name = {text:vo.name};
     sam.text = getText(sam);
     entry.content = sam;
     return entry;
@@ -28,7 +25,8 @@ function getText(obj) {
     //console.log
     var rtn = {status:"generated"};
     var txt = "";
-    txt = obj.name.given[0] + " " + obj.name.family[0];
+    //txt = obj.name.given[0] + " " + obj.name.family[0];
+    txt = obj.name.text;
     rtn.div = "<div>" + txt + "</div>";
     return rtn;
 }

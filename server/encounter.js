@@ -7,6 +7,8 @@
  */
 var _ = require("underscore");
 var moment = require('moment');
+var builder = {};
+builder.common = require('./common.js');
 
 //get a sample in simple format
 function getSample(vo) {
@@ -21,6 +23,12 @@ function getSample(vo) {
     sam.class = 'inpatient';
     sam.identifier = [{value:"ZZZ",system:"http://myhospital/ID"}];
     sam.text = getText(this);
+    sam.subject = {reference:vo.patientID};
+
+
+    var participant = {individual : {reference:vo.practitionerID},
+        type: [builder.common.cc({code:'CON',display:'Consultant',system:'http://hl7.org/fhir/v3/ParticipationType'})]};
+    sam.participant = [participant];
 
     entry.content = sam;
     return entry;

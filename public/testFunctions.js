@@ -52,15 +52,32 @@ function setupTestData(Z) {
 
         })
 
-        //now we want to add the 'standard' properties for each resource. for the moment we'll hard code them,
-        //but a better solution is obviously required...
 
-        //the patient...
         //the patient should always be present, so add it if not...
         if (! vo.patient) {
             vo.patient = {name:'patient',extensions:[],core:[]}
             vo.resource.push(vo.patient);
         }
+
+        //many of the resources will also need a prcatitioner. We'll make a list for now, but probably better elswhere...
+        var needPractitionerList = ['encounter'];
+        if (! vo.practitioner) {
+            //if there's no practitioner, then need to see if any of the resources being created need one...
+            var needPractitioner = false;
+            $.each(vo.resource,function(inx,res){
+                console.log(res)
+                if (needPractitionerList.indexOf(res.name) >-1) {
+                    needPractitioner = true;
+                }
+            })
+            console.log(needPractitioner)
+            if (needPractitioner){
+                vo.practitioner = {name:'practitioner',extensions:[],core:[]}
+                vo.resource.push(vo.practitioner);
+            }
+        }
+
+
 
         //a property for the handlebars template...
         if (vo.warning.length > 0) {
@@ -70,7 +87,8 @@ function setupTestData(Z) {
         //now add the standard elements needed to generate the test data
         //the server has a list of these
         $.get("/api/coreResourceTestParams",function(params){
-            console.log(params)
+            //console.log(params)
+            //console.log(vo.resource)
             $.each(vo.resource,function(inx,res){
                 var resourceName = res.name;
                 if (params[resourceName]) {
@@ -79,6 +97,7 @@ function setupTestData(Z) {
                     })
                 }
             })
+
             callback(vo);
         })
 

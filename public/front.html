@@ -221,9 +221,14 @@
 
                 //get the backbone view
                 //$.get('views/testDataView.js',function)
-                var attr = {profile: Z.currentProfile,warnings:warnings};
-                var viewTestData = new testDataView({model:vo,el:$("#workAreaTestData"),attributes:attr});
-                viewTestData.render();
+               // var attr = {profile: Z.currentProfile,warnings:warnings};
+
+                //remove any previous views...
+                if (Z.views.viewTestData) {
+                    Z.views.viewTestData.undelegateEvents();
+                }
+                Z.views.viewTestData = new testDataView({model:vo,el:$("#workAreaTestData")});
+                Z.views.viewTestData.render();
 
                 //$('#workAreaTestData').html(Z.template.testDataForm(vo));
 

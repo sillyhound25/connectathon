@@ -2,13 +2,14 @@ var _ = require('underscore');
 var moment = require('moment');
 
 //resource sample builder functions...
-var Common = require('./common.js');
-var Patient = require('./patient.js');
-var Practitioner = require('./practitioner.js');
-var Encounter = require('./encounter.js');
-var Condition = require('./condition.js');
-var Allergy = require('./allergyIntolerance.js');
-var ValueSet = require('./valueset.js');
+var builder = {};
+builder.common = require('./common.js');
+builder.patient = require('./patient.js');
+builder.practitioner = require('./practitioner.js');
+builder.encounter = require('./encounter.js');
+builder.condition = require('./condition.js');
+builder.allergy = require('./allergyIntolerance.js');
+builder.valueSet = require('./valueset.js');
 
 
 /* generate a bundle of resouces based on a profile that can be sent as a transaction to a server. The
@@ -19,13 +20,19 @@ var ValueSet = require('./valueset.js');
 var generateSampleBundle = function(vo,callback) {
     var profileID = vo.profileID;       //the ID of the profile. We'll add this as a tag to the bundle...
 
+    //these are ID's to resources that other resources might refer to - like Patient & practitioner...
+    var patientID;
+    var practitionerID;
+
+    console.log(JSON.stringify(vo));
+
     var objResources = {};   //this will be a object of resources...
     //first, get the list of resources to create.
     _.each(vo.items,function(item){
         var ar = item.code.split('-');
         var resource = ar[0];
         if (! objResources[resource]) {
-            objResources[resource] = {params : [], extensions:[],name:resource}
+            objResources[resource] = {params : {}, extensions:[],name:resource}
         }
         if (ar[1] === 'ext') {
             //this is an extension
@@ -33,9 +40,14 @@ var generateSampleBundle = function(vo,callback) {
         } else {
             //this is a base parameter
             var code = ar[1];
-            objResources[resource].params[code]= item.value;//.push({name:ar[1],value:item.value});
+            console.log('43',resource,code,item.value)
+            var r = objResources[resource];
+            r.params[code]= item.value;//.push({name:ar[1],value:item.value});
         }
     })
+
+
+    console.log(JSON.stringify(objResources));
 
     //create the bundle
     var bundle = {resourceType:"Bundle"};
@@ -43,30 +55,49 @@ var generateSampleBundle = function(vo,callback) {
     bundle.updated = moment().format();
     bundle.entry = [];
 
-    //create the patient resource (There must a patient
+    //create the patient resource (There must a patient - this is added by the test UI)
     var patientOptions = objResources.patient;
-
-    var samPatientEntry = Patient.getSample(patientOptions.params); //pass the params directly into the builder function
-
-    //now add any extensions to patient...
-    _.each(patientOptions.extensions,function(ext){
-        samPatientEntry.content.extension = samPatientEntry.content.extension || [];
-        var url = profileID + "#"+ ext.name;
-        //console.log(ext);
-        samPatientEntry.content.extension.push(Common.extension(url,ext.dataType,ext.value));
-    })
+    var samPatientEntry = builder.patient.getSample(patientOptions.params); //pass the params directly into the builder function
+    patientID = samPatientEntry.id;
+    addExtensions(samPatientEntry, patientOptions.extensions);
     bundle.entry.push(samPatientEntry);
 
+    //next to add is the practitioner. It is assumed that if any of the other resources in the profile have
+    //a reference to practitioner, then the UI will ensure that Practitioner is added to the collection...
+    if (objResources.practitioner) {
+        var optionsPrac = objResources.practitioner;
+        var practitionerEntry = builder.practitioner.getSample(optionsPrac.params); //pass the params directly into the builder function
+        practitionerID = practitionerEntry.id;
+        addExtensions(practitionerEntry, optionsPrac.extensions);
+        bundle.entry.push(practitionerEntry);
+    }
+
+    //finally, we can add the other resources
     _.each(objResources,function(res){
         console.log('resource name ' + res.name);
+        if (['patient','practitioner'].indexOf(res.name) === -1) {
+            var options = res;
+            options.params.patientID = patientID;
+            options.params.practitionerID = practitionerID;
+            var entry = builder[res.name].getSample(options.params); //pass the params directly into the builder function
+            addExtensions(entry, options.extensions);
+            bundle.entry.push(entry);
+        }
     })
 
 
    // var samEncounterEntry = Encounter.getSample({});
 
-
-
     callback(null,bundle);
+
+    function addExtensions(entryResource,extensions){
+        _.each(extensions,function(ext){
+            entryResource.content.extension = entryResource.content.extension || [];
+            var url = profileID + "#"+ ext.name;
+            entryResource.content.extension.push(builder.common.extension(url,ext.dataType,ext.value));
+        })
+
+    }
 }
 
 
