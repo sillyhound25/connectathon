@@ -5,11 +5,13 @@
     <script src="js/jquery-1.9.0.min.js"></script>
     <script src="js/handlebars-v1.3.0.js"></script>
     <script src="js/underscore-min.js"></script>
+    <script src="js/backbone-min.js"></script>
     <script src="js/moment.min.js"></script>
     <script src="js/async.js"></script>
     <script src="js/typeahead.bundle.js"></script>
     <script src="functions.js"></script>
     <script src="testFunctions.js"></script>
+    <script src="views/testDataView.js"></script>
 
     <!-- Latest compiled and minified CSS-->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -108,8 +110,8 @@
                         </div>
 
                         <div class="tab-pane" id="profileTestDataSubTab">
-                            <button  class="btn btn-success pull-right" id="btnGenerateTD">Generate Test Data</button>
-                            <h4>Generate Test Data</h4>
+                            <button style="margin-top: 5px" class="btn btn-success pull-right" id="btnGenerateTD">Create Test Form</button>
+                            <!--<h4>Generate Test Data</h4>-->
 
                             <div id="workAreaTestData"></div>
                         </div>
@@ -146,23 +148,16 @@
 <script>
 
     $(document).ready(function(){
-        var Z = {template:{},localFunctions : {}};     //instead of Y
-        /*
-        Z.template.oneVS = Handlebars.compile($('#oneVs').html());      //display a single valueset
-        Z.template.listVS = Handlebars.compile($('#vsList').html());
-        Z.template.oneProfile = Handlebars.compile($('#oneProfile').html());
-        Z.template.orionProfileList = Handlebars.compile($('#orionProfileList').html());
-        Z.template.editExtension = Handlebars.compile($('#editExtension').html());
-        Z.template.profileSummary = Handlebars.compile($('#profileSummary').html());
-        //Z.template.testDataForm = Handlebars.compile($('#testDataForm').html());
-*/
+        var Z = {template:{},localFunctions : {},views:{}};     //instead of Y
+
         //load all the handlebars templates from the templates folder...
-        $.each(['testDataForm','oneVS','listVS','oneProfile','orionProfileList','editExtension','profileSummary'],function(inx,name){
+        $.each(['oneVS','listVS','oneProfile','orionProfileList','editExtension','profileSummary'],function(inx,name){
             var fileName = 'templates/'+name+'.html';
             $.get(fileName,function(html){
                 Z.template[name] = Handlebars.compile(html);
             })
         })
+
 
 
         //set up the iframe within which help is shown
@@ -179,7 +174,7 @@
             //show the appropriate pane...
             $('.myPane').hide();
             var paneToShow = ev.currentTarget.getAttribute('data-page')
-            console.log(paneToShow)
+            //console.log(paneToShow)
             $('#'+paneToShow).show();
         })
 
@@ -192,7 +187,6 @@
 
 
         //create the various local functions - defined in functions.js
-        //Z.localFuntions.profileSummary
         localFunctionsSetup(Z);
 
         //handler for when the user wants to generate a summary
@@ -223,8 +217,15 @@
 
         //generate a test interface...
         $('#btnGenerateTD').on('click',function(){
-            Z.localFunctions.profileSummary.getExtensions(function(vo){
-                $('#workAreaTestData').html(Z.template.testDataForm(vo));
+            Z.localFunctions.testData.getExtensions(function(vo,warnings){
+
+                //get the backbone view
+                //$.get('views/testDataView.js',function)
+                var attr = {profile: Z.currentProfile,warnings:warnings};
+                var viewTestData = new testDataView({model:vo,el:$("#workAreaTestData"),attributes:attr});
+                viewTestData.render();
+
+                //$('#workAreaTestData').html(Z.template.testDataForm(vo));
 
 
 
@@ -823,17 +824,11 @@ function showOneExtension(Z,code) {
 
 
 
-<script id="vsList" type="text/x-handlebars-template">
-
-</script>
 
 
-<script id="orionProfileList" type="text/x-handlebars-template">
-
-</script>
 
 
-<script id="profiledResourceProperties" type="text/x-handlebars-template">
+<script id="profiledResourcePropertiesXXX" type="text/x-handlebars-template">
     <div class="row">
         <div class="col-md-12">
             <table>
@@ -850,10 +845,7 @@ function showOneExtension(Z,code) {
     </div>
 </script>
 
-<script id="editExtension" type="text/x-handlebars-template">
 
-
-</script>
 
 
 <script id="generalModelDlg" type="text/x-handlebars-template">
@@ -877,9 +869,7 @@ function showOneExtension(Z,code) {
 </script>
 
 
-<script id="testDataFormXXX" type="text/x-handlebars-template">
-    <h5>Test Data</h5>
-</script>
+
 
 
 

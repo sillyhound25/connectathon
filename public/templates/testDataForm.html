@@ -1,1 +1,71 @@
-<h5>Test Form</h5>
+
+<div class="row">
+    <div class="col-sm-8 col-md-8">
+        <input type='hidden' id = 'td_profileid' value='{{profile.id}}'/>
+        {{#if hasWarnings}}
+        <div class="alert alert-warning">
+            {{#each warning}}
+                {{this}}
+            {{/each}}
+        </div>
+        {{/if}}
+        <div id='td_success' class="alert alert-success">
+            <p>The resources have been created</p>
+        </div>
+        <form class="form-horizontal" role="form">
+
+            {{#each resource}}
+
+                <div class="form-group">
+                    <h4 class="well well-sm col-sm-12 col-md-12 " ><span  data-toggle="td_grp_{{name}}" class='myToggle' style="cursor: pointer">{{name}}</span>
+                        <div class="pull-right">
+                            <span id='{{name}}createdID'></span>
+                        </div>
+                    </h4>
+                </div>
+
+                <div id="td_grp_{{name}}">
+                    {{#each core}}
+                        <!-- Assume that all core properties are input via a text element-->
+                        <div class="form-group">
+                            <label class="col-sm-2 col-md-2">{{display}}</label>
+                            <div  class="col-sm-10 col-md-10">
+                                <input class="form-control data" type="text" data-code = "{{../name}}-{{code}}" value='{{default}}' placeholder="{{raw.definition.short}}"/>
+                            </div>
+                        </div>
+                    {{/each}}
+
+                    {{#each extensions}}
+                        {{#if isInput}}
+                            <div class="form-group">
+                                <label class="col-sm-2 col-md-2">{{raw.code}}</label>
+                                <div  class="col-sm-10 col-md-10">
+                                    <input class="form-control data" type="text" data-datatype="{{dataType}}" data-code = "{{../../name}}-ext-{{raw.code}}"  placeholder="{{raw.definition.short}}"/>
+                                </div>
+                            </div>
+                        {{/if}}
+
+                        {{#if isDropdown}}
+                            <div class="form-group">
+                                <label class="col-sm-2 col-md-2" >{{raw.code}}</label>
+                                <div  class="col-sm-10 col-md-10">
+                                    <select class="form-control data" type="text" data-datatype="{{dataType}}"  data-code = "{{../../name}}-ext-{{raw.code}}"  placeholder="{{raw.definition.short}}">
+                                        {{#each vs.content.define.concept}}
+                                        <option value="{{code}}">{{display}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                            </div>
+                        {{/if}}
+                    {{/each}}
+                </div>
+            {{/each}}
+        </form>
+    </div>
+    <div class="col-sm-4 col-md-4">
+        <div class="pull-right">
+            <a href="#" class="btn btn-primary" id="submitTD" style="margin-top: 5px">Submit Test Data</a>
+        </div>
+    </div>
+</div>
+

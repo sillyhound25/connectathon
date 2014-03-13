@@ -9,7 +9,7 @@ var _ = require("underscore");
 var moment = require('moment');
 
 //get a sample in simple format
-function getSample(inx) {
+function getSample(vo) {
     var entry = {};
     entry.title='Encounter';
     entry.id = 'cid:Encounter'+ new Date().getTime();
@@ -43,3 +43,6 @@ function getText(obj) {
 
 
 exports.getSample = getSample;
+exports.getDependencies = function() {
+    return ['patient','practitioner']
+}

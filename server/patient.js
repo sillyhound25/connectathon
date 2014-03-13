@@ -1,10 +1,8 @@
 var _ = require("underscore");
 var moment = require('moment');
 
-
 //get a sample in simple format
 function getSample(vo) {
-
     vo.fname = vo.fname || "John";
     vo.lname = vo.lname || "Cardinal";
     vo.identifier = vo.identifier || "PRP1660"
@@ -12,7 +10,6 @@ function getSample(vo) {
     entry.title='Patient';
     entry.id = 'cid:Patient'+ new Date().getTime();
     entry.updated = moment().format();
-
 
     var sam = {};
     sam.resourceType = "Patient";

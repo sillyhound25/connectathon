@@ -14,3 +14,12 @@ exports.newId = function(){
     var r = Math.floor(Math.random() * (max - min + 1) + min);
     return start+r;       //return a string
 }
+
+exports.extension = function(url,datatype,value) {
+    var ext = {};
+    ext.url = url;
+    var dt = datatype.charAt(0).toUpperCase() + datatype.slice(1);
+    var propertyName = 'value'+dt;
+    ext[propertyName] = value;
+    return ext;
+}

@@ -17,6 +17,8 @@ var Condition = require('./server/condition.js');
 var Allergy = require('./server/allergyIntolerance.js');
 var ValueSet = require('./server/valueset.js');
 
+var mSample = require('./server/serverSample.js');  //used to generate sample messages...
+
 //var app = module.exports = express.createServer();
 var app = express.createServer();
 
@@ -33,18 +35,32 @@ app.configure(function(){
   app.use(express.static(__dirname + '/public'));
 });
 
-
-app.get('/resource/:name', function(req, res){
-    //var query = 'Profile?name='+req.params.name + '&publisher=' + req.params.publisher;
-    var url = "http://hl7.org/implement/standards/fhir/"+req.params.name+".html";
-//console.log(url)
-    request(url,function(error,response,body){
-
-        res.end(body);
-
-    });
+//the parameters for each resource that can be set by a parameter. These are the parameters
+//that can be passed to the various builder modules - like patient.js
+app.get('/api/coreResourceTestParams', function(req, res){
+    var params = {};
+    params.patient = [];
+    params.patient.push({code:'fname',display:'First Name',default:'John'})
+    params.patient.push({code:'lname',display:'Last Name',default:'Cardinal'})
+    params.patient.push({code:'identifier',display:'Identifier',default:'PRP1660'})
+    res.json(params);
 });
 
+
+//create a set of samples based op a profile
+app.post('/api/createprofilesample', function(req, res){
+    //var vsID = req.params.id;
+    var sample = req.body;
+    console.log('generating test data...');
+
+    mSample.generateSampleBundle(sample,function(err,bundle){
+        //now send the bundle to the server for saving...
+        postBundleToFHIRServer(bundle,function(resp){
+            res.json(resp);
+        })
+    })
+
+});
 
 
 
@@ -61,9 +77,6 @@ app.get('/api/profile/:name/:publisher', function(req, res){
 app.put('/api/:id', function(req, res){
     var vsID = req.params.id;
     var resource = req.body;
-
-    //console.log(resource,vsID)
-
 
     putToFHIRServer(resource,vsID,function(resp){
         resp.content = resource;
@@ -147,7 +160,6 @@ app.put('/api/valueset/:id', function(req, res){
 //get all the valuestes from a specific published
 app.get('/api/valueset/:publisher', function(req, res){
     var publisher = req.params.publisher;
-
 
     request(getOptions(FHIRServerUrl+ 'ValueSet?publisher='+publisher),function(error,response,body){
         var resp1={};
@@ -391,12 +403,13 @@ function postBundleToFHIRServer(bundle,callback) {
         body : JSON.stringify(bundle),
         uri : FHIRServerUrl
     }
-
+    //console.log(options);
     request(options,function(error,response,body){
-
+        //console.log('bundle post')
         //console.log(JSON.parse(body));
 
         var resp = {};
+        resp.bundle = bundle;
         resp.id = response.headers.location;
         resp.statusCode = response.statusCode;
         resp.response = JSON.parse(body);
