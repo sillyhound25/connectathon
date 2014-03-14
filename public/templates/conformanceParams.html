@@ -1,0 +1,14 @@
+<!-- Build the search form from the conformance statement-->
+
+<form class="form-horizontal" role="form">
+    {{#each item}}
+
+        <div class="form-group">
+            <label class="col-sm-4 col-md-4">{{name}}</label>
+            <div  class="col-sm-8 col-md-8">
+                <input class="form-control queryParam" type="text"  data-code = "{{name}}"  placeholder="{{documentation}}"/>
+            </div>
+        </div>
+
+    {{/each}}
+</form>

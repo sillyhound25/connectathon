@@ -24,25 +24,31 @@ var generateSampleBundle = function(vo,callback) {
     var patientID;
     var practitionerID;
 
+    var messages = [];  //
     console.log(JSON.stringify(vo));
 
     var objResources = {};   //this will be a object of resources...
     //first, get the list of resources to create.
     _.each(vo.items,function(item){
-        var ar = item.code.split('-');
-        var resource = ar[0];
-        if (! objResources[resource]) {
-            objResources[resource] = {params : {}, extensions:[],name:resource}
-        }
-        if (ar[1] === 'ext') {
-            //this is an extension
-            objResources[resource].extensions.push({name:ar[2],value:item.value,dataType : item.dataType});
+        //console.log('33',item.code);
+        if (item.code) {
+            var ar = item.code.split('-');
+            var resource = ar[0];
+            if (! objResources[resource]) {
+                objResources[resource] = {params : {}, extensions:[],name:resource}
+            }
+            if (ar[1] === 'ext') {
+                //this is an extension
+                objResources[resource].extensions.push({name:ar[2],value:item.value,dataType : item.dataType});
+            } else {
+                //this is a base parameter
+                var code = ar[1];
+                //console.log('43',resource,code,item.value)
+                var r = objResources[resource];
+                r.params[code]= item.value;//.push({name:ar[1],value:item.value});
+            }
         } else {
-            //this is a base parameter
-            var code = ar[1];
-            console.log('43',resource,code,item.value)
-            var r = objResources[resource];
-            r.params[code]= item.value;//.push({name:ar[1],value:item.value});
+            messages.push('There was an item without a code: ' + JSON.stringify(item));
         }
     })
 
@@ -60,6 +66,12 @@ var generateSampleBundle = function(vo,callback) {
     var samPatientEntry = builder.patient.getSample(patientOptions.params); //pass the params directly into the builder function
     patientID = samPatientEntry.id;
     addExtensions(samPatientEntry, patientOptions.extensions);
+
+    //samPatientEntry.link = [rel:'search',href:"http://localhost/Patient?identifier=prp1660"]
+/*
+    samPatientEntry.link = [];
+    samPatientEntry.link.push({rel:'search',href:"http://localhost/Patient?identifier=prp1660"});
+*/
     bundle.entry.push(samPatientEntry);
 
     //next to add is the practitioner. It is assumed that if any of the other resources in the profile have
@@ -79,16 +91,21 @@ var generateSampleBundle = function(vo,callback) {
             var options = res;
             options.params.patientID = patientID;
             options.params.practitionerID = practitionerID;
-            var entry = builder[res.name].getSample(options.params); //pass the params directly into the builder function
-            addExtensions(entry, options.extensions);
-            bundle.entry.push(entry);
+            if (builder[res.name]) {
+                var entry = builder[res.name].getSample(options.params); //pass the params directly into the builder function
+                addExtensions(entry, options.extensions);
+                bundle.entry.push(entry);
+            } else {
+                messages.push('There is no builder object for ' +res.name + ' - ignored' );
+            }
+
         }
     })
 
 
    // var samEncounterEntry = Encounter.getSample({});
 
-    callback(null,bundle);
+    callback(null,bundle,messages);
 
     function addExtensions(entryResource,extensions){
         _.each(extensions,function(ext){

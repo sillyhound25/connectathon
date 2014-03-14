@@ -12,7 +12,7 @@
     <script src="functions.js"></script>
     <script src="testFunctions.js"></script>
     <script src="views/testDataView.js"></script>
-
+    <script src="views/queryView.js"></script>
     <!-- Latest compiled and minified CSS-->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <!-- Optional theme -->
@@ -36,6 +36,7 @@
             <li class="active navMainOption" data-page='homeTab'><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a> </li>
             <li class="navMainOption" data-page='profileTab'><a href="#" ><i class="glyphicon glyphicon-file"></i> Profiles</a></li>
             <li class="navMainOption" data-page='vsTab'><a href="#"><i class="glyphicon glyphicon-list"></i>  ValueSet</a></li>
+            <li class="navMainOption" data-page='queryTab'><a href="#"><i class="glyphicon glyphicon-fire"></i>  Search</a></li>
         </ul>
         <ul class="nav navbar-nav pull-right">
             <li class="navMainOption" data-page='helpTab'><a href="#" ><i class="glyphicon glyphicon-question-sign"></i> </a></li>
@@ -134,6 +135,26 @@
 
         </div>
 
+        <div class="myPane" id="queryTab">
+            <div class="row">
+                <div id="workAreaQuery"></div>
+                <!--
+                <div class="col-md-2 well well-sm">
+                    <h4>Resources</h4>
+                    <div id="qry_display"></div>
+                </div>
+                <div class="col-md-10">
+                    <h4></h4>
+                    <div id="workAreaQuery"></div>
+                </div>
+                -->
+
+            </div>
+
+        </div>
+
+
+
         <div class="myPane" id = "helpTab">
             <iframe id="myIFrame" style="width: 1200px; height:600px"></iframe>
         </div>
@@ -157,6 +178,16 @@
                 Z.template[name] = Handlebars.compile(html);
             })
         })
+
+
+        //get the conformance and display the resources...
+
+        //remove any previous views...
+       // if (Z.views.viewTestData) {
+         //   Z.views.viewTestData.undelegateEvents();
+      //  }
+        Z.views.viewQuery = new QueryView({el:$('#workAreaQuery')});
+        Z.views.viewQuery.render();
 
 
 
@@ -295,7 +326,7 @@
                 })
             })
 
-
+//console.log(clone)
             $('#workAreaProfile').html(Z.template.oneProfile(clone));
             $('#updatingProfileMsg').hide();
         })

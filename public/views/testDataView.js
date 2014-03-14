@@ -28,7 +28,7 @@ var testDataView = Backbone.View.extend({
             }
 
         })
-        console.log(sampleData);
+       // console.log(sampleData);
         //post the sample to the server
         $.ajax({
             type: "POST",

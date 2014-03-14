@@ -7,6 +7,7 @@ var express = require('express');
 var request = require('request');
 var moment = require('moment');
 var async = require('async');
+var _ = require('underscore');
 
 //FHIR sample modules
 var Common = require('./server/common.js');
@@ -35,6 +36,29 @@ app.configure(function(){
   app.use(express.static(__dirname + '/public'));
 });
 
+//perform a query against a fhir server
+app.get('/api/generalquery/:query', function(req, res){
+
+    console.log(JSON.parse(req.params.query));
+    var query = JSON.parse(req.params.query);
+    var url = "";
+    _.each(query.params,function(param){
+        url += "&" + param.name + '=' + param.value ;
+    })
+
+
+    url = query.resource + '?'+ url.slice(1);
+    console.log(url)
+
+
+    performQueryAgainstFHIRServer(url,function(resp){
+        res.json(resp);
+    })
+
+});
+
+
+
 //the parameters for each resource that can be set by a parameter. These are the parameters
 //that can be passed to the various builder modules - like patient.js
 app.get('/api/coreResourceTestParams', function(req, res){
@@ -55,9 +79,10 @@ app.post('/api/createprofilesample', function(req, res){
     var sample = req.body;
     console.log('generating test data...');
 
-    mSample.generateSampleBundle(sample,function(err,bundle){
+    mSample.generateSampleBundle(sample,function(err,bundle,messages){
         //now send the bundle to the server for saving...
         postBundleToFHIRServer(bundle,function(resp){
+            resp.messages = messages;
             res.json(resp);
         })
     })
@@ -74,6 +99,13 @@ app.get('/api/profile/:name/:publisher', function(req, res){
     })
 });
 
+//get a specific profile by name and publisher
+app.get('/api/conformance', function(req, res){
+    var query = 'metadata';
+    performQueryAgainstFHIRServer(query,function(resp){
+        res.json(resp);
+    })
+});
 
 //update a resource (the resource type is inside teh resource
 app.put('/api/:id', function(req, res){
@@ -303,6 +335,28 @@ function performQueryAgainstFHIRServer(query,callback){
             throw 'error';
         }
         callback(JSON.parse(body));
+
+    })
+}
+
+function performQueryAgainstFHIRServerXML(query,callback){
+    var options = {
+        method:'GET',
+        headers : {
+            "content-type" : 'application/xml+fhir'
+        },
+        uri : FHIRServerUrl + query
+    }
+
+    //console.log(options);
+
+    request(options,function(error,response,body){
+
+        if (response.statusCode != 200) {
+            console.log(body);
+            throw 'error';
+        }
+        callback(body);
 
     })
 }

@@ -1,0 +1,72 @@
+<div class="row">
+    <div class="col-md-3">
+
+        <!-- Use 'other' resource to save history...-->
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#qry_tab_common" data-toggle="tab">Common</a></li>
+            <li><a href="#qry_tab_all" data-toggle="tab">All</a></li>
+            <li><a href="#qry_tab_history" data-toggle="tab">History</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane active" id="qry_tab_common">
+                <h4>Common Resources</h4>
+                <ul class="list-unstyled">
+                    {{#each rest}}
+                        {{#each resource}}
+                            {{#if common}}
+                                <li><a href='#' class='query_resource' data-resource='{{type}}'>{{type}}</a></li>
+                            {{/if}}
+                        {{/each}}
+                    {{/each}}
+                </ul>
+        </div>
+
+        <div class="tab-pane" id="qry_tab_all">
+            <h4>All Resources</h4>
+            <ul class="list-unstyled">
+                {{#each rest}}
+                    {{#each resource}}
+                        <li><a href='#' class='query_resource' data-resource='{{type}}'>{{type}}</a></li>
+                    {{/each}}
+                {{/each}}
+            </ul>
+        </div>
+
+            <div class="tab-pane" id="qry_tab_history">
+                <p>History to come</p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <ul class="nav nav-tabs" id="qry_params_tabview">
+            <li class="active"><a href="#qry_tab_params" data-toggle="tab">Query</a></li>
+            <li><a href="#qry_tab_results" data-toggle="tab">Results</a></li>
+
+        </ul>
+
+        <div class="tab-content" >
+            <div class="tab-pane active" id="qry_tab_params">
+                <div id="query_params"></div>
+                <a href="#" class="btn btn-primary" id='query_execute'>Execute</a>
+            </div>
+
+            <div class="tab-pane" id="qry_tab_results">
+                <ul id="query_results"></ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-5">
+        <!--<div id="query_results"></div>-->
+        <div id='qry_result_id'></div>
+        <textarea class="form-control" rows="15" id="query_ta"></textarea>
+    </div>
+
+
+</div>
