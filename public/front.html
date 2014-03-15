@@ -13,6 +13,10 @@
     <script src="testFunctions.js"></script>
     <script src="views/testDataView.js"></script>
     <script src="views/queryView.js"></script>
+    <script src="views/ValueSetListView.js"></script>
+    <script src="views/ValueSetDetailView.js"></script>
+    <script src="models/ValueSetModel.js"></script>
+    <script src="collections/ValueSetCollection.js"></script>
     <!-- Latest compiled and minified CSS-->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <!-- Optional theme -->
@@ -33,9 +37,9 @@
             <a class="navbar-brand" href="#">Orion Profile Editor</a>
         </div>
         <ul class="nav navbar-nav">
-            <li class="active navMainOption" data-page='homeTab'><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a> </li>
+            <li class=" navMainOption" data-page='homeTab'><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a> </li>
             <li class="navMainOption" data-page='profileTab'><a href="#" ><i class="glyphicon glyphicon-file"></i> Profiles</a></li>
-            <li class="navMainOption" data-page='vsTab'><a href="#"><i class="glyphicon glyphicon-list"></i>  ValueSet</a></li>
+            <li class="active navMainOption" data-page='vsTab'><a href="#"><i class="glyphicon glyphicon-list"></i>  ValueSet</a></li>
             <li class="navMainOption" data-page='queryTab'><a href="#"><i class="glyphicon glyphicon-fire"></i>  Search</a></li>
         </ul>
         <ul class="nav navbar-nav pull-right">
@@ -180,7 +184,46 @@
         })
 
 
-        //get the conformance and display the resources...
+        //============================== ValueSet objects and handlers ==========================
+        Z.colVS = new ValueSetCollection();
+
+        Z.views.listVS = new ValueSetListView({collection:Z.colVS,el:$('#display'),template:Z.template.listVS});
+
+        Z.views.vsDetailView = new ValueSetDetailView({el:$('#workAreaVS')});
+
+        //the handler when a valueset is selected in the list
+        Z.views.vsDetailView.listenTo(Z.views.listVS,'select',function(vo){
+            //alert('sel'+vo.id)
+            var canShowVS = true;
+
+            if (Z.views.vsDetailView.hasChanged()) {
+                canShowVS = confirm("There are unsaved changes. Are you sure you wish to continue?")
+            }
+
+            if (canShowVS) {
+               // Z.dirtyVS = false;
+                var selectedModel = Z.colVS.findModelByResourceID(vo.id);       //the vs selected in the list view
+                //console.log(Z.colVS.findModelByResourceID(vo.id));
+                Z.views.vsDetailView.model = selectedModel;
+                Z.views.vsDetailView.render();
+            }
+        })
+
+        //the handler when a new ValueSet is selected
+        Z.views.vsDetailView.listenTo(Z.views.listVS,'new',function(vo){
+            Z.views.vsDetailView.setNewValueSet();
+            Z.views.vsDetailView.render();
+        })
+
+        //load the ValueSet. At the moment this is only Orion sourced resources... - Later we'll allow a select of some sort
+        //display the list when finished...
+        Z.colVS.fetch({
+            success : function() {
+                $('#loading').hide();
+                Z.views.listVS.render();      //render the list of valuesets...
+            }
+        });
+        //---------------------
 
         //remove any previous views...
        // if (Z.views.viewTestData) {
@@ -191,12 +234,18 @@
 
 
 
+/* temp
+
         //set up the iframe within which help is shown
         $('#myIFrame').attr('src','http://fhirprofileeditor.wordpress.com/overview/');
         $('#myIFrame').attr('width',$( window ).width());
+
+
+        */
         //activate the navbar tags...
         $('.myPane').hide();        //initially hide all the panes...
-        $('#homeTab').show();       //show the home tab
+        //$('#homeTab').show();       //show the home tab
+        $('#vsTab').show();       //show the vs tab
         $(".navMainOption").on('click',function(ev){
             //toggle the navbar links...
             $(".navMainOption").removeClass('active');
@@ -242,7 +291,7 @@
 
         Z.dataTypeList = ['boolean','code','string','integer','Coding','CodeableConcept','Period']
 
-        loadVS(Z);              //load all the value sets where orion is the publisher
+       // loadVS(Z);              //load all the value sets where orion is the publisher
         loadOrionProfiles(Z);   //load the orion profiles
         setupTestData(Z);       //functions to create test data
 
@@ -331,156 +380,6 @@
             $('#updatingProfileMsg').hide();
         })
 
-    }
-
-    function loadVS(Z) {
-        $('#loading').show();
-
-        $.get( "/api/valueset/orion", function( data ) {
-            $('#loading').hide();
-
-            Z.valueSets = data.content.response.entry;
-
-            $.each(Z.valueSets,function(inx,item){
-                item.inx = inx;
-
-            })
-            showVSList(Z)
-
-
-        });
-    }
-
-    function showVSList(Z){
-        //display the list of valuesets...
-        $('#display').html(Z.template.listVS({item: Z.valueSets}));
-
-        //handler for a new ValueSet
-        $('#new_vs').on('click',function(){
-            var vs = {'content':{ 'define' : {'concept' : []} }};
-            vs.content.define.system = 'http://orionhealth.com/fhir/vs';
-            //content.define.concept.
-
-            Z.currentVS = vs;
-            showVS(Z)
-        })
-
-        //handler to show the details of a single valueset
-        $('.vsDetail').on('click',function(ev){
-            var canShowVS = true;
-            if (Z.dirtyVS) {
-
-                canShowVS = confirm("There are unsaved changes. Are you sure you wish to continue?")
-                //alert('dirty VS');
-
-            }
-
-            if (canShowVS) {
-                Z.dirtyVS = false;
-                var inx = ev.currentTarget.getAttribute('data-inx');
-                Z.currentVS = Z.valueSets[inx];
-                showVS(Z);
-            }
-
-        })
-    }
-
-    function showVS(Z,inx){
-        //display the contents of a single ValueSet. Note that Z.valueSets actually contains
-        //atom.entry elements. This is because we need to retain the ID for updating
-
-        $('#workAreaVS').html(Z.template.oneVS(Z.currentVS));
-
-        //console.log(Z.currentVS);
-
-        if (! Z.dirtyVS) {
-            $('#save_change_vs').hide();
-        }
-
-        //handler when a text field is changed - sort of
-        $('.data').on('blur',function(){
-            Z.dirtyVS = true;
-            $('#save_change_vs').show();
-        })
-
-        //handler when a code is removed
-        $('.define_concept_del').on('click',function(ev){
-            var codeToRemove = ev.currentTarget.getAttribute('data-code');
-            var newConceptList = _.reject(Z.currentVS.content.define.concept,function(con) {return con.code===codeToRemove});
-            Z.currentVS.content.define.concept = newConceptList;
-            Z.dirtyVS = true;
-            showVS(Z,inx);
-        });
-
-        //handler to add a new entry
-        $('#define_new_add').on('click',function(){
-            var concept = {code:$('#define_new_code').val(),display:$('#define_new_display').val()};
-            Z.currentVS.content.define.concept.push(concept);
-            //save any changes to the name and description. Especially for a new ValueSet
-            Z.currentVS.content.name = $('#vs_name').val();
-            Z.currentVS.content.description = $('#vs_description').val();
-
-            Z.dirtyVS = true;
-            showVS(Z,inx);
-        })
-
-        //handler to save changes
-        $('#save_change_vs').on('click',function(){
-
-            var vs = Z.currentVS;
-            var uri = '/api/';
-            var method = 'PUT';
-
-            var content = vs.content;
-            content.name = $('#vs_name').val();
-            content.description = $('#vs_description').val();
-
-            //cotent.define should be present...
-            if (content.define) {
-                content.define.system =  $('#vs_system').val();
-            } else {
-                content.define = {system:$('#vs_system').val()};
-            }
-
-            if ($('#vs_id').text()) {
-                //this is an update
-
-                //get the logical ID from the full ID
-                //WARNING: if the ID includes history this will break...
-                var ar = vs.id.split('/');
-                var id = ar[ar.length-1]
-                uri = uri +id;
-
-            } else {
-                //this is a new valueset
-                method='POST';
-                content.publisher = "Orion Health";
-                content.resourceType = "ValueSet";
-                content.identifier = content.identifier || 'oh'+new Date().getTime();
-                content.name = content.name || "No name";
-                content.description = content.description ||  "No Description";
-                content.status = "draft";
-                content.experimental = true;
-                content.extensible = false;
-                content.date = moment().format();
-                //alert('new');
-
-            }
-
-            $.ajax (uri,{
-                method : method,
-                data : JSON.stringify(content),
-                headers : {
-                    'content-type' : 'application/json'
-                },
-                complete : function(xhr,status){
-                    console.log(xhr);
-                    alert(status);
-                    Z.dirtyVS = false;
-                    loadVS(Z);  //re-load the list of value sets.
-                }
-            })
-        })
     }
 
     function loadOrionProfiles(Z) {

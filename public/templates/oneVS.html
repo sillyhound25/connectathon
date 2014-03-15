@@ -3,9 +3,9 @@
 
         <div class="row">
             <div class="col-md-4">ID</div>
-            <div class="col-md-8"><div id='vs_id'>{{id}}</div></div>
+            <div class="col-md-8"><div id='vs_id'>{{meta.id}}</div></div>
         </div>
-        {{#with content}}
+
         <div class="row">
             <div class="col-md-4">Name</div>
             <div class="col-md-8"><input id = 'vs_name' class="data form-control" type='text' value='{{name}}'/></div>
@@ -46,7 +46,7 @@
                 </table>
             </div>
         </div>
-        {{/with}}
+
         {{#unless readOnly}}
         <div class="row">
             <div class="col-md-12">

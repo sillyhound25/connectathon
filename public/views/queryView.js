@@ -27,7 +27,22 @@ var QueryView = Backbone.View.extend({
                     //now get the search params
                     $.get('../templates/conformanceParams.html',function(html){
                         var template = Handlebars.compile(html);
-                        console.log(res.searchParam);
+                        //console.log(res.searchParam);
+
+                        //want 'identifier' and name at the top...
+                        var pos = -1;
+                        $.each(res.searchParam,function(inx,sp){
+                            if (sp.name === 'identifier') {
+                                pos = inx;
+                            }
+                        })
+                        if (pos > 0){
+                            var param = res.searchParam[pos];
+                            res.searchParam.splice(pos,1);
+                            res.searchParam.splice(0,0,param);
+                        }
+
+
                         $('#query_params').html(template({item:res.searchParam}));
                         return that;
                     })

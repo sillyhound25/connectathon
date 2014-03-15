@@ -3,7 +3,7 @@
         <div class="col-md-12">
             <ul class="list-unstyled">
                 {{#each item}}
-                <li><a class="vsDetail" data-inx="{{inx}}" href='#'>{{content.name}}</a></li>
+                <li><a class="vsDetail" data-inx="{{inx}}" data-id = {{meta.id}} href='#'>{{name}}</a></li>
                 {{/each}}
             </ul>
             <div><a href="#" id="new_vs">New ValueSet</a></div>
