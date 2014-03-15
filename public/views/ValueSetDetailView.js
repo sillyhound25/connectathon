@@ -26,17 +26,18 @@ var ValueSetDetailView =  Backbone.View.extend({
         vs.name = $('#vs_name').val();
         vs.description = $('#vs_description').val();
         vs.define.system = $('#vs_system').val();
-        this.model.set('isDirty',true);
+        this.model.set({'isDirty':true});
         console.log(this.model.get('isDirty'));
     },
     saveModel : function(){
+        var that = this;
         var vs = this.model.get('content'); //get the valueset
         vs.name = $('#vs_name').val();
         vs.description = $('#vs_description').val();
         //this.model.save();
         this.model.save({},{
             success : function() {
-                this.model.set('isDirty',false);
+                that.model.set({'isDirty':false});
                 alert('ValueSet saved')
             }
         });
@@ -44,10 +45,14 @@ var ValueSetDetailView =  Backbone.View.extend({
     },
     addConcept : function() {
         var newConcept = {code:$('#define_new_code').val(),display:$('#define_new_display').val()};
-        console.log(newConcept);
+        if (!newConcept.code || !newConcept.display) {
+            alert('You must enter both code and display');
+            return;
+        }
+        //console.log(newConcept);
         var vs = this.model.get('content'); //get the valueset
         vs.define.concept.push(newConcept);
-        this.model.set('isDirty',true);
+        this.model.set({'isDirty':true});
         this.render();
     },
     removeConcept : function(ev){
@@ -57,7 +62,7 @@ var ValueSetDetailView =  Backbone.View.extend({
         var vs = this.model.get('content'); //get the valueset
         var newConceptList = _.reject(vs.define.concept,function(con) {return con.code===codeToRemove});
         vs.define.concept = newConceptList;
-        this.model.set('content',vs)
+        this.model.set({'content':vs})
         this.render();
 
     },
@@ -75,8 +80,8 @@ var ValueSetDetailView =  Backbone.View.extend({
         newContent.date = moment().format();
         newContent.define = {system:'fhir.orionhealth.com'}
         this.model = new ValueSetModel();
-        this.model.set('content',newContent);
-        this.model.set('isDirty',false);
+        this.model.set({'content':newContent});
+        this.model.set({'isDirty':false});
 
     },
     render : function(){

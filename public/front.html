@@ -185,6 +185,44 @@
 
 
         //============================== ValueSet objects and handlers ==========================
+        var colVS = new ValueSetCollection();
+        var listVS = new ValueSetListView({collection:colVS,el:$('#display')});
+        var vsDetailView = new ValueSetDetailView({el:$('#workAreaVS')});
+
+        //The user selects a VS in the list
+        Backbone.listenTo(listVS,'vsList:select',function(vo){
+            //see if the existing valueset has been changed...
+            var canShowVS = true;
+            if (vsDetailView.hasChanged()) {
+                canShowVS = confirm("There are unsaved changes. Are you sure you wish to continue?")
+            }
+            if (canShowVS) {
+                var selectedModel = colVS.findModelByResourceID(vo.id);       //the vs selected in the list view
+                vsDetailView.model = selectedModel;
+                vsDetailView.render();
+            }
+        });
+
+        //the handler when the option to create a new ValueSet is selected
+        Backbone.listenTo(listVS,'vsList:new',function(vo){
+            vsDetailView.setNewValueSet();
+            vsDetailView.render();
+        })
+
+        //load the ValueSet. At the moment this is only Orion sourced resources... - Later we'll allow a select of some sort
+        //display the list when finished...
+        colVS.fetch({
+            success : function() {
+                $('#loading').hide();
+                listVS.render();      //render the list of valuesets...
+            },
+            error : function() {
+                alert('There was an error loading the ValueSets')
+            }
+        });
+        /*
+
+        //============================== ValueSet objects and handlers ==========================
         Z.colVS = new ValueSetCollection();
 
         Z.views.listVS = new ValueSetListView({collection:Z.colVS,el:$('#display'),template:Z.template.listVS});
@@ -224,7 +262,7 @@
             }
         });
         //---------------------
-
+*/
         //remove any previous views...
        // if (Z.views.viewTestData) {
          //   Z.views.viewTestData.undelegateEvents();

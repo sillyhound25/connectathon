@@ -13,12 +13,12 @@ var ValueSetListView = Backbone.View.extend({
         "click #new_vs" : "newVS"
     },
     newVS : function(){
-        this.trigger('new');
+        this.trigger('vsList:new');
     },
     showDetail : function(ev) {
         //alert('dirty VS');
         var id = $(ev.currentTarget).attr('data-id');
-        this.trigger('select',{id:id});
+        this.trigger('vsList:select',{id:id});
 
 
     },
