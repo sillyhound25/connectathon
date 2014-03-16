@@ -17,6 +17,12 @@
     <script src="views/ValueSetDetailView.js"></script>
     <script src="models/ValueSetModel.js"></script>
     <script src="collections/ValueSetCollection.js"></script>
+
+    <script src="views/ProfileListView.js"></script>
+    <script src="views/ProfileDetailView.js"></script>
+    <script src="models/ProfileModel.js"></script>
+    <script src="collections/ProfileCollection.js"></script>
+
     <!-- Latest compiled and minified CSS-->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <!-- Optional theme -->
@@ -34,12 +40,15 @@
 <nav class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">Orion Profile Editor</a>
+            <a class="navbar-brand" href="#">
+            <img src="images/icon-fhir-32.png"/>
+            </a>
+            <a class="navbar-brand" href="#">  FHIR Profile Editor</a>
         </div>
         <ul class="nav navbar-nav">
             <li class=" navMainOption" data-page='homeTab'><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a> </li>
-            <li class="navMainOption" data-page='profileTab'><a href="#" ><i class="glyphicon glyphicon-file"></i> Profiles</a></li>
-            <li class="active navMainOption" data-page='vsTab'><a href="#"><i class="glyphicon glyphicon-list"></i>  ValueSet</a></li>
+            <li class="active navMainOption" data-page='profileTab'><a href="#" ><i class="glyphicon glyphicon-file"></i> Profiles</a></li>
+            <li class=" navMainOption" data-page='vsTab'><a href="#"><i class="glyphicon glyphicon-list"></i>  ValueSet</a></li>
             <li class="navMainOption" data-page='queryTab'><a href="#"><i class="glyphicon glyphicon-fire"></i>  Search</a></li>
         </ul>
         <ul class="nav navbar-nav pull-right">
@@ -184,10 +193,66 @@
         })
 
 
+
+        Backbone.on('loaded',function(){
+
+        })
+
+        //============================= Profile objects and handlers
+
+        var colProfile = new ProfileCollection();
+        var listProfiles = new ProfileListView({collection:colProfile,el:$('#orionProfilesDiv')}); //List View for the Profiles
+        var profileDetailView = new ProfileDetailView({el:$('#workAreaProfile')});       //Detail/edit view for a single VS
+
+
+
+        //The user selects a Profile from the  in the list
+        Backbone.listenTo(listProfiles,'profileList:select',function(vo){
+            //see if the existing valueset has been changed...
+//console.log('ping',vo.id)
+            var selectedModel = colProfile.findModelByResourceID(vo.id);       //the vs selected in the list view
+            profileDetailView.model = selectedModel;
+            profileDetailView.render();
+
+            return;
+
+            var canShowVS = true;
+            if (vsDetailView.hasChanged()) {
+                canShowVS = confirm("There are unsaved changes. Are you sure you wish to continue?")
+            }
+            if (canShowVS) {
+                var selectedModel = colVS.findModelByResourceID(vo.id);       //the vs selected in the list view
+                vsDetailView.model = selectedModel;
+                vsDetailView.render();
+            }
+        });
+
+        //load the profiles...
+
+        colProfile.fetch({
+            success : function() {
+                $('#loading').hide();
+                //_.each(colProfile.models,function(m){
+                //    console.log(m.id);
+               // })
+                //console.log(colProfile.models);
+                listProfiles.render();      //render the list of valuesets...
+            },
+            error : function() {
+                alert('There was an error loading the Profiles')
+            }
+        });
+
+
+
+
+//return
+
+
         //============================== ValueSet objects and handlers ==========================
-        var colVS = new ValueSetCollection();
-        var listVS = new ValueSetListView({collection:colVS,el:$('#display')});
-        var vsDetailView = new ValueSetDetailView({el:$('#workAreaVS')});
+        var colVS = new ValueSetCollection();           //collection of ValueSets
+        var listVS = new ValueSetListView({collection:colVS,el:$('#display')}); //List View for the ValueSets
+        var vsDetailView = new ValueSetDetailView({el:$('#workAreaVS')});       //Detail/edit view for a single VS
 
         //The user selects a VS in the list
         Backbone.listenTo(listVS,'vsList:select',function(vo){
@@ -220,53 +285,7 @@
                 alert('There was an error loading the ValueSets')
             }
         });
-        /*
 
-        //============================== ValueSet objects and handlers ==========================
-        Z.colVS = new ValueSetCollection();
-
-        Z.views.listVS = new ValueSetListView({collection:Z.colVS,el:$('#display'),template:Z.template.listVS});
-
-        Z.views.vsDetailView = new ValueSetDetailView({el:$('#workAreaVS')});
-
-        //the handler when a valueset is selected in the list
-        Z.views.vsDetailView.listenTo(Z.views.listVS,'select',function(vo){
-            //alert('sel'+vo.id)
-            var canShowVS = true;
-
-            if (Z.views.vsDetailView.hasChanged()) {
-                canShowVS = confirm("There are unsaved changes. Are you sure you wish to continue?")
-            }
-
-            if (canShowVS) {
-               // Z.dirtyVS = false;
-                var selectedModel = Z.colVS.findModelByResourceID(vo.id);       //the vs selected in the list view
-                //console.log(Z.colVS.findModelByResourceID(vo.id));
-                Z.views.vsDetailView.model = selectedModel;
-                Z.views.vsDetailView.render();
-            }
-        })
-
-        //the handler when a new ValueSet is selected
-        Z.views.vsDetailView.listenTo(Z.views.listVS,'new',function(vo){
-            Z.views.vsDetailView.setNewValueSet();
-            Z.views.vsDetailView.render();
-        })
-
-        //load the ValueSet. At the moment this is only Orion sourced resources... - Later we'll allow a select of some sort
-        //display the list when finished...
-        Z.colVS.fetch({
-            success : function() {
-                $('#loading').hide();
-                Z.views.listVS.render();      //render the list of valuesets...
-            }
-        });
-        //---------------------
-*/
-        //remove any previous views...
-       // if (Z.views.viewTestData) {
-         //   Z.views.viewTestData.undelegateEvents();
-      //  }
         Z.views.viewQuery = new QueryView({el:$('#workAreaQuery')});
         Z.views.viewQuery.render();
 
@@ -283,7 +302,11 @@
         //activate the navbar tags...
         $('.myPane').hide();        //initially hide all the panes...
         //$('#homeTab').show();       //show the home tab
-        $('#vsTab').show();       //show the vs tab
+        $('#profileTab').show();       //show the profile tab
+
+
+
+
         $(".navMainOption").on('click',function(ev){
             //toggle the navbar links...
             $(".navMainOption").removeClass('active');
@@ -330,7 +353,7 @@
         Z.dataTypeList = ['boolean','code','string','integer','Coding','CodeableConcept','Period']
 
        // loadVS(Z);              //load all the value sets where orion is the publisher
-        loadOrionProfiles(Z);   //load the orion profiles
+        //loadOrionProfiles(Z);   //load the orion profiles
         setupTestData(Z);       //functions to create test data
 
         //generate a test interface...
@@ -364,7 +387,7 @@
         })
     })
 
-    function loadProfile(Z,name,pub){
+    function loadProfileDEP(Z,name,pub){
         $('#loading').show();
         $.get( "/api/profile/"+name+"/"+pub, function( data ) {
             $('#loading').hide();
