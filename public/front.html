@@ -20,6 +20,7 @@
 
     <script src="views/ProfileListView.js"></script>
     <script src="views/ProfileDetailView.js"></script>
+    <script src="views/ProfileExtensionView.js"></script>
     <script src="models/ProfileModel.js"></script>
     <script src="collections/ProfileCollection.js"></script>
 
@@ -193,60 +194,22 @@
         })
 
 
+        //list of resources - should be the complete fhir list...
+        Z.resourceList = ['Encounter','MedicationAdministration','Medication','Observation','Patient','Practitioner'];
+        $.each(Z.resourceList,function(inx,res){
+            var lne = "<li><a class='selProfile' data-name='"+res+"' data-pub='FHIR Project'>"+res+"</a></li>";
+            $('#coreResourceList').append(lne);
+        })
 
+
+        //Z.dataTypeList = ['boolean','code','string','integer','Coding','CodeableConcept','Period']
+
+        //the list of permissable datatypes in a profile...
+        var dataTypeList = ['boolean','code','string','integer','Coding','CodeableConcept','Period']
+        var resourceList = ['Encounter','MedicationAdministration','Medication','Observation','Patient','Practitioner'];
         Backbone.on('loaded',function(){
 
         })
-
-        //============================= Profile objects and handlers
-
-        var colProfile = new ProfileCollection();
-        var listProfiles = new ProfileListView({collection:colProfile,el:$('#orionProfilesDiv')}); //List View for the Profiles
-        var profileDetailView = new ProfileDetailView({el:$('#workAreaProfile')});       //Detail/edit view for a single VS
-
-
-
-        //The user selects a Profile from the  in the list
-        Backbone.listenTo(listProfiles,'profileList:select',function(vo){
-            //see if the existing valueset has been changed...
-//console.log('ping',vo.id)
-            var selectedModel = colProfile.findModelByResourceID(vo.id);       //the vs selected in the list view
-            profileDetailView.model = selectedModel;
-            profileDetailView.render();
-
-            return;
-
-            var canShowVS = true;
-            if (vsDetailView.hasChanged()) {
-                canShowVS = confirm("There are unsaved changes. Are you sure you wish to continue?")
-            }
-            if (canShowVS) {
-                var selectedModel = colVS.findModelByResourceID(vo.id);       //the vs selected in the list view
-                vsDetailView.model = selectedModel;
-                vsDetailView.render();
-            }
-        });
-
-        //load the profiles...
-
-        colProfile.fetch({
-            success : function() {
-                $('#loading').hide();
-                //_.each(colProfile.models,function(m){
-                //    console.log(m.id);
-               // })
-                //console.log(colProfile.models);
-                listProfiles.render();      //render the list of valuesets...
-            },
-            error : function() {
-                alert('There was an error loading the Profiles')
-            }
-        });
-
-
-
-
-//return
 
 
         //============================== ValueSet objects and handlers ==========================
@@ -286,6 +249,74 @@
             }
         });
 
+
+
+        //============================= Profile objects and handlers
+
+        var colProfile = new ProfileCollection();
+        var listProfiles = new ProfileListView({collection:colProfile,el:$('#orionProfilesDiv')}); //List View for the Profiles
+        var profileDetailView = new ProfileDetailView({el:$('#workAreaProfile')});       //Detail/edit view for a single VS
+        var profileExtensionView = new ProfileExtensionView({el:$('#editExtensionDiv')});
+        //todo - these should probably be a method on the View rather than a direct setting like this...
+        profileExtensionView.meta.dataTypeList = dataTypeList;      //the permissable datatypes
+        profileExtensionView.meta.colVS = colVS;    //the collection of known valuesets (or at least, those we can choose from)
+        profileExtensionView.meta.resourceList = resourceList;
+
+        //The user selects a Profile from the  in the list
+        Backbone.listenTo(listProfiles,'profileList:select',function(vo){
+            var selectedModel = colProfile.findModelByResourceID(vo.id);       //the vs selected in the list view
+            profileDetailView.model = selectedModel;
+            profileDetailView.render();
+
+            return;
+
+            var canShowVS = true;
+            if (vsDetailView.hasChanged()) {
+                canShowVS = confirm("There are unsaved changes. Are you sure you wish to continue?")
+            }
+            if (canShowVS) {
+                var selectedModel = colVS.findModelByResourceID(vo.id);       //the vs selected in the list view
+                vsDetailView.model = selectedModel;
+                vsDetailView.render();
+            }
+        });
+
+        //handler for when a user clicks on an existing extension definition in a profile
+        Backbone.listenTo(profileDetailView,'profileDetail:editExtension',function(vo){
+            console.log(vo);
+            var selectedModel = colProfile.findModelByResourceID(vo.id);       //the vs selected in the list view
+
+            profileExtensionView.model = selectedModel;
+            profileExtensionView.setCode(vo.code);
+            profileExtensionView.render();
+
+        });
+
+
+
+
+        //load the profiles...
+
+        colProfile.fetch({
+            success : function() {
+                $('#loading').hide();
+                //_.each(colProfile.models,function(m){
+                //    console.log(m.id);
+               // })
+                //console.log(colProfile.models);
+                listProfiles.render();      //render the list of valuesets...
+            },
+            error : function() {
+                alert('There was an error loading the Profiles')
+            }
+        });
+
+
+
+
+//return
+
+
         Z.views.viewQuery = new QueryView({el:$('#workAreaQuery')});
         Z.views.viewQuery.render();
 
@@ -319,12 +350,7 @@
             $('#'+paneToShow).show();
         })
 
-        //list of resources - should be the complete fhir list...
-        Z.resourceList = ['Encounter','MedicationAdministration','Medication','Observation','Patient','Practitioner'];
-        $.each(Z.resourceList,function(inx,res){
-            var lne = "<li><a class='selProfile' data-name='"+res+"' data-pub='FHIR Project'>"+res+"</a></li>";
-            $('#coreResourceList').append(lne);
-        })
+
 
 
         //create the various local functions - defined in functions.js

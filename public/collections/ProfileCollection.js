@@ -8,7 +8,7 @@ var ProfileCollection = Backbone.Collection.extend({
 
     findModelByResourceID : function(resourceID) {
         //return a model with the given resourceID
-        console.log(resourceID);
+        //console.log(resourceID);
         return _.findWhere(this.models,{'id':resourceID})
     },
     toJSON : function(){

@@ -9,13 +9,16 @@
 
 var ProfileDetailView =  Backbone.View.extend({
     events : {
-        "click .orionProfileDetail" : "showDetail",
-        "click #new_vsXX" : "newVS"
+        "click .orionProfileDetailXXX" : "showDetail",
+        "click .profile-extension" : "editExtension"
     },
-    newVS : function(){
-        this.trigger('vsList:new');
+    editExtension : function(ev){
+        //edit a single extension
+        var model = this.model.toJSON();
+        var code = ev.currentTarget.getAttribute('data-code');      //the code of the extension
+        this.trigger('profileDetail:editExtension',{id:model.meta.id,code:code});
     },
-    showDetail : function(ev) {
+    showDetailXXX : function(ev) {
         //alert('dirty VS');
         var id = $(ev.currentTarget).attr('data-id');
         this.trigger('profileList:select',{id:id});
@@ -38,7 +41,7 @@ var ProfileDetailView =  Backbone.View.extend({
     },
     draw : function(){
         //actually render out the valueset...
-console.log(this.template(this.model.toJSON()));
+//console.log(this.template(this.model.toJSON()));
         this.$el.html(this.template(this.model.toJSON()));
         //this.delegateEvents();
         $('#updatingProfileMsg').hide();
