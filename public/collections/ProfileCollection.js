@@ -20,7 +20,7 @@ var ProfileCollection = Backbone.Collection.extend({
         return ar;
     },
     parse : function(response,options) {
-        console.log(response);
+        //console.log(response);
         var ar = [];
         _.each(response.entry,function(entry){
             ar.push({content:entry.content,id:entry.id});

@@ -9,8 +9,8 @@
     <script src="js/moment.min.js"></script>
     <script src="js/async.js"></script>
     <script src="js/typeahead.bundle.js"></script>
-    <script src="functions.js"></script>
-    <!--<script src="testFunctions.js"></script>
+    <!--<script src="functions.js"></script>
+    <script src="testFunctions.js"></script>
     <script src="views/testDataView.js"></script>-->
     <script src="views/queryView.js"></script>
     <script src="views/ValueSetListView.js"></script>
@@ -188,6 +188,7 @@
 <script>
 
     $(document).ready(function(){
+        /*
         var Z = {template:{},localFunctions : {},views:{}};     //instead of Y
 
         //load all the handlebars templates from the templates folder...
@@ -206,6 +207,7 @@
             $('#coreResourceList').append(lne);
         })
 
+        */
 
         //Z.dataTypeList = ['boolean','code','string','integer','Coding','CodeableConcept','Period']
 
@@ -213,9 +215,6 @@
         var dataTypeList = ['boolean','code','date','string','integer','Coding','CodeableConcept','Period']
         var resourceList = ['Encounter','MedicationAdministration','Medication','Observation','Patient','Practitioner'];
 
-        Backbone.on('loaded',function(){
-
-        })
 
         //======== Using Mediator pattern via global BackBone object ================
 
@@ -255,8 +254,6 @@
                 alert('There was an error loading the ValueSets')
             }
         });
-
-
 
         //============================= Profile objects and handlers
 
@@ -369,10 +366,12 @@
         });
 
 
+        var viewQuery = new QueryView({el:$('#workAreaQuery')});
+        viewQuery.render();
 
 
-        Z.views.viewQuery = new QueryView({el:$('#workAreaQuery')});
-        Z.views.viewQuery.render();
+        ///Z.views.viewQuery = new QueryView({el:$('#workAreaQuery')});
+        //Z.views.viewQuery.render();
 
 
 

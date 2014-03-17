@@ -103,7 +103,7 @@ var ProfileTestFormView = Backbone.View.extend({
     draw : function(rows){
         //actually render out the collection...
         var template = this.template;
-        console.log(rows)
+        //console.log(rows)
         this.$el.html(template(rows));
 
         if (!rows) {

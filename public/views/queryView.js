@@ -105,7 +105,7 @@ console.log(json);
         var that=this;
         $.get('api/conformance',function(conf){
             that.model = conf;
-            console.log(conf)
+            //console.log(conf)
 
             $.get('../templates/conformanceList.html',function(html){
                 var template = Handlebars.compile(html);
