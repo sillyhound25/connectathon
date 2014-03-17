@@ -1,5 +1,6 @@
 /*
  * backbone view for test data generation
+ *
  */
 
 var testDataView = Backbone.View.extend({

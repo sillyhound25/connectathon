@@ -48,7 +48,6 @@ var ProfileSummaryView = Backbone.View.extend({
     draw : function(arSummary){
         //actually render out the collection...
         var template = this.template;
-        console.log(this.collection)
         this.$el.html(template(arSummary));
     }
 

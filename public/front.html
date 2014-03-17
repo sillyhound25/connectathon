@@ -10,7 +10,7 @@
     <script src="js/async.js"></script>
     <script src="js/typeahead.bundle.js"></script>
     <script src="functions.js"></script>
-    <script src="testFunctions.js"></script>
+    <!--<script src="testFunctions.js"></script>-->
     <script src="views/testDataView.js"></script>
     <script src="views/queryView.js"></script>
     <script src="views/ValueSetListView.js"></script>
@@ -22,9 +22,10 @@
     <script src="views/ProfileDetailView.js"></script>
     <script src="views/ProfileExtensionView.js"></script>
     <script src="views/ProfileSummaryView.js"></script>
-
+    <script src="views/ProfileTestFormView.js"></script>
     <script src="models/ProfileModel.js"></script>
     <script src="models/ProfileSummaryModel.js"></script>
+    <script src="models/ProfileTestFormModel.js"></script>
     <script src="collections/ProfileCollection.js"></script>
 
     <!-- Latest compiled and minified CSS-->
@@ -128,7 +129,7 @@
                         </div>
 
                         <div class="tab-pane" id="profileTestDataSubTab">
-                            <button style="margin-top: 5px" class="btn btn-success pull-right" id="btnGenerateTD">Create Test Form</button>
+
                             <!--<h4>Generate Test Data</h4>-->
 
                             <div id="workAreaTestData"></div>
@@ -215,6 +216,7 @@
 
         })
 
+        //======== Using Mediator pattern via global BackBone object ================
 
         //============================== ValueSet objects and handlers ==========================
         var colVS = new ValueSetCollection();           //collection of ValueSets
@@ -266,14 +268,25 @@
         profileExtensionView.meta.colVS = colVS;    //the collection of known valuesets (or at least, those we can choose from)
         profileExtensionView.meta.resourceList = resourceList;
 
-        var profileSummaryView = new ProfileSummaryView({el:$('#workAreaSummaryProfile')});       //Detail/edit view for a single VS
+        var profileSummaryView = new ProfileSummaryView({el:$('#workAreaSummaryProfile')});       //generate a profile summary
         profileSummaryView.render();
 
-        //The user selects a Profile from the  in the list
+        var profileTestFormView = new ProfileTestFormView({el:$('#workAreaTestData')});       //generate a test form...
+        profileTestFormView.meta.colVS = colVS;    //needse the valueset
+        profileTestFormView.render();   //as there is no model, this will just render the 'create form' button...
+
+
+
+
+        //The user selects a Profile from the  in the list. Make sure that all the views that have an interest in
+        //this profile have their model set...
         Backbone.listenTo(listProfiles,'profileList:select',function(vo){
             var selectedModel = colProfile.findModelByResourceID(vo.id);       //the vs selected in the list view
             profileDetailView.model = selectedModel;
             profileSummaryView.model = selectedModel;
+            profileTestFormView.model = selectedModel;
+
+
             profileDetailView.render();
         });
 
@@ -437,7 +450,9 @@
 
        // loadVS(Z);              //load all the value sets where orion is the publisher
         //loadOrionProfiles(Z);   //load the orion profiles
-        setupTestData(Z);       //functions to create test data
+       // setupTestData(Z);       //functions to create test data
+
+/*
 
         //generate a test interface...
         $('#btnGenerateTD').on('click',function(){
@@ -461,7 +476,7 @@
             });
         })
 
-
+*/
         //load a profile
         $('.selProfile').on('click',function(ev){
             var name = ev.currentTarget.getAttribute('data-name');
