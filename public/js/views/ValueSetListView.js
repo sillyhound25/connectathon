@@ -37,6 +37,7 @@ var ValueSetListView = Backbone.View.extend({
     draw : function(){
         //actually render out the collection...
         var template = this.template;
+        //console.log(template({item:this.collection.toJSON()}));
         this.$el.html(template({item:this.collection.toJSON()}));
     }
 
