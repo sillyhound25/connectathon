@@ -21,7 +21,10 @@
     <script src="views/ProfileListView.js"></script>
     <script src="views/ProfileDetailView.js"></script>
     <script src="views/ProfileExtensionView.js"></script>
+    <script src="views/ProfileSummaryView.js"></script>
+
     <script src="models/ProfileModel.js"></script>
+    <script src="models/ProfileSummaryModel.js"></script>
     <script src="collections/ProfileCollection.js"></script>
 
     <!-- Latest compiled and minified CSS-->
@@ -117,7 +120,7 @@
                         </div>
 
                         <div class="tab-pane" id="profileSummarySubTab">
-                            <button  class="btn btn-success pull-right" id="btnCreateSummary">Generate summary</button>
+                            <!--<button  class="btn btn-success pull-right" id="btnCreateSummaryXXX">Generate summary</button>-->
 
                             <div id='updatingProfileSummaryMsg' style="display:none" class="alert alert-warning">Reading data for the summary. This can take a while...</div>
 
@@ -205,8 +208,9 @@
         //Z.dataTypeList = ['boolean','code','string','integer','Coding','CodeableConcept','Period']
 
         //the list of permissable datatypes in a profile...
-        var dataTypeList = ['boolean','code','string','integer','Coding','CodeableConcept','Period']
+        var dataTypeList = ['boolean','code','date','string','integer','Coding','CodeableConcept','Period']
         var resourceList = ['Encounter','MedicationAdministration','Medication','Observation','Patient','Practitioner'];
+
         Backbone.on('loaded',function(){
 
         })
@@ -262,24 +266,22 @@
         profileExtensionView.meta.colVS = colVS;    //the collection of known valuesets (or at least, those we can choose from)
         profileExtensionView.meta.resourceList = resourceList;
 
+        var profileSummaryView = new ProfileSummaryView({el:$('#workAreaSummaryProfile')});       //Detail/edit view for a single VS
+        profileSummaryView.render();
+
         //The user selects a Profile from the  in the list
         Backbone.listenTo(listProfiles,'profileList:select',function(vo){
             var selectedModel = colProfile.findModelByResourceID(vo.id);       //the vs selected in the list view
             profileDetailView.model = selectedModel;
+            profileSummaryView.model = selectedModel;
             profileDetailView.render();
-
-            return;
-
-            var canShowVS = true;
-            if (vsDetailView.hasChanged()) {
-                canShowVS = confirm("There are unsaved changes. Are you sure you wish to continue?")
-            }
-            if (canShowVS) {
-                var selectedModel = colVS.findModelByResourceID(vo.id);       //the vs selected in the list view
-                vsDetailView.model = selectedModel;
-                vsDetailView.render();
-            }
         });
+
+        //a new profile
+        Backbone.listenTo(listProfiles,'profileList:new',function(vo){
+            profileDetailView.model = null;     //this means no model - ie new...
+            profileDetailView.render();
+        })
 
         //handler for when a user clicks on an existing extension definition in a profile
         Backbone.listenTo(profileDetailView,'profileDetail:editExtension',function(vo){
@@ -292,7 +294,55 @@
 
         });
 
+        //handler for when a new extension is to be added to a profile
+        Backbone.listenTo(profileDetailView,'profileDetail:addExtension',function(vo){
+            console.log(vo);
+            var selectedModel = colProfile.findModelByResourceID(vo.id);       //the vs selected in the list view
+            profileExtensionView.model = selectedModel;
+            profileExtensionView.setCode("");   //an empty code will mean a new extension...
+            profileExtensionView.render();
 
+        });
+
+        //a new profile was added
+        Backbone.listenTo(profileDetailView,'profile:added',function(vo){
+            console.log(vo);
+            //re-read all the models. May be able to add it to the collection directly...
+            colProfile.fetch({
+                success : function() {
+                    $('#loading').hide();
+                    listProfiles.render();      //render the list of valuesets...
+                },
+                error : function() {
+                    alert('There was an error loading the Profiles')
+                }
+            });
+
+            //colProfile.add(vo.model);
+            //listProfiles.render();      //re-display the vi
+        });
+
+        //an extension in a profile has been updated.
+        Backbone.listenTo(profileExtensionView,'profileExtension:updated',function(vo){
+            //re-render the profile - the model should already be set...
+            profileDetailView.render();
+        });
+
+        Backbone.listenTo(profileDetailView,'profile:updated',function(vo){
+            //re-render the profile - the model should already be set...
+            profileDetailView.render();
+        });
+
+
+     //   var profileSummaryView = new ProfileSummaryView({el:$('#workAreaSummaryProfile')});       //Detail/edit view for a single VS
+     //   profileSummaryView.render();
+
+
+
+        //Backbone.on()
+
+
+        //this.trigger('profileExtension:updated',{id:model.meta.id,code:code});
 
 
         //load the profiles...
@@ -320,6 +370,28 @@
         Z.views.viewQuery = new QueryView({el:$('#workAreaQuery')});
         Z.views.viewQuery.render();
 
+/*
+        //handler for when the user wants to generate a summary
+        $('#btnCreateSummary').on('click',function(){
+            $('#updatingProfileSummaryMsg').show();
+
+            var sumryModel = new ProfileSummaryModel();
+            sumryModel.
+
+            //console.log(Z.localFunctions.profileSummary)
+
+            Z.localFunctions.profileSummary(function(err,summary){
+                $('#updatingProfileSummaryMsg').hide();
+                if (err) {
+                    alert(err)
+                } else {
+                    $('#workAreaSummaryProfile').html(Z.template.profileSummary(summary));
+
+                }
+
+            })
+        })
+*/
 
 
 /* temp
@@ -356,23 +428,8 @@
         //create the various local functions - defined in functions.js
         localFunctionsSetup(Z);
 
-        //handler for when the user wants to generate a summary
-        $('#btnCreateSummary').on('click',function(){
-            $('#updatingProfileSummaryMsg').show();
 
-            //console.log(Z.localFunctions.profileSummary)
 
-            Z.localFunctions.profileSummary(function(err,summary){
-                $('#updatingProfileSummaryMsg').hide();
-                if (err) {
-                    alert(err)
-                } else {
-                    $('#workAreaSummaryProfile').html(Z.template.profileSummary(summary));
-
-                }
-
-            })
-        })
 
 
 
@@ -412,7 +469,7 @@
             loadProfile(Z,name,pub);
         })
     })
-
+/*
     function loadProfileDEP(Z,name,pub){
         $('#loading').show();
         $.get( "/api/profile/"+name+"/"+pub, function( data ) {
@@ -468,7 +525,8 @@
         })
 
     }
-
+    */
+/*
     function loadOrionProfiles(Z) {
         $.get( "/api/profile/orion", function( data ) {
             //$('#loading').hide();
@@ -506,7 +564,7 @@
             })
         })
     }
-
+*/
 
 function showCurrentProfile(Z) {
     //use the BS template to lay out the profile...
@@ -532,6 +590,8 @@ function showCurrentProfile(Z) {
 
     */
 
+    /*
+
     $('.remove_ext').on('click',function(ev){
         //remove an extension
         var code = ev.currentTarget.getAttribute('data-code');
@@ -548,10 +608,15 @@ function showCurrentProfile(Z) {
         }
     });
 
+    */
+    /*
+
         //add a new extension
     $('#add_new_extension').on('click',function(){
         showOneExtension(Z,'newcode');
     })
+
+    */
 
 
     //show the 'save' button for editing in the profile 'header'
@@ -683,7 +748,7 @@ function showCurrentProfile(Z) {
     })
 
 }
-
+/*
     function updateExtension(Z){
 
         if (!$('#eeCode').val()) {
@@ -730,7 +795,7 @@ function showCurrentProfile(Z) {
 
         $('#editExtensionDlg').modal('hide');
     }
-
+*/
 //displays the model edit screen for a single extension
 function showOneExtension(Z,code) {
 

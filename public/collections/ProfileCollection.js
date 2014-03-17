@@ -24,7 +24,7 @@ var ProfileCollection = Backbone.Collection.extend({
         var ar = [];
         _.each(response.entry,function(entry){
             ar.push({content:entry.content,id:entry.id});
-            console.log(entry.id);
+            //console.log(entry.id);
         })
         return ar;
     }

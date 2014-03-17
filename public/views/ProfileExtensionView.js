@@ -8,20 +8,85 @@
 
 
 var ProfileExtensionView =  Backbone.View.extend({
+    events : {
+        "click #eeSave" : "saveExtension"
+    },
+
+    saveExtension : function() {
+        //update the extension
+        var isNew = false;
+        if (!$('#eeCode').val()) {
+            alert('An extension must have a code. No changes saved.');
+            return;
+        }
+
+        var extension = this.meta.extension;    //for right now, assume update
+        if (!extension) {
+            isNew = true;
+            extension = {definition : {}};
+        }
+
+
+        extension.code=$('#eeCode').val();
+        extension.definition.short=$('#eeShort').val();
+        extension.definition.formal=$('#eeFormal').val();
+        extension.definition.min=$('#eeMin').val();
+        extension.definition.max=$('#eeMax').val();
+        extension.definition.type = [{code:$('#eeDataType').val()}];
+
+        extension.context= [$('#eeContextResource').val()];
+
+        if ($('#eeIsModifier').is(':checked')) {
+            extension.definition.isModifier = true;
+        } else {
+            extension.definition.isModifier = false;
+        }
+
+
+        //get the value set (if selected)
+        var vsValue = $('#eeValueSet').val();
+        if (vsValue) {
+            var vsText = $("#eeValueSet option:selected").text();
+            extension.definition.binding = {name:vsText,referenceResource: {reference :vsValue}};
+        } else {
+            extension.definition.binding ;
+        }
+
+        //update the model...
+
+        if (isNew) {
+            this.model.addExtension(extension);
+        } else {
+            this.model.updateExtension(extension);
+        }
+
+
+
+
+        $('#editExtensionDlg').modal('hide');
+
+        //let the world know that the extension was modified - the profile can be re-drawn...
+        this.trigger('profileExtension:updated');
+
+    },
     initialize : function() {
         this.meta = {};     //keep my properties - eg the extension  - in a separate property...
     },
     setCode : function(code){
-        //console.log(this.meta.valueSets)
         var that = this;
         //called when the extension is being edited. We locate the existing extension and set it as a property
-        //of the view - a more elegant solution would be to create another BB model...
-        var model = this.model.toJSON();
-        _.each(model.extensionDefn,function(ext){
-            if (ext.code === code) {
-                that.meta.extension = ext;
-            }
-        })
+        //of the view - a more elegant solution might be to create another BB model...
+        if (code) {
+            var model = this.model.toJSON();
+            _.each(model.extensionDefn,function(ext){
+                if (ext.code === code) {
+                    that.meta.extension = ext;
+                }
+            })
+        } else {
+            delete that.meta.extension;
+        }
+
     },
     render : function(){
         //this.undelegateEvents();
@@ -57,7 +122,7 @@ var ProfileExtensionView =  Backbone.View.extend({
 
         //some of the elements - like dropdowns and checkboxes - need to be set separately
         //there's likely a more elegant way to do this...
-        if (extension) {
+       // if (extension) {
 
             if (extension.isModifier) {
                 $("#eeIsModifier").attr('checked',true);
@@ -109,7 +174,7 @@ var ProfileExtensionView =  Backbone.View.extend({
                 lne += ">"+name+"</option>";
                 $("#eeValueSet").append(lne);
             })
-        }
+       // }
 
 
         //this.delegateEvents();
@@ -120,7 +185,7 @@ var ProfileExtensionView =  Backbone.View.extend({
 
         //set the focus appropraitely...
         $('#editExtensionDlg').on('shown.bs.modal',function(){
-            if (!that.code) {
+            if (!extension.code) {
                 $('#eeCode').focus();
             } else {
                 $('#eeShort').focus();

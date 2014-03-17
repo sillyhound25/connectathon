@@ -5,9 +5,9 @@
 var ProfileListView = Backbone.View.extend({
     events : {
         "click .orionProfileDetail" : "showDetail",
-        "click #new_vs" : "newVS"
+        "click #new_profile" : "newProfile"
     },
-    newVS : function(){
+    newProfile : function(){
         this.trigger('profileList:new');
     },
     showDetail : function(ev) {
