@@ -10,8 +10,8 @@
     <script src="js/async.js"></script>
     <script src="js/typeahead.bundle.js"></script>
     <script src="functions.js"></script>
-    <!--<script src="testFunctions.js"></script>-->
-    <script src="views/testDataView.js"></script>
+    <!--<script src="testFunctions.js"></script>
+    <script src="views/testDataView.js"></script>-->
     <script src="views/queryView.js"></script>
     <script src="views/ValueSetListView.js"></script>
     <script src="views/ValueSetDetailView.js"></script>
@@ -276,8 +276,6 @@
         profileTestFormView.render();   //as there is no model, this will just render the 'create form' button...
 
 
-
-
         //The user selects a Profile from the  in the list. Make sure that all the views that have an interest in
         //this profile have their model set...
         Backbone.listenTo(listProfiles,'profileList:select',function(vo){
@@ -439,14 +437,14 @@
 
 
         //create the various local functions - defined in functions.js
-        localFunctionsSetup(Z);
+      //  localFunctionsSetup(Z);
 
 
 
 
 
 
-        Z.dataTypeList = ['boolean','code','string','integer','Coding','CodeableConcept','Period']
+        //Z.dataTypeList = ['boolean','code','string','integer','Coding','CodeableConcept','Period']
 
        // loadVS(Z);              //load all the value sets where orion is the publisher
         //loadOrionProfiles(Z);   //load the orion profiles
@@ -478,12 +476,16 @@
 
 */
         //load a profile
+        /*
         $('.selProfile').on('click',function(ev){
             var name = ev.currentTarget.getAttribute('data-name');
             var pub = ev.currentTarget.getAttribute('data-pub');
             loadProfile(Z,name,pub);
         })
+        */
+
     })
+
 /*
     function loadProfileDEP(Z,name,pub){
         $('#loading').show();
@@ -658,7 +660,7 @@ function showCurrentProfile(Z) {
 
 */
     });
-
+/*
     //show the save changes button if there have been changes...
     if (! Z.dirtyProfile) {
         $('#save_profile_changes').hide();
@@ -724,7 +726,7 @@ function showCurrentProfile(Z) {
             })
 
         })
-
+*/
 
 
     //the handler for when the valueSet detail link is selected.
@@ -811,6 +813,7 @@ function showCurrentProfile(Z) {
         $('#editExtensionDlg').modal('hide');
     }
 */
+    /*
 //displays the model edit screen for a single extension
 function showOneExtension(Z,code) {
 
@@ -918,7 +921,7 @@ function showOneExtension(Z,code) {
 
 }
 
-
+*/
 
 </script>
 

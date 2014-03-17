@@ -26,6 +26,7 @@ var ProfileSummaryView = Backbone.View.extend({
         var model = this.model;
         var profileSummaryModel = new ProfileSummaryModel();
         //profileSummaryModel.setProfile(this.model);
+        this.$el.html("Generating summary, please wait...");
         profileSummaryModel.getSummary(model,function(err, arSummary){
             console.log(err,arSummary);
             that.render(arSummary)
