@@ -12,7 +12,45 @@ var ProfileDetailView =  Backbone.View.extend({
         "click .remove_ext" : "removeExtension",
         "click .profile-extension" : "editExtension",
         "click #add_new_extension": "addExtension",
-        "click #save_profile_changes" : "save"
+        "click .vsInExt" : "showValueSet",
+        "click #save_profile_changes" : "save",
+         "blur .profile_header": function(){
+             this.isDirty = true;
+             $('#save_profile_changes').show();
+         }
+    },
+    showValueSet : function(ev) {
+        //todo thi should be a separate view...
+        var vsURI = ev.currentTarget.getAttribute('data-code');
+        console.log(vsURI);
+        this.trigger('profileDetail:showVS',{uri:vsURI});
+        return;
+
+        //alert(encodeURIComponent(vsURI));
+
+        //get the resource. Note this is the actual resource - not a bundle.entry
+        $.get( "/api/valueset/id/"+encodeURIComponent(vsURI), function( vsResource ) {
+            //alert(data);
+            console.log(vsResource)
+            var genDialogFrame = $('#generalModelDlg').html();      //the frams for the modal dialog
+            $('#modalDialogDiv').html(genDialogFrame);      //write the frame to the DOM
+
+            var model = {content:vsResource};
+            model.id = vsURI;
+            model.readOnly = true;
+
+            $('#modal-content').html(Z.template.oneVS(model));    //use the BS template to write out the dialog
+
+
+
+            //and show the modal...
+            $('#generalDlg').modal();
+
+
+        });
+    },
+    isDirty : function() {
+        return this.isDirty;
     },
     save : function() {
         var that=this;
@@ -46,13 +84,19 @@ var ProfileDetailView =  Backbone.View.extend({
             }
         });
     },
+    setModel : function(model) {
+        this.model = model;
+        this.isDirty = false;
+    },
     addExtension : function(ev){
         //add a new extension
         var jsonModel = this.model.toJSON();
+        this.isDirty = true;    //will be dirty even if the addition is cancelled...
         this.trigger('profileDetail:addExtension',{id:jsonModel.meta.id});
     },
     removeExtension : function(ev){
-        //edit a single extension
+        //remove an extension
+        this.isDirty = true;
         var model = this.model;
         var code = ev.currentTarget.getAttribute('data-code');      //the code of the extension
         console.log(code);
@@ -61,6 +105,7 @@ var ProfileDetailView =  Backbone.View.extend({
     },
     editExtension : function(ev){
         //edit a single extension
+        this.isDirty = true;
         var jsonModel = this.model.toJSON();
         var code = ev.currentTarget.getAttribute('data-code');      //the code of the extension
         this.trigger('profileDetail:editExtension',{id:jsonModel.meta.id,code:code});
@@ -92,10 +137,14 @@ var ProfileDetailView =  Backbone.View.extend({
 
         if (this.model) {
             this.$el.html(this.template(this.model.toJSON()));
+
         } else {
             this.$el.html(this.template());
         }
 
+        if (! this.isDirty) {
+            $('#save_profile_changes').hide();
+        }
 
         //this.delegateEvents();
         $('#updatingProfileMsg').hide();

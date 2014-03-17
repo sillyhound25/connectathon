@@ -14,6 +14,7 @@
     <script src="views/testDataView.js"></script>-->
     <script src="views/queryView.js"></script>
     <script src="views/ValueSetListView.js"></script>
+    <script src="views/ValueSetSummaryView.js"></script>
     <script src="views/ValueSetDetailView.js"></script>
     <script src="models/ValueSetModel.js"></script>
     <script src="collections/ValueSetCollection.js"></script>
@@ -275,12 +276,13 @@
         profileTestFormView.meta.colVS = colVS;    //needse the valueset
         profileTestFormView.render();   //as there is no model, this will just render the 'create form' button...
 
+        var valueSetSummaryView = new ValueSetSummaryView();
 
         //The user selects a Profile from the  in the list. Make sure that all the views that have an interest in
         //this profile have their model set...
         Backbone.listenTo(listProfiles,'profileList:select',function(vo){
             var selectedModel = colProfile.findModelByResourceID(vo.id);       //the vs selected in the list view
-            profileDetailView.model = selectedModel;
+            profileDetailView.setModel(selectedModel);
             profileSummaryView.model = selectedModel;
             profileTestFormView.model = selectedModel;
 
@@ -315,6 +317,12 @@
 
         });
 
+        //the user wishes to view a valueset...
+        Backbone.listenTo(profileDetailView,'profileDetail:showVS',function(vo){
+            valueSetSummaryView.render(vo.uri)
+        })
+
+
         //a new profile was added
         Backbone.listenTo(profileDetailView,'profile:added',function(vo){
             console.log(vo);
@@ -345,18 +353,6 @@
         });
 
 
-     //   var profileSummaryView = new ProfileSummaryView({el:$('#workAreaSummaryProfile')});       //Detail/edit view for a single VS
-     //   profileSummaryView.render();
-
-
-
-        //Backbone.on()
-
-
-        //this.trigger('profileExtension:updated',{id:model.meta.id,code:code});
-
-
-        //load the profiles...
 
         colProfile.fetch({
             success : function() {
@@ -375,34 +371,9 @@
 
 
 
-//return
-
-
         Z.views.viewQuery = new QueryView({el:$('#workAreaQuery')});
         Z.views.viewQuery.render();
 
-/*
-        //handler for when the user wants to generate a summary
-        $('#btnCreateSummary').on('click',function(){
-            $('#updatingProfileSummaryMsg').show();
-
-            var sumryModel = new ProfileSummaryModel();
-            sumryModel.
-
-            //console.log(Z.localFunctions.profileSummary)
-
-            Z.localFunctions.profileSummary(function(err,summary){
-                $('#updatingProfileSummaryMsg').hide();
-                if (err) {
-                    alert(err)
-                } else {
-                    $('#workAreaSummaryProfile').html(Z.template.profileSummary(summary));
-
-                }
-
-            })
-        })
-*/
 
 
 /* temp
@@ -433,155 +404,11 @@
             $('#'+paneToShow).show();
         })
 
-
-
-
-        //create the various local functions - defined in functions.js
-      //  localFunctionsSetup(Z);
-
-
-
-
-
-
-        //Z.dataTypeList = ['boolean','code','string','integer','Coding','CodeableConcept','Period']
-
-       // loadVS(Z);              //load all the value sets where orion is the publisher
-        //loadOrionProfiles(Z);   //load the orion profiles
-       // setupTestData(Z);       //functions to create test data
-
-/*
-
-        //generate a test interface...
-        $('#btnGenerateTD').on('click',function(){
-            Z.localFunctions.testData.getExtensions(function(vo,warnings){
-
-                //get the backbone view
-                //$.get('views/testDataView.js',function)
-               // var attr = {profile: Z.currentProfile,warnings:warnings};
-
-                //remove any previous views...
-                if (Z.views.viewTestData) {
-                    Z.views.viewTestData.undelegateEvents();
-                }
-                Z.views.viewTestData = new testDataView({model:vo,el:$("#workAreaTestData")});
-                Z.views.viewTestData.render();
-
-                //$('#workAreaTestData').html(Z.template.testDataForm(vo));
-
-
-
-            });
-        })
-
-*/
-        //load a profile
-        /*
-        $('.selProfile').on('click',function(ev){
-            var name = ev.currentTarget.getAttribute('data-name');
-            var pub = ev.currentTarget.getAttribute('data-pub');
-            loadProfile(Z,name,pub);
-        })
-        */
-
     })
 
+
 /*
-    function loadProfileDEP(Z,name,pub){
-        $('#loading').show();
-        $.get( "/api/profile/"+name+"/"+pub, function( data ) {
-            $('#loading').hide();
 
-            //console.log(data);
-            if (data.entry.length > 1) {
-                //this will occur for something like 'medication' that can be in multiples names
-                var fnd = false;
-                $.each(data.entry,function(inx,ent){
-                    console.log(ent);
-                    if (ent.content.name.toLowerCase() === name.toLowerCase()) {
-                        Z.currentProfile = ent;
-                        fnd=true;
-                    }
-                })
-
-                if (! fnd){
-                    alert('Error: More than one matching profile, and no exact matches');
-                    return;
-                }
-
-
-
-            } else if (data.entry.length === 0) {
-                alert ('Error: No matching profile found');
-                return;
-            } else {
-                Z.currentProfile = data.entry[0];    //actually an entry...
-            }
-
-
-
-            //console.log(Z.currentProfile);
-
-
-            //create a clone of the profile for display - eg so we can add 'hide' properties to the extensions defined on the structures
-            var clone = $.extend(true,{},Z.currentProfile) ;    //remember this is actually a bundle entry
-            console.log(clone);
-            //now hide the
-            $.each(clone.content.structure,function(inx,struct){
-                $.each(struct.element,function(inx1,el){
-                    console.log(el.path);
-                    if (el.path.indexOf('xtension') !== -1) {
-                        el.hide = true;
-                    }
-                })
-            })
-
-//console.log(clone)
-            $('#workAreaProfile').html(Z.template.oneProfile(clone));
-            $('#updatingProfileMsg').hide();
-        })
-
-    }
-    */
-/*
-    function loadOrionProfiles(Z) {
-        $.get( "/api/profile/orion", function( data ) {
-            //$('#loading').hide();
-            ///console.log(data)
-            Z.orionProfiles = data;
-
-            $('#orionProfilesDiv').html(Z.template.orionProfileList(Z.orionProfiles));
-
-            //new profile
-            $('#new_profile').on('click',function(){
-                //alert('new');
-                Z.currentProfile = {content : {}};
-                Z.currentProfile.content.publisher='Orion Health'
-                Z.currentProfile.content.extensionDefn=[];
-                showCurrentProfile(Z);
-
-            })
-
-
-            //show a single profile
-            $('.orionProfileDetail').on('click',function(ev){
-                var id = ev.currentTarget.getAttribute('data-id');
-                //alert(id)
-                $.each(Z.orionProfiles.entry,function(inx,prof){
-                    //console.log(id,prof)
-
-                    if (prof.id === id){
-                        Z.currentProfile = prof;
-                        Z.dirtyProfile = false;     //set true when the profile is changed
-                        showCurrentProfile(Z);
-                        //$('#workAreaProfile').html(Z.template.oneProfile(prof));
-                        return false;
-                    }
-                })
-            })
-        })
-    }
-*/
 
 function showCurrentProfile(Z) {
     //use the BS template to lay out the profile...
@@ -589,144 +416,7 @@ function showCurrentProfile(Z) {
 
 
 
-    $('#workAreaProfile').html(Z.template.oneProfile(Z.currentProfile));
-    $('#updatingProfileMsg').hide();
 
-    /*
-
-    //temp - generate the summary - there will be a better place to call this I suspect...
-    Z.localFunctions.profileSummary(function(err,summary){
-        $('#updatingProfileSummaryMsg').hide();
-        if (err) {
-            alert(err)
-        } else {
-            $('#workAreaSummaryProfile').html(Z.template.profileSummary(summary));
-
-        }
-    });
-
-    */
-
-    /*
-
-    $('.remove_ext').on('click',function(ev){
-        //remove an extension
-        var code = ev.currentTarget.getAttribute('data-code');
-        var inx = -1;
-        $.each(Z.currentProfile.content.extensionDefn,function(pos,ext){
-            if (ext.code === code){
-                inx=pos;
-            }
-        })
-        if (inx > -1){
-            Z.currentProfile.content.extensionDefn.splice(inx,1);
-            Z.dirtyProfile = true;
-            showCurrentProfile(Z);
-        }
-    });
-
-    */
-    /*
-
-        //add a new extension
-    $('#add_new_extension').on('click',function(){
-        showOneExtension(Z,'newcode');
-    })
-
-    */
-
-
-    //show the 'save' button for editing in the profile 'header'
-    $('.profile_header').on('blur',function(){
-        $('#save_profile_changes').show();
-        Z.dirtyProfile = true;
-    })
-
-
-    //the user selects a resource within an extension. List all the properties of that resource.
-    $('.resource_in_extension').on('click',function(ev){
-        var resourcename = ev.currentTarget.getAttribute('data-code');
-
-        getProfiledResource(Z,resourcename);
-
-        //alert(resourcename);
-/*
-        var genDialogFrame = $('#generalModelDlg').html();      //the frams for the modal dialog
-        $('#modalDialogDiv').html(genDialogFrame);      //write the frame to the DOM
-
-        //var url = "http://hl7.org/implement/standards/fhir/"+resourcename+".html";
-        var url = "resource/"+resourcename;
-        $("#generalDlg").modal({remote:url})
-
-*/
-    });
-/*
-    //show the save changes button if there have been changes...
-    if (! Z.dirtyProfile) {
-        $('#save_profile_changes').hide();
-
-    }
-        $('#save_profile_changes').on('click',function(){
-            //alert('save');
-            //console.log(Z.currentProfile);
-            var isNewProfile = false;
-            var content = Z.currentProfile.content;
-
-            //set the value for the profile 'header' contents...
-            content.name = $('#profileName').val();
-            content.description = $('#profileDescription').val();
-            content.requirements = $('#profileRequirements').val();
-
-            if (! content.name || !content.description || !content.requirements) {
-                alert('The profile name, description and requirements are all required');
-                return;
-            }
-
-            var method = 'PUT';
-            var uri;
-            if (Z.currentProfile.id) {
-                //this is an existing profile
-                var ar = Z.currentProfile.id.split('/');
-                var id = ar[ar.length-1]
-                uri = '/api/'+id;
-            } else {
-                //this is a new profile
-                method='POST';
-                uri = '/api'
-                content.resourceType = "Profile";
-                content.identifier = content.identifier || 'oh'+new Date().getTime();
-                content.status = "draft";
-                content.experimental = true;
-                content.date = moment().format();
-                isNewProfile = true;
-            }
-
-            $('#updatingProfileMsg').show();
-            $.ajax (uri,{
-                method : method,
-                data : JSON.stringify(content),
-                headers : {
-                    'content-type' : 'application/json'
-                },
-                complete : function(xhr,status){
-                    $('#updatingProfileMsg').hide();
-                    // - keep to remind me!console.log(xhr.responseText);
-                    //alert(status);
-                    Z.dirtyProfile = false;     //set true when the profile is changed
-
-                    if (isNewProfile) {
-                        loadOrionProfiles(Z);
-                    }
-
-
-
-                    showCurrentProfile(Z);
-                    //loadVS(Z);  //re-load the list of value sets.
-                }
-            })
-
-        })
-*/
 
 
     //the handler for when the valueSet detail link is selected.
@@ -765,192 +455,10 @@ function showCurrentProfile(Z) {
     })
 
 }
-/*
-    function updateExtension(Z){
-
-        if (!$('#eeCode').val()) {
-            alert('An extension must have a code. No changes saved.');
-            return;
-        }
-
-        if (! Z.currentExtension.context) {
-            //this is a new extension. Add it to the current profile.
-            Z.currentExtension.contextType = 'resource';
-            Z.currentProfile.content.extensionDefn = Z.currentProfile.content.extensionDefn || []
-            Z.currentProfile.content.extensionDefn.push(Z.currentExtension);
-        }
-
-
-        Z.dirtyProfile = true;     //show the 'save' button
-        Z.currentExtension.code=$('#eeCode').val();
-        Z.currentExtension.definition.short=$('#eeShort').val();
-        Z.currentExtension.definition.formal=$('#eeFormal').val();
-        Z.currentExtension.definition.min=$('#eeMin').val();
-        Z.currentExtension.definition.max=$('#eeMax').val();
-        Z.currentExtension.definition.type = [{code:$('#eeDataType').val()}];
-
-        Z.currentExtension.context= [$('#eeContextResource').val()];
-
-        if ($('#eeIsModifier').is(':checked')) {
-            Z.currentExtension.definition.isModifier = true;
-        } else {
-            Z.currentExtension.definition.isModifier = false;
-        }
-
-        //console.log($('#eeIsModifier').is(':checked'))
-        //Z.currentExtension.definition.isModifier = $('#eeIsModifier').attr('checked');
-
-
-        //get the value set (if selected)
-        var vsValue = $('#eeValueSet').val();
-        if (vsValue) {
-            var vsText = $("#eeValueSet option:selected").text();
-            Z.currentExtension.definition.binding = {name:vsText,referenceResource: {reference :vsValue}};
-        } else {
-            delete Z.currentExtension.definition.binding ;
-        }
-
-        $('#editExtensionDlg').modal('hide');
-    }
-*/
-    /*
-//displays the model edit screen for a single extension
-function showOneExtension(Z,code) {
-
-    //console.log(Z.currentProfile)
-    //get the extension definition from the profile
-    var extension;
-
-    if (Z.currentProfile.content.extensionDefn) {
-        //test needed as if a new profile is saved with no extensions, subsequent retrievals have extensionDefn empty...
-        $.each(Z.currentProfile.content.extensionDefn,function(inx,ext){
-            //console.log(ext)
-            if (ext.code === code) {
-                extension = ext;
-                return false;
-            }
-        })
-    }
-
-
-    if (! extension) {
-        //this is a new extension
-        extension = {definition : {}};
-        extension.definition.min = 0;
-        extension.definition.max = 1;
-        extension.definition.type = [{code:'string'}];
-       //don't set contextType - that's the flag used to signal a new extension. ?would a Z. property be better?
-       // extension.context = ['resource'];
-    }
-
-    Z.currentExtension = extension;
-    //console.log(extension);
-
-    //use the handlebars template to generate the modal dialog
-    $('#editExtensionDiv').html(Z.template.editExtension(extension));
-
-    if (extension.definition.isModifier) {
-        $("#eeIsModifier").attr('checked',true);
-    }
-
-    //add the options to the resource dropdown
-
-    $.each(Z.resourceList,function(inx,name){
-        var lne = "<option value='"+name + "'";
-        //note that we only support one resource
-        if (extension.context && name === extension.context[0]) {
-            lne += " selected='selected' ";
-        }
-        lne += ">"+name+"</option>";
-        $("#eeContextResource").append(lne);
-    })
-
-    //set the datatype
-    var dataType="";
-    if (extension.definition.type) {
-        dataType = extension.definition.type[0].code;     //current datatype (1 only)
-    }
-
-    $.each(Z.dataTypeList,function(inx,name){
-        var lne = "<option value='"+name + "'";
-        //note that we only support one resource
-        if (name === dataType) {
-            lne += " selected='selected' ";
-        }
-        lne += ">"+name+"</option>";
-        $("#eeDataType").append(lne);
-    })
-
-    //set the valueset
-    var vsID = "";
-    if (extension.definition.binding) {
-        vsID = extension.definition.binding.referenceResource.reference;
-    }
-
-    $.each(Z.valueSets,function(inx,vs){
-        //console.log(vs);
-        var name=vs.content.name;
-        var lne = "<option value='"+vs.id + "'";
-        //note that we only support one resource
-        if (vs.id === vsID) {
-            lne += " selected='selected' ";
-        }
-        lne += ">"+name+"</option>";
-        $("#eeValueSet").append(lne);
-    })
-
-    //and show the modal...
-    $('#editExtensionDlg').modal();
-
-    //set the focus appropraitely...
-    $('#editExtensionDlg').on('shown.bs.modal',function(){
-        if (!extension.code) {
-            $('#eeCode').focus();
-        } else {
-            $('#eeShort').focus();
-        }
-
-    })
-
-    //and set up tha save handler. The same for add new and edit
-    $('#eeSave').on('click',function(){
-
-        updateExtension(Z);
-        showCurrentProfile(Z)
-    })
-
-}
 
 */
 
 </script>
-
-
-
-
-
-
-
-
-
-<script id="profiledResourcePropertiesXXX" type="text/x-handlebars-template">
-    <div class="row">
-        <div class="col-md-12">
-            <table>
-                {{#each item}}
-                    <tr>
-                        <td>{{path}}</td>
-                        <td>{{type}}</td>
-                        <td>{{description}}</td>
-                    </tr>
-                {{/each}}
-            </table>
-
-        </div>
-    </div>
-</script>
-
-
 
 
 <script id="generalModelDlg" type="text/x-handlebars-template">
@@ -959,7 +467,7 @@ function showOneExtension(Z,code) {
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">General Dialog</h4>
+                    <h4 class="modal-title"><span id="generalDlgTitle">General Dialog</span></h4>
                 </div>
                 <div class="modal-body">
                     <div id='modal-content'></div>

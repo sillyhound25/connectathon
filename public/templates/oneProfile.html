@@ -36,7 +36,9 @@
 
             <div class="col-md-2">
                 <div><button id = 'add_new_extension' class="btn btn-success btn-block">Add ExtensionDef</button></div>
-                <div style="padding-top:5px"><button id = 'save_profile_changes' class="btn btn-primary btn-block">Update Profile</button></div>
+                <div style="padding-top:5px">
+                    <button id = 'save_profile_changes' class="btn btn-primary btn-block">Update Profile</button>
+                </div>
             </div>
         </div>
 
@@ -81,7 +83,8 @@
                 <td>{{contextType}}</td>
                 <td>
                     {{#each context}}
-                    <a href='#' class='resource_in_extension' data-code="{{this}}">{{this}}</a>
+                        {{this}}
+                    <!--<a href='#' class='resource_in_extension' data-code="{{this}}">{{this}}</a>-->
                     {{/each}}
                 </td>
                 <td>{{definition.isModifier}}</td>

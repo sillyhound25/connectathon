@@ -330,6 +330,9 @@ function performQueryAgainstFHIRServer(query,callback){
 
     request(options,function(error,response,body){
 
+        if (error) {
+            throw error;
+        }
         if (response.statusCode != 200) {
             console.log(JSON.parse(body));
             throw 'error';
