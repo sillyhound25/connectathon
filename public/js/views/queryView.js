@@ -29,6 +29,12 @@ var QueryView = Backbone.View.extend({
                         var template = Handlebars.compile(html);
                         //console.log(res.searchParam);
 
+                        //move the common parameter names to the top of the list
+                        _.each(['name','identifier'],function(paramName){
+                            moveToTop(res,paramName);
+                        })
+
+                        /*
                         //want 'identifier' and name at the top...
                         var pos = -1;
                         $.each(res.searchParam,function(inx,sp){
@@ -41,18 +47,36 @@ var QueryView = Backbone.View.extend({
                             res.searchParam.splice(pos,1);
                             res.searchParam.splice(0,0,param);
                         }
-
+*/
 
                         $('#query_params').html(template({item:res.searchParam}));
                         return that;
                     })
                 }
             })
-
+            function moveToTop(res,paramName) {
+                //move a particular parameter to the top of the list for the users convenience
+                var pos = -1;
+                $.each(res.searchParam,function(inx,sp){
+                    if (sp.name === paramName) {
+                        pos = inx;
+                    }
+                })
+                if (pos > 0){
+                    var param = res.searchParam[pos];
+                    res.searchParam.splice(pos,1);
+                    res.searchParam.splice(0,0,param);
+                }
+            }
 
         },
         "click #query_execute" : function(ev){
             var that = this;
+            //clear the display area...
+            $('#query_results').html("");
+            $('#query_ta').text("");
+            $('#qry_result_id').html("");
+
             //build the query param object
             var query = {resource:this.resourceName,params : []};
             $('.queryParam').each(function(inx,el){
@@ -65,8 +89,11 @@ var QueryView = Backbone.View.extend({
             })
             var queryString = JSON.stringify(query);
 
+
+            console.log(queryString);
+
             $.get('/api/generalquery/'+queryString,function(json){
-console.log(json);
+//console.log(json);
 
                 that.resultSet = json;
                 //display a list of the responses...
@@ -80,12 +107,7 @@ console.log(json);
                 //show the results list
                 $('#qry_params_tabview a[href="#qry_tab_results"]').tab('show') // Select tab by name
 
-
                 that.showResult(0);
-
-                //var o = json.entry[0].content;
-                //$('#query_ta').text(JSON.stringify(o,undefined,2));
-
             })
 
 
@@ -94,9 +116,14 @@ console.log(json);
 
     showResult : function(inx){
         //show a single result from the result set
-        var result = this.resultSet.entry[inx].content;
-        $('#qry_result_id').html(this.resultSet.entry[inx].id)
-        $('#query_ta').text(JSON.stringify(result,undefined,2));
+
+        if (this.resultSet.entry && this.resultSet.entry.length > inx) {
+            var result = this.resultSet.entry[inx].content;
+            $('#qry_result_id').html('<strong>' + this.resultSet.entry[inx].id+"</strong>");
+            $('#query_ta').text(JSON.stringify(result,undefined,2));
+        }
+
+
 
     },
 
