@@ -20,8 +20,15 @@ builder.valueSet = require('./valueset.js');
 var generateSampleBundle = function(vo,callback) {
     var profileID = vo.profileID;       //the ID of the profile. We'll add this as a tag to the bundle...
 
+    var patientID = vo.patientID;   //set if the client selected a patient...
+    console.log('PatientID:' + patientID);
+/*
+
+    callback(true);
+    return;
+*/
     //these are ID's to resources that other resources might refer to - like Patient & practitioner...
-    var patientID;
+    //var patientID;
     var practitionerID;
 
     var messages = [];  //
@@ -61,18 +68,26 @@ var generateSampleBundle = function(vo,callback) {
     bundle.updated = moment().format();
     bundle.entry = [];
 
-    //create the patient resource (There must a patient - this is added by the test UI)
-    var patientOptions = objResources.patient;
-    var samPatientEntry = builder.patient.getSample(patientOptions.params); //pass the params directly into the builder function
-    patientID = samPatientEntry.id;
-    addExtensions(samPatientEntry, patientOptions.extensions);
 
-    //samPatientEntry.link = [rel:'search',href:"http://localhost/Patient?identifier=prp1660"]
-/*
-    samPatientEntry.link = [];
-    samPatientEntry.link.push({rel:'search',href:"http://localhost/Patient?identifier=prp1660"});
-*/
-    bundle.entry.push(samPatientEntry);
+
+    //only create a new patient resource if none was selected on the client...
+    if (! patientID)  {
+
+        //create the patient resource (There must a patient - this is added by the test UI)
+        var patientOptions = objResources.patient;
+        var samPatientEntry = builder.patient.getSample(patientOptions.params); //pass the params directly into the builder function
+        patientID = samPatientEntry.id;
+
+        //if there are extensions to patient, then a new patient will need to be created and so will be added to
+        //the bundle. If not, then we look to see if there is already a patient with that identifier and use that one. In
+        //this case we won't add the patient, but instead will create a reference for all the other resources (by adding
+        //it to the builder functions)
+
+        addExtensions(samPatientEntry, patientOptions.extensions);
+
+
+        bundle.entry.push(samPatientEntry);
+}
 
     //next to add is the practitioner. It is assumed that if any of the other resources in the profile have
     //a reference to practitioner, then the UI will ensure that Practitioner is added to the collection...

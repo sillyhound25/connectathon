@@ -15,10 +15,15 @@
             {{/each}}
         </div>
         {{/if}}
-        <div id='td_success' class="alert alert-success">
+        <div id='td_success' class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             <p>The resources have been created</p>
         </div>
-        <form class="form-horizontal" role="form">
+        <div id='td_waiting' class="alert alert-warning">
+            <p>Creating resources on the server, please wait...</p>
+        </div>
+        <div id="td_form_data">
+            <form class="form-horizontal" role="form">
 
             {{#each resource}}
 
@@ -32,11 +37,24 @@
 
                 <div id="td_grp_{{name}}">
                     {{#each core}}
+
                         <!-- Assume that all core properties are input via a text element-->
                         <div class="form-group">
-                            <label class="col-sm-2 col-md-2">{{display}}</label>
-                            <div  class="col-sm-10 col-md-10">
-                                <input class="form-control data" type="text" data-code = "{{../name}}-{{code}}" value='{{default}}' placeholder="{{raw.definition.short}}"/>
+                            <label class="col-sm-3 col-md-3">{{display}}</label>
+                            <div  class="col-sm-9 col-md-9">
+                                {{#if lookupPatient}}
+                                <div class="row">
+                                    <div class="col-sm-9 col-md-9">
+                                        <input class="form-control data" type="text" data-code = "{{../../name}}-{{code}}" value='{{default}}' placeholder="{{raw.definition.short}}"/>
+
+                                    </div>
+                                    <div class="col-sm-3 col-md-3">
+                                        <a href="#" class="btn btn-primary" id="td_lookup">Find Patient</a>
+                                    </div>
+                                </div>
+                                {{else}}
+                                <input class="form-control data" type="text" data-code = "{{../../name}}-{{code}}" value='{{default}}' placeholder="{{raw.definition.short}}"/>
+                                {{/if}}
                             </div>
                         </div>
                     {{/each}}
@@ -44,8 +62,8 @@
                     {{#each extensions}}
                         {{#if isInput}}
                             <div class="form-group">
-                                <label class="col-sm-2 col-md-2">{{raw.code}}</label>
-                                <div  class="col-sm-10 col-md-10">
+                                <label class="col-sm-3 col-md-3">{{raw.code}}</label>
+                                <div  class="col-sm-9 col-md-9">
                                     <input class="form-control data" type="text" data-datatype="{{dataType}}" data-code = "{{../../name}}-ext-{{raw.code}}"  placeholder="{{raw.definition.short}}"/>
                                 </div>
                             </div>
@@ -53,8 +71,8 @@
 
                         {{#if isDropdown}}
                             <div class="form-group">
-                                <label class="col-sm-2 col-md-2" >{{raw.code}}</label>
-                                <div  class="col-sm-10 col-md-10">
+                                <label class="col-sm-3 col-md-3" >{{raw.code}}</label>
+                                <div  class="col-sm-9 col-md-9">
                                     <select class="form-control data" type="text" data-datatype="{{dataType}}"  data-code = "{{../../name}}-ext-{{raw.code}}"  placeholder="{{raw.definition.short}}">
                                         {{#each vs.define.concept}}
                                         <option value="{{code}}">{{display}}</option>
@@ -65,8 +83,10 @@
                         {{/if}}
                     {{/each}}
                 </div>
+            <div><em>{{tip}}</em></div>
             {{/each}}
         </form>
+        </div>
     </div>
     <div class="col-sm-4 col-md-4">
         <div class="pull-right">

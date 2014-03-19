@@ -27,6 +27,7 @@
     <script src="js/views/ProfileExtensionView.js"></script>
     <script src="js/views/ProfileSummaryView.js"></script>
     <script src="js/views/ProfileTestFormView.js"></script>
+    <script src="js/views/ProfileQueryView.js"></script>
     <script src="js/models/ProfileModel.js"></script>
     <script src="js/models/ProfileSummaryModel.js"></script>
     <script src="js/models/ProfileTestFormModel.js"></script>
@@ -36,7 +37,7 @@
 
     <!-- Latest compiled and minified CSS-->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    <!-- Optional theme -->
+    <!-- Optional theme-->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
 
     <!-- Latest compiled and minified JavaScript -->
@@ -57,10 +58,11 @@
             <a class="navbar-brand" href="#">  FHIR Workbench</a>
         </div>
         <ul class="nav navbar-nav">
-            <li class=" navMainOption" data-page='homeTab'><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a> </li>
-            <li class="active navMainOption" data-page='profileTab'><a href="#" ><i class="glyphicon glyphicon-file"></i> Profiles</a></li>
+            <li class="active  navMainOption" data-page='homeTab'><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a> </li>
+            <li class="navMainOption" data-page='profileTab'><a href="#" ><i class="glyphicon glyphicon-file"></i> Profiles</a></li>
             <li class=" navMainOption" data-page='vsTab'><a href="#"><i class="glyphicon glyphicon-list"></i>  ValueSet</a></li>
-            <li class="navMainOption" data-page='queryTab'><a href="#"><i class="glyphicon glyphicon-fire"></i>  Search</a></li>
+            <li class="navMainOption" data-page='queryTab'><a href="#"><i class="glyphicon glyphicon-fire"></i>  Resource basedSearch</a></li>
+            <li class="navMainOption" data-page='profileQueryTab'><a href="#"><i class="glyphicon glyphicon-fire"></i>  Patient based Search</a></li>
         </ul>
         <ul class="nav navbar-nav pull-right">
             <li class="navMainOption" data-page='helpTab'><a href="#" ><i class="glyphicon glyphicon-question-sign"></i> </a></li>
@@ -98,8 +100,10 @@
         <div class="myPane" id="profileTab">
             <div class="row">
                 <div class="col-md-2 well">
+                    <!--
                     <h4>Resources</h4>
                     <ul class="list-unstyled" id="coreResourceList">
+                        -->
                         <!--<li><a class="selProfile" data-name="patient" data-pub='FHIR Project'>Patient</a></li>-->
                     </ul>
 
@@ -177,6 +181,15 @@
 
         </div>
 
+        <div class="myPane" id="profileQueryTab">
+            <div class="row">
+                <div id="workAreaProfileQuery"></div>
+
+
+            </div>
+
+        </div>
+
 
 
         <div class="myPane" id = "helpTab">
@@ -193,71 +206,28 @@
 <script>
 
     $(document).ready(function(){
-        /*
-        var Z = {template:{},localFunctions : {},views:{}};     //instead of Y
 
-        //load all the handlebars templates from the templates folder...
-        $.each(['oneVS','listVS','oneProfile','orionProfileList','editExtension','profileSummary'],function(inx,name){
-            var fileName = 'templates/'+name+'.html';
-            $.get(fileName,function(html){
-                Z.template[name] = Handlebars.compile(html);
-            })
-        })
+        //see the 'mediator.js' file for the main commands that initiate the workbench
+        //at some point I'll make this a real mediator.
+        //Note that it's critical that the mediator.js is the last file to be referenced (plan is to move to require.js)
 
-
-        //list of resources - should be the complete fhir list...
-        Z.resourceList = ['Encounter','MedicationAdministration','Medication','Observation','Patient','Practitioner'];
-        $.each(Z.resourceList,function(inx,res){
-            var lne = "<li><a class='selProfile' data-name='"+res+"' data-pub='FHIR Project'>"+res+"</a></li>";
-            $('#coreResourceList').append(lne);
-        })
-
-        */
-
-        //Z.dataTypeList = ['boolean','code','string','integer','Coding','CodeableConcept','Period']
-
-
-
-        //======== Using Mediator pattern via global BackBone object ================
-
-
-        //var mediator = new Mediator();
-        //Mediator.start();
-
-
-
-
-
-        ///Z.views.viewQuery = new QueryView({el:$('#workAreaQuery')});
-        //Z.views.viewQuery.render();
-
-
-
-/* temp
-
-        //set up the iframe within which help is shown
-        $('#myIFrame').attr('src','http://fhirprofileeditor.wordpress.com/overview/');
-        $('#myIFrame').attr('width',$( window ).width());
-
-
-        */
         //activate the navbar tags...
         $('.myPane').hide();        //initially hide all the panes...
-        //$('#homeTab').show();       //show the home tab
-        $('#profileTab').show();       //show the profile tab
+        $('#homeTab').show();       //show the home tab
+        //$('#profileTab').show();       //show the profile tab
 
 
 
 
+        //$('#profileSummarySubTab').tab('show');
+
+        //activate the tabs on the navbar
         $(".navMainOption").on('click',function(ev){
-            //toggle the navbar links...
             $(".navMainOption").removeClass('active');
             $(ev.currentTarget).addClass('active');
-
             //show the appropriate pane...
             $('.myPane').hide();
             var paneToShow = ev.currentTarget.getAttribute('data-page')
-            //console.log(paneToShow)
             $('#'+paneToShow).show();
         })
 

@@ -8,6 +8,7 @@ var request = require('request');
 var moment = require('moment');
 var async = require('async');
 var _ = require('underscore');
+var fs = require('fs');
 
 //FHIR sample modules
 var Common = require('./server/common.js');
@@ -33,7 +34,7 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
+  app.use(express.static(__dirname + '/client'));
 });
 
 //perform a query against a fhir server
@@ -66,7 +67,7 @@ app.get('/api/coreResourceTestParams', function(req, res){
     params.patient = [];
     params.patient.push({code:'fname',display:'First Name',default:'John'})
     params.patient.push({code:'lname',display:'Last Name',default:'Cardinal'})
-    params.patient.push({code:'identifier',display:'Identifier',default:'PRP1660'})
+    params.patient.push({code:'identifier',display:'Identifier',default:'ABC1234',lookupPatient:true})
     params.practitioner = [];
     params.practitioner.push({code:'name',display:'Full Name',default:'Marcus Welby'})
     res.json(params);
@@ -79,12 +80,27 @@ app.post('/api/createprofilesample', function(req, res){
     var sample = req.body;
     console.log('generating test data...');
 
+
     mSample.generateSampleBundle(sample,function(err,bundle,messages){
         //now send the bundle to the server for saving...
-        postBundleToFHIRServer(bundle,function(resp){
-            resp.messages = messages;
+        if (!err) {
+            logBundle(bundle,'testData',function(){
+
+
+                postBundleToFHIRServer(bundle,function(resp){
+                    resp.messages = messages;
+                    res.json(resp);
+                })
+
+            })
+        } else {
+            resp.messages = "Error: " + err;
             res.json(resp);
-        })
+        }
+
+
+
+
     })
 
 });
@@ -114,7 +130,10 @@ app.put('/api/:id', function(req, res){
 
     putToFHIRServer(resource,vsID,function(resp){
         resp.content = resource;
-        res.json(resp);
+        logResource(resource,function(){
+            res.json(resp);
+        })
+
     })
 
 });
@@ -144,7 +163,7 @@ app.get('/api/valueset/id/:id', function(req, res){
         res.json(resp);
     })
 })
-
+/*
 //add a new valueset
 app.post('/api/valuesetXXXXX', function(req, res){
     var vsID = req.params.id;
@@ -155,9 +174,15 @@ app.post('/api/valuesetXXXXX', function(req, res){
 
     postToFHIRServer(resource,function(resp){
         resp.content = resource;
-        res.json(resp);
+        putToFHIRServer(resource,vsID,function(resp){
+            resp.content = resource;
+            logResource(resource,function(){
+                res.json(resp);
+            })
+        //res.json(resp);
     })
 });
+    */
 
 
 //the resource name is in the resource. todo - change
@@ -170,7 +195,12 @@ app.post('/api', function(req, res){
 
     postToFHIRServer(resource,function(resp){
         resp.content = resource;
-        res.json(resp.body,resp.statusCode);
+
+        logResource(resource,function(){
+            res.json(resp.body,resp.statusCode);
+        })
+
+
 
     })
 });
@@ -219,6 +249,29 @@ app.get('/api/patient/:patientID', function(req, res){
     })
 
 })
+
+function logResource(resource,callback){
+    var fileName = "./resourceBackup/"+resource.resourceType+ '-' + new Date().getTime() + '.json';
+    fs.writeFile(fileName,JSON.stringify(resource), function(err) {
+        if(err) {
+            throw err;
+        } else {
+            callback();
+        }
+    });
+}
+//log a bundle
+function logBundle(bundle,name,callback){
+    var fileName = "./bundleBackup/"+name+ '-' + new Date().getTime() + '.json';
+    fs.writeFile(fileName,JSON.stringify(bundle), function(err) {
+        if(err) {
+            throw err;
+        } else {
+            callback();
+        }
+    });
+}
+
 
 app.post('/api/createSamples', function(req, res){
     //console.log('/api/createSamples')

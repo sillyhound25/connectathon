@@ -4,6 +4,8 @@
  */
 
 
+
+
 var Mediator={};
 
 //the list of permissable datatypes in a profile...
@@ -15,6 +17,8 @@ var colVS = new ValueSetCollection();           //collection of ValueSets
 var listVS = new ValueSetListView({collection:colVS,el:$('#display')}); //List View for the ValueSets
 var vsDetailView = new ValueSetDetailView({el:$('#workAreaVS')});       //Detail/edit view for a single VS
 
+var profileQueryView = new ProfileQueryView({el:$('#workAreaProfileQuery')});
+profileQueryView.render();
 //Mediator.start = function() {
 
     //============================== ValueSet objects and handlers ==========================
@@ -47,7 +51,7 @@ var vsDetailView = new ValueSetDetailView({el:$('#workAreaVS')});       //Detail
 //display the list when finished...
 colVS.fetch({
     success : function() {
-        console.log('ok')
+
         $('#loading').hide();
         listVS.render();      //render the list of valuesets...
     },
@@ -85,7 +89,9 @@ Backbone.listenTo(listProfiles,'profileList:select',function(vo){
     profileSummaryView.model = selectedModel;
     profileTestFormView.model = selectedModel;
 
-
+    //make sure the details tab is displayed...
+    $('.nav-tabs a[href="#profileDetailSubTab"]').tab('show');
+    //and render the details of the profile
     profileDetailView.render();
 });
 
@@ -116,7 +122,7 @@ Backbone.listenTo(profileDetailView,'profileDetail:addExtension',function(vo){
 
 });
 
-//the user wishes to view a valueset...
+//the user wishes to view a valueset from within a profile...
 Backbone.listenTo(profileDetailView,'profileDetail:showVS',function(vo){
     valueSetSummaryView.render(vo.uri)
 })
@@ -161,6 +167,7 @@ colProfile.fetch({
         // })
         //console.log(colProfile.models);
         listProfiles.render();      //render the list of valuesets...
+        profileQueryView.setProfiles(colProfile);
     },
     error : function() {
         alert('There was an error loading the Profiles')

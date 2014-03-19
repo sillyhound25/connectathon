@@ -1,9 +1,5 @@
 /**
- * Created with JetBrains WebStorm.
- * User: davidha
- * Date: 17/03/14
- * Time: 2:09 PM
- * To change this template use File | Settings | File Templates.
+ * Generate the test Form data. Ie not a 'real' model - just somewhere to put business logic...
  */
 
 
@@ -60,15 +56,22 @@ ProfileTestFormModel = Backbone.Model.extend({
             }
 
 
-
-
         })
 
 
         //the patient should always be present, so add it if not...
+        var tip = "Click the 'Find Patient' button to find a patient with this identifier. If there is a single one found, then they will be used " +
+            " to store resources against, - otherwise a new patient will be created."
         if (! vo.patient) {
-            vo.patient = {name:'patient',extensions:[],core:[]}
+            vo.patient = {name:'patient',extensions:[],core:[],tip : tip}
             vo.resource.push(vo.patient);
+        } else {
+            if (vo.patient.extensions.length > 0) {
+                vo.patient.tip = "If you add an extension to this patient, then a new Patient Resource will be created, which can cause multiple patients with the same identifier";
+            } else {
+                vo.patient.tip = tip;
+            }
+
         }
 
         //many of the resources will also need a prcatitioner. We'll make a list for now, but probably better elswhere...
@@ -105,11 +108,31 @@ ProfileTestFormModel = Backbone.Model.extend({
                 var resourceName = res.name;
                 if (params[resourceName]) {
                     $.each(params[resourceName],function(inx1,param){
-                        vo[resourceName].core.push(param)
+                        //vo[resourceName].core.push(param)
+                        res.core.push(param)
                     })
                 }
             })
 
+
+
+            //finally, move the patient to the top of the list...
+            var pos = -1;
+            $.each(vo.resource,function(inx,res){
+                if (res.name === 'patient') {
+                    pos = inx;
+                }
+            })
+            if (pos > 0){
+                var patientEntry = vo.resource[pos];
+                vo.resource.splice(pos,1);
+                vo.resource.splice(0,0,patientEntry);
+            }
+
+
+
+
+            console.log(vo);
             callback(vo);
         })
 

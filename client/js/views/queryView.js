@@ -34,28 +34,15 @@ var QueryView = Backbone.View.extend({
                             moveToTop(res,paramName);
                         })
 
-                        /*
-                        //want 'identifier' and name at the top...
-                        var pos = -1;
-                        $.each(res.searchParam,function(inx,sp){
-                            if (sp.name === 'identifier') {
-                                pos = inx;
-                            }
-                        })
-                        if (pos > 0){
-                            var param = res.searchParam[pos];
-                            res.searchParam.splice(pos,1);
-                            res.searchParam.splice(0,0,param);
-                        }
-*/
 
-                        $('#query_params').html(template({item:res.searchParam}));
+                        $('#query_params').html(template({item:res.searchParam,resourceName:that.resourceName}));
                         return that;
                     })
                 }
             })
+
+            //move a particular parameter to the top of the list for the users convenience
             function moveToTop(res,paramName) {
-                //move a particular parameter to the top of the list for the users convenience
                 var pos = -1;
                 $.each(res.searchParam,function(inx,sp){
                     if (sp.name === paramName) {

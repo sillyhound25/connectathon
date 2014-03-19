@@ -72,14 +72,16 @@ var ProfileDetailView =  Backbone.View.extend({
         }
 
         model.set('content',content);
-
+        $('#save_profile_changes').text('Updating...').attr('disabled',true)
         model.save({},{
             success : function() {
+                $('#save_profile_changes').text('Update Profile').attr('disabled',false)
                 //that.model.set({'isDirty':false});
                 alert('Profile Updated');
                 that.trigger('profile:added',{model:model});
             },
             error : function() {
+                $('#save_profile_changes').text('Update Profile').attr('disabled',false)
                 alert('sorry, there was an error saving the profile')
             }
         });

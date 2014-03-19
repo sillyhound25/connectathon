@@ -1,0 +1,54 @@
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div id = "pq_warning" class="alert alert-warning">Running query, please wait</div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6 col-md-6">
+        Patient Identifier:
+        <input type="text" id='pq_identifier' value="AAA123"/>
+        <a href="#" id="pq_getPatient" class="btn btn-primary">Find</a>
+
+    </div>
+
+    <div class="col-sm-6 col-md-6">
+        <select class="form-control" id="pq_select_patient"></select>
+    </div>
+    <!--
+    <div class="col-sm-4 col-md-4">
+
+    </div>
+    -->
+</div>
+<hr  style='margin : 10px'/>
+<div class="row">
+    <div class="col-sm-2 col-md-2">
+        <h5>Profiles</h5>
+        <ul class="list list-unstyled">
+            {{#each profiles}}
+                <li><a href='#' class="pq_profile" data-name="{{name}}">{{name}}</a> </li>
+            {{/each}}
+        </ul>
+    </div>
+    <div class="col-sm-2 col-md-2">
+        <h5>Resource</h5>
+        <div id="pq_resources"></div>
+        {{#each resources}}
+            <div>
+                <input type='radio' name='pq_resource'/> {{this}}
+            </div>
+
+        {{/each}}
+        <br />
+        <div><a href="#" class="btn btn-danger" id="pq_execute">Query</a> </div>
+    </div>
+    <div class="col-sm-2 col-md-2">
+        <h5>Results</h5>
+        <div id="pq_results"></div>
+    </div>
+    <div class="col-sm-6 col-md-6">
+        <strong><div class="row text-center" style='margin-top: 0px' id="pq_resourceid"></div></strong>
+        <textarea class="form-control" rows="25" id="pq_one_result"></textarea>
+    </div>
+</div>
