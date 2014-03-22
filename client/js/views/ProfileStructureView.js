@@ -1,102 +1,28 @@
 /**
- * Created with JetBrains WebStorm.
- * User: davidha
- * Date: 17/03/14
- * Time: 9:43 AM
- * To change this template use File | Settings | File Templates.
+ * The view to edit/add a structure...
  */
 
 
-var ProfileExtensionView =  Backbone.View.extend({
+var ProfileStructureView =  Backbone.View.extend({
     events : {
-        "click #eeSave" : "saveExtension"
+        "click #esSave" : "saveStructure"
     },
 
-    saveExtension : function() {
-        //update the extension
-        var isNew = false;
-        if (!$('#eeCode').val()) {
-            alert('An extension must have a code. No changes saved.');
-            return;
-        }
-
-        var extension = this.meta.extension;    //for right now, assume update
-        if (!extension) {
-            isNew = true;
-            extension = {definition : {}};
-        }
-
-
-        extension.code=$('#eeCode').val();
-        extension.definition.short=$('#eeShort').val();
-        extension.definition.formal=$('#eeFormal').val();
-        extension.definition.min=$('#eeMin').val();
-        extension.definition.max=$('#eeMax').val();
-        extension.definition.type = [{code:$('#eeDataType').val()}];
-
-        extension.context= [$('#eeContextResource').val()];
-
-        if ($('#eeIsModifier').is(':checked')) {
-            extension.definition.isModifier = true;
-        } else {
-            extension.definition.isModifier = false;
-        }
-
-
-        //get the value set (if selected)
-        var vsValue = $('#eeValueSet').val();
-        if (vsValue) {
-            var vsText = $("#eeValueSet option:selected").text();
-            extension.definition.binding = {name:vsText,referenceResource: {reference :vsValue}};
-        } else {
-            extension.definition.binding ;
-        }
-
-        //update the model...
-
-        if (isNew) {
-            this.model.addExtension(extension);
-        } else {
-            this.model.updateExtension(extension);
-        }
-
-
-
-
-        $('#editExtensionDlg').modal('hide');
-
-        //let the world know that the extension was modified - the profile can be re-drawn...
-        this.trigger('profileExtension:updated');
+    saveStructure : function() {
 
     },
-    initialize : function() {
-        this.meta = {};     //keep my properties - eg the extension  - in a separate property...
-    },
-    setCode : function(code){
-        var that = this;
-        //called when the extension is being edited. We locate the existing extension and set it as a property
-        //of the view - a more elegant solution might be to create another BB model...
-        if (code) {
-            var model = this.model.toJSON();
-            _.each(model.extensionDefn,function(ext){
-                if (ext.code === code) {
-                    that.meta.extension = ext;
-                }
-            })
-        } else {
-            delete that.meta.extension;
-        }
-
+    setPath : function(path) {
+        //set the path that is to be edited...
+        this.path = path;
+        console.log(path);
     },
     render : function(){
-        //this.undelegateEvents();
+
         var that=this;
-
-
 
         //retrieve the template the first time render is called...
         if (! this.template) {
-            $.get('templates/editExtension.html',function(html){
+            $.get('templates/editStructure.html',function(html){
                 that.template = Handlebars.compile(html);
                 that.draw();
             })
@@ -108,6 +34,11 @@ var ProfileExtensionView =  Backbone.View.extend({
     draw : function(){
         var that = this;
 
+        var json = this.model.toJSON();
+        console.log(json);
+
+
+/*
         //get the existing extension (if any)
         var extension = this.meta.extension;
         if (!extension ) {
@@ -117,9 +48,15 @@ var ProfileExtensionView =  Backbone.View.extend({
             extension.definition.max = 1;
             extension.definition.type = [{code:'string'}];
         }
-        //now render the template, setting the current values
-        this.$el.html(this.template(extension));      //render the dialog
 
+        */
+        //now render the template, setting the current values
+        console.log(this.$el);
+        this.$el.html(this.template(json));      //render the dialog
+
+        $('#editStructureDlg').modal();
+
+/*
         //some of the elements - like dropdowns and checkboxes - need to be set separately
         //there's likely a more elegant way to do this...
        // if (extension) {
@@ -158,8 +95,8 @@ var ProfileExtensionView =  Backbone.View.extend({
 
             //---------set the valueset -------------
             var vsID = "";
-            if (extension.definition.binding) {
-                vsID = ext.definition.binding.referenceResource.reference;
+            if (extension.definition.binding && extension.definition.binding.referenceResource) {
+                vsID = extension.definition.binding.referenceResource.reference;
             }
             var ar = that.meta.colVS.toJSON();
             //console.log(ar);
@@ -192,7 +129,7 @@ var ProfileExtensionView =  Backbone.View.extend({
             }
 
         })
-
+*/
 
     }
 })

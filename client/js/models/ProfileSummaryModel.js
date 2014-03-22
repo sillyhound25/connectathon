@@ -2,20 +2,47 @@
  * Generate a summary of the profile. This might be better as a collection plus smaller models eventually..
  */
 
+
+ProfileSummaryItemModel = Backbone.Model.extend({
+    defaults : {
+        path : "",
+        min : 0,
+        max : 1,
+        datatype : "",
+        description : "",
+        type : "",
+        resource : "",
+        profileid : ""
+    }
+})
+
+ProfileSummaryItemCollection = Backbone.Collection.extend({
+    model : ProfileSummaryItemModel
+});
+
+
 ProfileSummaryModel = Backbone.Model.extend({
 
 
-    //generate teh summary...
+    //generate the summary...
     getSummary : function(profileModel,callback) {
         //set the profile to generate a summary of
         var profile = profileModel.get('content');    //the FHIR profile
 
+
+
+        //todo - this check may not be needed as eventually we'll be slicing not just extending...
         if (! profile.extensionDefn) {
             callback('No extensions have been defined yet');
             return;
         }
 
         //find all the resources that this profile refrences...
+
+        //var models = new ProfileSummaryItemCollection();
+
+
+        //todo the resoruces collection is the original - will replace with models..
         var summary = {resources : {}}
         $.each(profile.extensionDefn,function(inx,ext){
             //console.log(ext)
@@ -29,10 +56,12 @@ ProfileSummaryModel = Backbone.Model.extend({
 
 
         //create the array of tasks for async...
+        //each task is to retrieve the base definition for resources in this profile.
+        //todo this will require re-factoring as at the moment there must be an extension forst...
         var arTasks = [];
         $.each(summary.resources,function(resourceName) {
             arTasks.push(function(cb){
-                //console.log('here',resourceName)
+                //get the profile. Note that this will be a 'contains' string search, so can return multiple matches...
                 $.get( "/api/profile/"+resourceName+"/FHIR Project", function( data ) {
                     summary.resources[resourceName].raw = data;
                     //console.log('back')
@@ -59,8 +88,28 @@ ProfileSummaryModel = Backbone.Model.extend({
         //get all the structures that are defined in this profile, and all extensions for this resorucetype
         function getStructures(resourceName,profileBundle,cb){
 
+            //possible 'structures' is a better name than 'properties'
             var arStructures = summary.resources[resourceName].properties;
-            var resource = profileBundle.entry[0].content;
+            summary.resources[resourceName].models =  new ProfileSummaryItemCollection();
+            var models = summary.resources[resourceName].models;        //just a convenience variable...
+            //var models = new ProfileSummaryItemCollection();
+            //because there may be multiple returns we need to search the bundle...
+            var resource;
+            var cnt = 0;        //the count of all properties for this resource in this profile...
+            $.each(profileBundle.entry,function(inx,entry){
+                //>>>>>  assume that the name of the profile is the same as the resourceName
+                if (entry.content.name.toLowerCase() === resourceName.toLowerCase()){
+                    resource = entry.content;
+                }
+            })
+
+            if (! resource) {
+                alert('The profile for the ' + resourceName + ' resource was not found');
+                cb();
+            }
+            //var resource = profileBundle.entry[0].content;
+
+            //go through all the structures defined in the core definition for this resource.
             $.each(resource.structure[0].element, function(inx,el){
                 //console.log(el);
                 if (el.definition.type) {
@@ -68,51 +117,96 @@ ProfileSummaryModel = Backbone.Model.extend({
                     var type = el.definition.type[0].code;
                     //don't include extensions on the standard profile - they all have them and it's clutter at the moment...
                     if (type.toLowerCase() !== 'extension') {
-                        arStructures.push({path : el.path, description: el.definition.short,type:type,min:el.definition.min,max:el.definition.max})
 
+                        //now see if there is a structure defined in the profile that matches the resource name
+                        //and path. If there is, then that is what we'll include in the list of 'properties' (where a
+                        //'property' could be core, profiled or an extension). Otherwise we'll use the core
+
+                        var modelFromProfile = false;
+
+                        if (profile.structure) {
+                            //does the profile have any structures? (note visibility due to js closure...
+                            //if so check each strcutire to find one that matches this resource...
+                            _.each(profile.structure,function(struc){
+                                if (struc.name.toLowerCase() === resourceName.toLowerCase()) {
+                                    //yep, we've got at least one modification for this 
+                                }
+                            })
+
+                        }
+
+
+
+                        if (! modelFromProfile) {
+                            arStructures.push({path : el.path, description: el.definition.short,type:type,
+                                min:el.definition.min,max:el.definition.max,resource:resourceName,type:'core'})
+
+                            //create the model - this will be the way forward...
+                            models.push(new ProfileSummaryItemModel({
+                                profileid : profileModel.get('id'),
+                                path : el.path,
+                                description: el.definition.short,
+                                datatype:type,
+                                min:el.definition.min,
+                                max:el.definition.max,
+                                resource:resourceName,
+                                type:'core'     //indicates that this model represents the core definition. It may be overridden by a profile of course...
+                            }));
+
+                        }
+
+                        cnt++;
                         //console.log(el);
                     }
 
                 } else {
                     //just add the name...
-                    arStructures.push({path : el.path, description: el.definition.short,type:"----------"})
+                    arStructures.push({path : el.path, description: el.definition.short,type:"----------",resource:resourceName})
                 }
 
             })
 
 
             //now add the extensions that this profile defines for this resource...
-            arStructures.push({path : '-------', description: '-------',type:"----------"})
+            arStructures.push({path : '-------', description: '-------',type:"----------",resource:resourceName})
             //console.log(Z.currentProfile);
             $.each(profile.extensionDefn,function(inx,ext){
                 //console.log(ext)
 
                 if (ext.context[0].toLowerCase() === resourceName) {
                     //only the extensions that apply to this profile
+                    cnt++;
                     var type = '?????';
                     if (ext.definition.type) {
                         type = ext.definition.type[0].code;
                     }
 
-                    arStructures.push({path : ext.code, description: ext.definition.short,type:type,min:ext.definition.min,max:ext.definition.max})
+                    arStructures.push({path : ext.code, description: ext.definition.short,type:type,
+                        min:ext.definition.min,max:ext.definition.max,resource:resourceName,type:'ext'})
+
+                    models.push(new ProfileSummaryItemModel({
+                        profileid : profileModel.get('id'),
+                        path : ext.code,
+                        description: ext.definition.short,
+                        datatype:type,
+                        min:ext.definition.min,
+                        max:ext.definition.max,
+                        resource:resourceName,
+                        type:'ext'      //indicates that this is an extension from the profile
+                    }));
                 }
 
 
             })
 
+            //todo ========= here is where we'll get the structural profile elements...
+
+            summary.resources[resourceName].count = cnt;
+
 
 
             cb();
         }
-
-
-
-
-
-
-
-
-
 
     }
 

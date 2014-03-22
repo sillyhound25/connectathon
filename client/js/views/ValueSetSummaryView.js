@@ -1,9 +1,5 @@
 /**
- * Created with JetBrains WebStorm.
- * User: davidha
- * Date: 17/03/14
- * Time: 5:30 PM
- * To change this template use File | Settings | File Templates.
+ *Display teh contents of a ValueSet. Editing not allowed.
  */
 
 var ValueSetSummaryView = Backbone.View.extend({
@@ -36,6 +32,7 @@ var ValueSetSummaryView = Backbone.View.extend({
             vsResource.readOnly = true;
 
             $('#modal-content').html(that.template(vsResource));    //use the BS template to write out the dialog
+
             $('#generalDlgTitle').html('Contents of ValueSet')
 
 

@@ -28,6 +28,8 @@
     <script src="js/views/ProfileSummaryView.js"></script>
     <script src="js/views/ProfileTestFormView.js"></script>
     <script src="js/views/ProfileQueryView.js"></script>
+    <script src="js/views/ProfileContentView.js"></script>
+    <script src="js/views/ProfileStructureView.js"></script>
     <script src="js/models/ProfileModel.js"></script>
     <script src="js/models/ProfileSummaryModel.js"></script>
     <script src="js/models/ProfileTestFormModel.js"></script>
@@ -99,35 +101,33 @@
 
         <div class="myPane" id="profileTab">
             <div class="row">
-                <div class="col-md-2 well">
-                    <!--
-                    <h4>Resources</h4>
-                    <ul class="list-unstyled" id="coreResourceList">
-                        -->
-                        <!--<li><a class="selProfile" data-name="patient" data-pub='FHIR Project'>Patient</a></li>-->
-                    </ul>
+                <div class="col-md-3 wellXXX">
 
                     <h4>Orion Profiles</h4>
                     <div id="orionProfilesDiv"></div>
                 </div>
 
-                <div class="col-md-10">
+                <div class="col-md-9">
                     <!--
                                         <div id="workAreaProfile"></div>-->
-
                     <ul class="nav nav-tabs">
                         <li class="pull-right"><a href="#profileTestDataSubTab" data-toggle="tab">Test Data</a></li>
-                        <li class="pull-right"><a href="#profileSummarySubTab" data-toggle="tab">Summary</a></li>
-                        <li class="active pull-right"><a href="#profileDetailSubTab" data-toggle="tab">Detail</a></li>
+                        <li class="pull-right"><a href="#profileContentSubTab" data-toggle="tab">Content</a></li>
+                        <li class="pull-right"><a href="#profileSummarySubTab" data-toggle="tab">All Properties</a></li>
+                        <li class="active pull-right"><a href="#profileDetailSubTab" data-toggle="tab">Extensions</a></li>
 
                     </ul>
-
-                    <div class="tab-content">
-
+                    <br />
+                    <div class="tab-content" >
 
                         <div class="tab-pane active" id="profileDetailSubTab">
-                            <h4>Profile Detail</h4>
+                            <!--<h4>Profile Detail</h4>-->
                             <div id="workAreaProfile"></div>
+                        </div>
+
+                        <div class="tab-pane" id="profileContentSubTab">
+                            <!--<h4>Profile Detail</h4>-->
+                            <div id="workAreaContentProfile"></div>
                         </div>
 
                         <div class="tab-pane" id="profileSummarySubTab">
@@ -200,6 +200,7 @@
 
 
     <div id="editExtensionDiv"></div>
+    <div id="editStructureDiv"></div>
     <div id="modalDialogDiv"></div>
 </div>
 
@@ -213,13 +214,12 @@
 
         //activate the navbar tags...
         $('.myPane').hide();        //initially hide all the panes...
-        $('#homeTab').show();       //show the home tab
-        //$('#profileTab').show();       //show the profile tab
+        //$('#homeTab').show();       //show the home tab
+        $('#profileTab').show();       //show the profile tab
 
 
 
 
-        //$('#profileSummarySubTab').tab('show');
 
         //activate the tabs on the navbar
         $(".navMainOption").on('click',function(ev){
@@ -231,59 +231,12 @@
             $('#'+paneToShow).show();
         })
 
+        Handlebars.registerHelper('proper',function(str){
+            return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+        })
+
     })
 
-
-/*
-
-
-function showCurrentProfile(Z) {
-    //use the BS template to lay out the profile...
-
-
-
-
-
-
-
-    //the handler for when the valueSet detail link is selected.
-    $('.vsInExt').on('click',function(ev){
-        var vsURI = ev.currentTarget.getAttribute('data-code');
-        //alert(encodeURIComponent(vsURI));
-
-        //get teh resource. Note this is the actual resource - not a bundle.entry
-        $.get( "/api/valueset/id/"+encodeURIComponent(vsURI), function( vsResource ) {
-            //alert(data);
-            console.log(vsResource)
-            var genDialogFrame = $('#generalModelDlg').html();      //the frams for the modal dialog
-            $('#modalDialogDiv').html(genDialogFrame);      //write the frame to the DOM
-
-            var model = {content:vsResource};
-            model.id = vsURI;
-            model.readOnly = true;
-
-            $('#modal-content').html(Z.template.oneVS(model));    //use the BS template to write out the dialog
-
-
-
-            //and show the modal...
-            $('#generalDlg').modal();
-
-
-        });
-    })
-
-    //console.log(Z.currentProfile);
-
-    //the handler when an existing extension is selected for editing/display
-    $('.profile-extension').on('click',function(ev){
-        var code = ev.currentTarget.getAttribute('data-code');      //the code of the extension
-        showOneExtension(Z,code);       //displays the modal dialog for editing an extension
-    })
-
-}
-
-*/
 
 </script>
 
@@ -309,6 +262,7 @@ function showCurrentProfile(Z) {
 </script>
 
 
+<!-- Mediator must be last...-->
 <script src="js/mediator.js"></script>
 
 

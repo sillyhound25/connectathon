@@ -72,8 +72,15 @@ profileExtensionView.meta.dataTypeList = dataTypeList;      //the permissable da
 profileExtensionView.meta.colVS = colVS;    //the collection of known valuesets (or at least, those we can choose from)
 profileExtensionView.meta.resourceList = resourceList;
 
+var profileStructureView = new ProfileStructureView({el:$('#editStructureDiv')});
+
+
 var profileSummaryView = new ProfileSummaryView({el:$('#workAreaSummaryProfile')});       //generate a profile summary
 profileSummaryView.render();
+
+var profileContentView = new ProfileContentView({el:$('#workAreaContentProfile')});       //generate a profile summary
+//profileContentView.render();
+
 
 var profileTestFormView = new ProfileTestFormView({el:$('#workAreaTestData')});       //generate a test form...
 profileTestFormView.meta.colVS = colVS;    //needse the valueset
@@ -88,15 +95,18 @@ Backbone.listenTo(listProfiles,'profileList:select',function(vo){
     profileDetailView.setModel(selectedModel);
     profileSummaryView.model = selectedModel;
     profileTestFormView.model = selectedModel;
+    profileContentView.setModel(selectedModel);     //set the model and render
 
     //make sure the details tab is displayed...
     $('.nav-tabs a[href="#profileDetailSubTab"]').tab('show');
+
     //and render the details of the profile
     profileDetailView.render();
 });
 
-//a new profile
+//creating a new profile
 Backbone.listenTo(listProfiles,'profileList:new',function(vo){
+    $('.nav-tabs a[href="#profileDetailSubTab"]').tab('show');
     profileDetailView.model = null;     //this means no model - ie new...
     profileDetailView.render();
 })
@@ -119,12 +129,12 @@ Backbone.listenTo(profileDetailView,'profileDetail:addExtension',function(vo){
     profileExtensionView.model = selectedModel;
     profileExtensionView.setCode("");   //an empty code will mean a new extension...
     profileExtensionView.render();
-
 });
 
 //the user wishes to view a valueset from within a profile...
 Backbone.listenTo(profileDetailView,'profileDetail:showVS',function(vo){
-    valueSetSummaryView.render(vo.uri)
+
+    valueSetSummaryView.render(vo.uri);
 })
 
 
@@ -135,7 +145,9 @@ Backbone.listenTo(profileDetailView,'profile:added',function(vo){
     colProfile.fetch({
         success : function() {
             $('#loading').hide();
-            listProfiles.render();      //render the list of valuesets...
+            listProfiles.render();      //render the profile list
+            profileQueryView.setProfiles(colProfile);
+            profileQueryView.render();  //render the query view (has a list of profiles)
         },
         error : function() {
             alert('There was an error loading the Profiles')
@@ -158,6 +170,32 @@ Backbone.listenTo(profileDetailView,'profile:updated',function(vo){
 });
 
 
+Backbone.on('profileSummary:slice',function(vo){
+    console.log(vo);
+
+
+        var selectedProfileModel = colProfile.findModelByResourceID(vo.profileid);       //the vs selected in the list view
+
+    console.log(selectedProfileModel)
+        if (selectedProfileModel) {
+            if (vo.type==='ext') {
+                //this is an extensio
+                //todo - changes are not being saved here...
+                profileExtensionView.model = selectedProfileModel;
+                profileExtensionView.setCode(vo.path);  //the code of the extension is in the path in the summary view...
+                profileExtensionView.render();
+            } else {
+                //this is a structure
+                profileStructureView.model = selectedProfileModel;     //this is a profile model
+                profileStructureView.setPath(vo.path);  //the code of the extension is in the path in the summary view...
+                profileStructureView.render();
+            }
+        } else {
+            alert('No model with the ID ' + vo.profileid + " was found...")
+        }
+
+
+});
 
 colProfile.fetch({
     success : function() {

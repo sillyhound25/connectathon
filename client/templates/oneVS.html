@@ -23,7 +23,7 @@
             <div class="col-md-10">
                 <table class="table table-bordered table-condensed">
                     <tr><th>Display</th><th>Code</th>
-                        {{#unless ../readOnly}}
+                        {{#unless readOnly}}
                         <td>Action</td>
                         {{/unless}}
                     </tr>
@@ -31,12 +31,12 @@
                     <tr>
                         <td>{{display}}</td>
                         <td>{{code}}</td>
-                        {{#unless ../../readOnly}}
+                        {{#unless ../readOnly}}
                         <td><a class="define_concept_del" data-code= "{{code}}" href="#">Delete</a> </td>
                         {{/unless}}
                     </tr>
                     {{/each}}
-                    {{#unless ../readOnly}}
+                    {{#unless readOnly}}
                     <tr>
                         <td><input type='text' id='define_new_display'/> </td>
                         <td><input type='text' id='define_new_code'/> </td>
@@ -56,7 +56,9 @@
         {{/unless}}
     </div>
     <div class="col-md-2">
+        {{#unless readOnly}}
         <a href='#' class="btn btn-primary pull-right" id='save_change_vs'>Save Changes</a>
+        {{/unless}}
     </div>
 
 

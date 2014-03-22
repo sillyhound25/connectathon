@@ -25,13 +25,13 @@ var ProfileTestFormView = Backbone.View.extend({
         }
         query.params.push({name:'identifier',value:v});
         var queryString = JSON.stringify(query);
-        console.log(queryString);
-        //$('#pq_select_patient').empty();
-        //$('#pq_warning').show();
+        //console.log(queryString);
+
         $('#td_lookup').text('Please wait...')
         $.get('/api/generalquery/'+queryString,function(bundle){
             //console.log(bundle);
-            $('#td_lookup').text('Find Patient')
+            $('#td_lookup').text('Find Patient');
+            $('#submitTD').attr('disabled',false);        //allow the form to be submitted...
             var numPatients = bundle.entry.length;
 
             switch (numPatients) {
@@ -43,6 +43,23 @@ var ProfileTestFormView = Backbone.View.extend({
                     alert('Patient found. The new resources will be attached to that patient');
                     var ar = bundle.entry[0].id.split('/');
                     //console.log(bundle.entry[0].id,ar);
+                    try {
+                        //set the name properties
+                        //console.log(bundle);
+                        var patientFName = bundle.entry[0].content.name[0].given[0];
+                        var patientLName = bundle.entry[0].content.name[0].family[0];
+                        var el = $("input[data-code='patient-fname']");
+                        $(el).val(patientFName).attr('disabled',true);
+                        el = $("input[data-code='patient-lname']");
+                        $(el).val(patientLName).attr('disabled',true);
+
+                        $('#patientcreatedID').html(bundle.entry[0].id);
+
+
+                    } catch (err){
+                        console.log("Error setting name property: " + err)
+                    }
+
                     that.patientID = "Patient/"+ar[ar.length-1];
                     //console.log(that.patientID);
                     break;
@@ -66,6 +83,9 @@ var ProfileTestFormView = Backbone.View.extend({
             alert('Please select a profile first');
             return;
         }
+
+        this.patientID = "";    //re-set the patient ID
+
         var profile = this.model.get('content');       //the fhir profile object...
         var colVS = this.meta.colVS;
         var profileTestFormModel = new ProfileTestFormModel();
@@ -75,6 +95,8 @@ var ProfileTestFormView = Backbone.View.extend({
             //data.warnings are warnings
             console.log(data)
             that.render(data);
+            //now disable the submit button until the patient ID is checked...
+            $('#submitTD').attr('disabled',true);
         })
 
     },
@@ -90,18 +112,36 @@ var ProfileTestFormView = Backbone.View.extend({
 
         //the patientID will only be set if the patient was checked, and there was a single patient with the given identifier
         var sampleData = {profileID:$('#td_profileid').val(),items:[],patientID : this.patientID};
-        $(".data").each(function(inx,el){
+        //get all the controls marked as data controle in the container...
+        this.$el.find(".tf-data").each(function(inx,el){
             var value = $(el).val();
             var dataType = $(el).attr('data-dataType');
+            //need to fix the value for boolean datatypes.
+            switch (dataType) {
+
+                case 'boolean' : {
+                    if (value === 'on') {
+                        value = true;
+                    }
+                    break;
+                }
+            }
             console.log(dataType);
+            //todo - need to decied what to do with boolean false - do we always send booleans???
             if (value) {
                 var code = $(el).attr('data-code');
-                //code is in the format <resource>-ext-<code> if an extension
-                //or <resource>-<code> if not.
-                if (code.indexOf('patient-ext') > -1) {
-                    areThereExtensionsToPatient = true;
+                if (code) {
+                    //code is in the format <resource>-ext-<code> if an extension
+                    //or <resource>-<code> if not.
+                    if (code.indexOf('patient-ext') > -1) {
+                        areThereExtensionsToPatient = true;
+                    }
+                    sampleData.items.push({code:code,value:value,dataType:dataType})
+                } else {
+                    alert('value of '+value+ " didn't have a code...")
+                    console.log();
                 }
-                sampleData.items.push({code:code,value:value,dataType:dataType})
+
             }
 
         })
@@ -117,6 +157,10 @@ var ProfileTestFormView = Backbone.View.extend({
         $('#td_waiting').show();
         $('#submitTD').attr('disabled',true);
 
+
+//alert('submit')
+        //return;
+
         // console.log(sampleData);
         //post the sample to the server
         $.ajax({
@@ -126,21 +170,39 @@ var ProfileTestFormView = Backbone.View.extend({
                 'content-type' : 'application/json'
             },
             data: JSON.stringify(sampleData),
+            //the return from the proxy server will always be 200. The repsponse form the remote (FHIR) server
+            //will be in the statusCode property
             success: function(data,status,xhr) {
                 console.log(data);
                 //alert('The resources have been successfully saved.')
 
-                $('#td_success').show();
-                //now update the ID's that were created by the server...
-                $.each(data.response.entry,function(inx,ent){
-                    //each entry contains the id of the created resource.
-                    var ar = ent.id.split('/');
-                    var resource = ar[ar.length-2].toLowerCase();
-                    var logicalId = ar[ar.length-1];        //not currently used...
-                    var elID = resource+'createdID';
-                    $('#'+elID).html(ent.id);
-                    //console.log(ar)
-                })
+                if (data.statusCode === 200) {      //note that success for a single resource is 201 but for a bundle is 200
+                    $('#td_success').show();
+                    //now update the ID's that were created by the server...
+                    if (data.response.entry){
+                        $.each(data.response.entry,function(inx,ent){
+                            //each entry contains the id of the created resource.
+
+                            var ar = ent.id.split('/');
+                            var resource = ar[ar.length-2].toLowerCase();
+                            var logicalId = ar[ar.length-1];        //not currently used...
+                            var elID = resource+'createdID';
+                            $('#'+elID).html(ent.id);
+
+                        })
+                    }
+                    } else {
+                        //there was an error. If there's an operationOutcome, then show that otherwise just display the whole body
+                        var msg = JSON.stringify(data.response);
+                        if (data.response.issue) {
+                            msg = "";
+                            _.each(data.response.issue,function(issue){
+                                msg += issue.details + " ("+issue.severity + ")\n";
+                            })
+                        }
+                        alert("There was a problem: " + msg)
+
+                }
             },
             error : function(xhr,status,err) {
                 alert('There was an error: ' + err)
@@ -149,7 +211,7 @@ var ProfileTestFormView = Backbone.View.extend({
             complete : function(xhr,status) {
                 $('#td_form_data').show();
                 $('#td_waiting').hide();
-                $('#submitTD').attr('disabled',true);
+                //$('#submitTD').attr('disabled',false);
             }
         });
 
@@ -170,8 +232,13 @@ var ProfileTestFormView = Backbone.View.extend({
     draw : function(rows){
         //actually render out the collection...
         var template = this.template;
-        //console.log(rows)
-        this.$el.html(template(rows));
+        console.log(rows)
+        if (rows) {
+            this.$el.html(template(rows));
+        } else {
+            this.$el.html(template({}));
+        }
+
 
         if (!rows) {
             //there is no form yet...

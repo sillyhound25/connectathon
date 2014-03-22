@@ -7,7 +7,7 @@ var ProfileQueryView = Backbone.View.extend({
         var t = "{{#each resources}}<div><input type='radio' name='pq_resource' value='{{this}}'/> {{this}}</div>{{/each}}";
         this.resourceTemplate = Handlebars.compile(t);
 
-        var t1 = "<ul>{{#each entry}}<li><a href='#' data-inx = '{{@index}}' class='pq_oneResult'>{{@index}}: {{title}}</a></li>{{/each}}</ul>";
+        var t1 = "<ul>{{#each entry}}<li><a href='#' data-inx = '{{@index}}' class='pq_oneResult'>Item {{@index}}</a></li>{{/each}}</ul>";
         this.resultsTemplate = Handlebars.compile(t1);
 
         //console.log(this.resourceTemplate)
@@ -43,10 +43,18 @@ var ProfileQueryView = Backbone.View.extend({
         var ar = patient.split('/');
         var logicalId = ar[ar.length-1];
         var query = {resource:resource,params : []};
-        query.params.push({name:'subject',value:logicalId});
+        //this is a problem with FHIR - some of the resources (notable the medications) use 'patient' not 'subject'
+        if (['medicationadministration','medicationprescription','medicationdispense','medicationstatement'].indexOf(resource.toLowerCase()) > -1) {
+            query.params.push({name:'patient',value:logicalId});
+        } else {
+            query.params.push({name:'subject',value:logicalId});
+        }
+
+
         var queryString = JSON.stringify(query);
         //console.log(queryString,patient,resource);
         this.clearResults();
+        console.log(queryString);
         $.get('/api/generalquery/'+queryString,function(bundle){
             that.resultBundle = bundle;
             console.log(bundle);
@@ -69,16 +77,26 @@ var ProfileQueryView = Backbone.View.extend({
         $('#pq_warning').show();
         $.get('/api/generalquery/'+queryString,function(bundle){
             console.log(bundle);
-            _.each(bundle.entry,function(ent){
-                var id = ent.id;
-                var name = 'Unknown';
-                try {
-                    name = ent.content.name[0].text;
-                } catch (ex){}
-
-                $('#pq_select_patient').append("<option value='"+id+"'>"+ name + " (" + id+")</option>");
-            })
             $('#pq_warning').hide();
+            if (bundle.entry.length === 0) {
+                alert('No patient found with that identifier')
+            } else {
+                _.each(bundle.entry,function(ent){
+                    var id = ent.id;
+                    var name = 'Unknown';
+                    try {
+                        name = ent.content.name[0].text;
+                    } catch (ex){}
+
+                    $('#pq_select_patient').append("<option value='"+id+"'>"+ name + " (" + id+")</option>");
+                })
+
+                if (bundle.entry.length > 1) {
+                    alert('Be warned: there are multiple patients with this identifier...');
+                }
+
+            }
+
         })
 
     },

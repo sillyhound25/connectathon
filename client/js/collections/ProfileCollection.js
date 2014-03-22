@@ -17,6 +17,18 @@ var ProfileCollection = Backbone.Collection.extend({
         _.each(this.models,function(model){
             ar.push(model.toJSON());
         })
+
+
+        //sort the list by name
+        ar.sort(function(a,b){
+            //console.log(a,b)
+            //todo - optimize this...
+            if (a.name.toLowerCase() < b.name.toLowerCase()) {
+                return -1
+            }  else return 1;
+        })
+        //console.log(ar)
+
         return ar;
     },
     parse : function(response,options) {

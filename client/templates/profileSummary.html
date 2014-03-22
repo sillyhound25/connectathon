@@ -1,23 +1,38 @@
 
+<style>
+    .notUsed {
+        text-decoration: line-through;
+    }
+</style>
+
 <div class="row">
     <div class="col-md-12">
         <div class="row">
-            <div class="col-md-5 col-sm-5"><h4>Profile Summary</h4></div>
+            <div class="col-md-5 col-sm-5">
+                <!--<h4>Profile Summary</h4>-->
+            </div>
             <div class="col-md-7 col-sm-7"><button  class="btn btn-success pull-right" id="btnCreateSummary">Generate summary</button></div>
         </div>
 
         <table class="table table-condensed table-bordered">
             <tr><th>Path</th><th>Mult</th><th>DataType</th><th>Description</th></tr>
             {{#each resources}}
-            <h4><tr class="info"><td colspan="4">{{@key}}</td> </h4>
-            {{#each this.properties}}
-            <tr>
-                <td>{{path}}</td>
-                <td>{{min}}..{{max}}</td>
-                <td>{{type}}</td>
-                <td>{{description}}</td>
-            </tr>
-            {{/each}}
+
+                    <tr class="info">
+                        <td colspan="4">
+                            <h5><div class="ps_resource" data-code="{{@key}}">{{proper @key}} ({{count}} items)</div></h5>
+                        </td>
+                    </tr>
+
+
+                {{#each this.properties}}
+                    <tr class="ps_row ps_row_{{resource}} {{#if notUsed}} notUsed {{/if}}">
+                        <td><a href='#' class="ps_row_item" data-type="{{type}}" data-path="{{path}}">{{path}}</a> </td>
+                        <td>{{min}}..{{max}}</td>
+                        <td>{{type}}</td>
+                        <td>{{description}}</td>
+                    </tr>
+                {{/each}}
             {{/each}}
         </table>
     </div>

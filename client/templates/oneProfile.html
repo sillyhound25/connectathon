@@ -1,3 +1,5 @@
+<!-- Display the contents of a single profile...-->
+
 <div id='updatingProfileMsg' class="alert alert-warning">Updating...</div>
 
 <div class="row">
@@ -55,18 +57,18 @@
                 <table class="table table-bordered table-condensed">
                     <tr><th>Path</th><th>isMod</th><th>min..max</th><th>Type</th></tr>
                     {{#each element}}
-                    {{#unless hide}}
-                    <tr>
-                        <td><div title='{{definition.formal}}'>{{path}}</div></td>
-                        <td>{{definition.isModifier}}</td>
-                        <td>{{definition.min}}..{{definition.max}}</td>
-                        <td>
-                            {{#each definition.type}}
-                            <div>{{code}}</div>
-                            {{/each}}
-                        </td>
-                    </tr>
-                    {{/unless}}
+                        {{#unless hide}}
+                        <tr>
+                            <td><div title='{{definition.formal}}'>{{path}}</div></td>
+                            <td>{{definition.isModifier}}</td>
+                            <td>{{definition.min}}..{{definition.max}}</td>
+                            <td>
+                                {{#each definition.type}}
+                                <div>{{code}}</div>
+                                {{/each}}
+                            </td>
+                        </tr>
+                        {{/unless}}
                     {{/each}}
                 </table>
             </div>

@@ -14,6 +14,7 @@ var ProfileDetailView =  Backbone.View.extend({
         "click #add_new_extension": "addExtension",
         "click .vsInExt" : "showValueSet",
         "click #save_profile_changes" : "save",
+
          "blur .profile_header": function(){
              this.isDirty = true;
              $('#save_profile_changes').show();
@@ -89,6 +90,9 @@ var ProfileDetailView =  Backbone.View.extend({
     setModel : function(model) {
         this.model = model;
         this.isDirty = false;
+        //console.log(model);
+
+
     },
     addExtension : function(ev){
         //add a new extension
@@ -139,6 +143,8 @@ var ProfileDetailView =  Backbone.View.extend({
 
         if (this.model) {
             this.$el.html(this.template(this.model.toJSON()));
+//console.log(this.model.toJSON());
+            //$('#op_profilename_label').html(this.template(this.model.toJSON().name));
 
         } else {
             this.$el.html(this.template());

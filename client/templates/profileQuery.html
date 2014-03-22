@@ -7,7 +7,7 @@
 <div class="row">
     <div class="col-sm-6 col-md-6">
         Patient Identifier:
-        <input type="text" id='pq_identifier' value="AAA123"/>
+        <input type="text" id='pq_identifier' value="ABC1235"/>
         <a href="#" id="pq_getPatient" class="btn btn-primary">Find</a>
 
     </div>
@@ -25,9 +25,10 @@
 <div class="row">
     <div class="col-sm-2 col-md-2">
         <h5>Profiles</h5>
-        <ul class="list list-unstyled">
+
+        <ul class="list-group">
             {{#each profiles}}
-                <li><a href='#' class="pq_profile" data-name="{{name}}">{{name}}</a> </li>
+                <a class="pq_profile list-group-item" data-name="{{name}}"  href='#'>{{name}}</a>
             {{/each}}
         </ul>
     </div>

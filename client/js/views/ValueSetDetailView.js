@@ -51,6 +51,7 @@ var ValueSetDetailView =  Backbone.View.extend({
         }
         //console.log(newConcept);
         var vs = this.model.get('content'); //get the valueset
+        vs.define.concept = vs.define.concept || [];
         vs.define.concept.push(newConcept);
         this.model.set({'isDirty':true});
         this.render();

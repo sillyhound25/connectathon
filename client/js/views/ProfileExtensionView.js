@@ -1,9 +1,5 @@
 /**
- * Created with JetBrains WebStorm.
- * User: davidha
- * Date: 17/03/14
- * Time: 9:43 AM
- * To change this template use File | Settings | File Templates.
+ * The view to edit/add an extension...
  */
 
 
@@ -49,7 +45,7 @@ var ProfileExtensionView =  Backbone.View.extend({
             var vsText = $("#eeValueSet option:selected").text();
             extension.definition.binding = {name:vsText,referenceResource: {reference :vsValue}};
         } else {
-            extension.definition.binding ;
+            delete extension.definition.binding ;
         }
 
         //update the model...
@@ -158,8 +154,8 @@ var ProfileExtensionView =  Backbone.View.extend({
 
             //---------set the valueset -------------
             var vsID = "";
-            if (extension.definition.binding) {
-                vsID = ext.definition.binding.referenceResource.reference;
+            if (extension.definition.binding && extension.definition.binding.referenceResource) {
+                vsID = extension.definition.binding.referenceResource.reference;
             }
             var ar = that.meta.colVS.toJSON();
             //console.log(ar);

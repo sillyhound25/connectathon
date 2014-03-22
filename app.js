@@ -67,7 +67,7 @@ app.get('/api/coreResourceTestParams', function(req, res){
     params.patient = [];
     params.patient.push({code:'fname',display:'First Name',default:'John'})
     params.patient.push({code:'lname',display:'Last Name',default:'Cardinal'})
-    params.patient.push({code:'identifier',display:'Identifier',default:'ABC1234',lookupPatient:true})
+    params.patient.push({code:'identifier',display:'Identifier',default:'ABC1235',lookupPatient:true})
     params.practitioner = [];
     params.practitioner.push({code:'name',display:'Full Name',default:'Marcus Welby'})
     res.json(params);
@@ -519,7 +519,10 @@ function postBundleToFHIRServer(bundle,callback) {
     request(options,function(error,response,body){
         //console.log('bundle post')
         //console.log(JSON.parse(body));
-
+        if (error) {
+            console.log(error);
+            throw error;
+        }
         var resp = {};
         resp.bundle = bundle;
         resp.id = response.headers.location;

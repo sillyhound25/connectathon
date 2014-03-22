@@ -17,6 +17,7 @@ var QueryView = Backbone.View.extend({
         },
 
         "click .query_resource" : function(ev) {
+            $('.nav-tabs a[href="#qry_tab_params"]').tab('show');
             //select a resource and display the query parameters
             var resourceName = $(ev.currentTarget).attr('data-resource');
             this.resourceName = resourceName;

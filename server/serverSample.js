@@ -10,7 +10,7 @@ builder.encounter = require('./encounter.js');
 builder.condition = require('./condition.js');
 builder.allergy = require('./allergyIntolerance.js');
 builder.valueSet = require('./valueset.js');
-
+builder.medicationadministration = require('./medicationadministration.js');
 
 /* generate a bundle of resouces based on a profile that can be sent as a transaction to a server. The
  * principle is that there are functions (in the modules above) that can generate sample resources with some

@@ -5,14 +5,25 @@
 var ProfileListView = Backbone.View.extend({
     events : {
         "click .orionProfileDetail" : "showDetail",
-        "click #new_profile" : "newProfile"
+        "click #new_profile" : "newProfile",
+        "click .delete-profile" : "deleteProfile"
+    },
+    deleteProfile : function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        var id = $(ev.currentTarget).attr('data-id');
+        alert('This will delete the profile with the ID: ' + id);
     },
     newProfile : function(){
         this.trigger('profileList:new');
     },
     showDetail : function(ev) {
         //alert('dirty VS');
+        $('.orionProfileDetail').removeClass('active');
+
         var id = $(ev.currentTarget).attr('data-id');
+        $(ev.currentTarget).addClass('active');
+
         this.trigger('profileList:select',{id:id});
 
 
@@ -32,7 +43,7 @@ var ProfileListView = Backbone.View.extend({
     draw : function(){
         //actually render out the collection...
         var template = this.template;
-        console.log(this.collection)
+        //console.log(this.collection.toJSON())
         this.$el.html(template({entry:this.collection.toJSON()}));
     }
 

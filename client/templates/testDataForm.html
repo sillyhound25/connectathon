@@ -45,7 +45,7 @@
                                 {{#if lookupPatient}}
                                 <div class="row">
                                     <div class="col-sm-9 col-md-9">
-                                        <input class="form-control data" type="text" data-code = "{{../../name}}-{{code}}" value='{{default}}' placeholder="{{raw.definition.short}}"/>
+                                        <input class="form-control tf-data" type="text"  data-datatype="string" data-code = "{{../../name}}-{{code}}" value='{{default}}' placeholder="{{raw.definition.short}}"/>
 
                                     </div>
                                     <div class="col-sm-3 col-md-3">
@@ -53,27 +53,54 @@
                                     </div>
                                 </div>
                                 {{else}}
-                                <input class="form-control data" type="text" data-code = "{{../../name}}-{{code}}" value='{{default}}' placeholder="{{raw.definition.short}}"/>
+                                <input class="form-control tf-data" type="text" data-datatype="string" data-code = "{{../../name}}-{{code}}" value='{{default}}' placeholder="{{raw.definition.short}}"/>
                                 {{/if}}
                             </div>
                         </div>
                     {{/each}}
 
                     {{#each extensions}}
+
+
+
+                    {{#if isDate}}
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-3">{{raw.code}}</label>
+                        <div  class="col-sm-9 col-md-9">
+                            <input class="form-control tf-data" type="date" data-datatype="{{dataType}}" data-code = "{{../../name}}-ext-{{raw.code}}"  placeholder="{{raw.definition.short}}"/>
+                        </div>
+                    </div>
+                    {{/if}}
+
+
                         {{#if isInput}}
                             <div class="form-group">
                                 <label class="col-sm-3 col-md-3">{{raw.code}}</label>
                                 <div  class="col-sm-9 col-md-9">
-                                    <input class="form-control data" type="text" data-datatype="{{dataType}}" data-code = "{{../../name}}-ext-{{raw.code}}"  placeholder="{{raw.definition.short}}"/>
+                                    <input class="form-control tf-data" type="text" data-datatype="{{dataType}}" data-code = "{{../../name}}-ext-{{raw.code}}"  placeholder="{{raw.definition.short}}"/>
                                 </div>
                             </div>
                         {{/if}}
+
+
+
+                        {{#if isBoolean}}
+                        <div class="form-group">
+                            <label class="col-sm-3 col-md-3">{{raw.code}}</label>
+                            <div  class="col-sm-1 col-md-1">
+                                <input class="form-control tf-data pull-left" type="checkbox" data-datatype="{{dataType}}" data-code = "{{../../name}}-ext-{{raw.code}}" />
+                            </div>
+                        </div>
+                        {{/if}}
+
 
                         {{#if isDropdown}}
                             <div class="form-group">
                                 <label class="col-sm-3 col-md-3" >{{raw.code}}</label>
                                 <div  class="col-sm-9 col-md-9">
-                                    <select class="form-control data" type="text" data-datatype="{{dataType}}"  data-code = "{{../../name}}-ext-{{raw.code}}"  placeholder="{{raw.definition.short}}">
+
+                                    <select class="form-control tf-data" type="text" data-datatype="{{dataType}}"  data-code = "{{../../name}}-ext-{{raw.code}}"  placeholder="{{raw.definition.short}}">
+                                        <option value=""></option>
                                         {{#each vs.define.concept}}
                                         <option value="{{code}}">{{display}}</option>
                                         {{/each}}
@@ -81,6 +108,7 @@
                                 </div>
                             </div>
                         {{/if}}
+
                     {{/each}}
                 </div>
             <div><em>{{tip}}</em></div>
@@ -90,7 +118,7 @@
     </div>
     <div class="col-sm-4 col-md-4">
         <div class="pull-right">
-            <a href="#"  style="margin-top: 5px" class="btn btn-success " id="btnGenerateTD">Create Test Form</a>
+            <a href="#" class="btn btn-success " id="btnGenerateTD">Create Test Form</a>
             <div><a href="#" class="btn btn-primary" id="submitTD" style="margin-top: 5px">Submit Test Data</a></div>
         </div>
     </div>

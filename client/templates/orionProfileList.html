@@ -1,10 +1,29 @@
 <div class="row">
     <div class="col-md-12">
-        <ul class="list-unstyled">
+        <div>
+            <a href="#" id="new_profile" class="btn btn-info pull-right">New Profile</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <ul class="list-group">
             {{#each entry}}
-            <li><a class="orionProfileDetail" data-id="{{meta.id}}"  href='#'>{{name}}</a></li>
+
+            <a class="orionProfileDetail list-group-item" data-id="{{meta.id}}"  href='#'>{{name}}
+                <span style="cursor: hand"  data-id="{{meta.id}}" class="delete-profile pull-right"><i class="glyphicon glyphicon-remove"></i></span>
+            </a>
+
+            <!--
+            <li class="list-group-item active">
+
+                <a class="orionProfileDetail " data-id="{{meta.id}}"  href='#'>{{name}}</a>
+                <div class="orionProfileDetail " data-id="{{meta.id}}"  href='#'>{{name}}</div>
+            </li>-->
             {{/each}}
         </ul>
-        <div><a href="#" id="new_profile">New Profile</a></div>
+
     </div>
 </div>

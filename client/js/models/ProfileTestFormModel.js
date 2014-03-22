@@ -16,7 +16,7 @@ ProfileTestFormModel = Backbone.Model.extend({
         vo.profile = profile;
         vo.resource = [];  //an array of different resources
         //first, generate a object that has all extensions for all resources in the profile
-        console.log(profile);
+        //console.log(profile);
         $.each(profile.extensionDefn,function(inx,ext){
             //console.log(ext);
             var resource = ext.context[0].toLowerCase();      //the resource that this extends
@@ -30,8 +30,31 @@ ProfileTestFormModel = Backbone.Model.extend({
             if (ext.definition.type) {
                 oneInput.dataType =  ext.definition.type[0].code;    //we only look at the first..
                 if (! ext.definition.binding) {
-                    //this is a 'simple' input
-                    oneInput.isInput = true;
+                    //this is a 'simple' input. Could be a text box or a checkbox
+//console.log(oneInput.dataType.toLowerCase());
+                    switch ( oneInput.dataType.toLowerCase() ) {
+                        case 'boolean' : {
+                            oneInput.isBoolean = true;
+                            break;
+                        }
+                        case 'date' : {
+                            oneInput.isDate = true;
+                            break;
+                        }
+                        default : {
+                            oneInput.isInput = true;
+                            break
+
+                        }
+                    }
+                    /*
+                    if (oneInput.dataType.toLowerCase() === 'boolean') {
+                        oneInput.isBoolean = true;
+                    } else {
+                        oneInput.isInput = true;
+                    }
+                    */
+
                 } else {
                     //this is a binding to a valueset. We assume that we've loaded the valueset already - obviously not scaleable...
                     //but a simple matter to retrieve the the valueset direclty from the server if we need to
@@ -43,7 +66,7 @@ ProfileTestFormModel = Backbone.Model.extend({
                     var ar = colVS.toJSON();
 
                     $.each(ar,function(inx1,vs) {
-                        console.log(vs);
+                        //console.log(vs);
                         if (vs.meta.id === vsID) {
                             oneInput.vs = vs;   //again, actually an entry property...
                         }
@@ -80,12 +103,12 @@ ProfileTestFormModel = Backbone.Model.extend({
             //if there's no practitioner, then need to see if any of the resources being created need one...
             var needPractitioner = false;
             $.each(vo.resource,function(inx,res){
-                console.log(res)
+                //console.log(res)
                 if (needPractitionerList.indexOf(res.name) >-1) {
                     needPractitioner = true;
                 }
             })
-            console.log(needPractitioner)
+            //console.log(needPractitioner)
             if (needPractitioner){
                 vo.practitioner = {name:'practitioner',extensions:[],core:[]}
                 vo.resource.push(vo.practitioner);
@@ -129,10 +152,7 @@ ProfileTestFormModel = Backbone.Model.extend({
                 vo.resource.splice(0,0,patientEntry);
             }
 
-
-
-
-            console.log(vo);
+            //console.log(vo);
             callback(vo);
         })
 
