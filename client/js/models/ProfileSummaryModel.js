@@ -63,33 +63,43 @@ ProfileSummaryModel = Backbone.Model.extend({
         var arTasks = [];
         $.each(summary.resources,function(resourceName) {
             arTasks.push(function(cb){
-                //get the profile. Note that this will be a 'contains' string search, so can return multiple matches...
-                $.get( "/api/profile/"+resourceName+"/FHIR Project", function( data ) {
-                    //Backbone.fhirResourceCache
-                    summary.resources[resourceName].raw = data;
-
-
-                    $.each(profileBundle.entry,function(inx,entry){
-                        //>>>>>  assume that the name of the profile is the same as the resourceName
-                        if (entry.content.name.toLowerCase() === resourceName.toLowerCase()){
-                            resource = entry.content;
-                            Backbone.fhirResourceCache[resourceName] = entry;
-                        }
-                    })
-
-                    if (! resource) {
-                        alert('The profile for the ' + resourceName + ' resource was not found');
-                        cb();
-                    }
-
-
-
-                    //console.log('back')
-                    //pulls the properties from the resource and from the profile into the summary
-                    getStructures(resourceName,data,function(){
+                if (Backbone.fhirResourceCache[resourceName]) {
+                    console.log('load ' + resourceName + ' from cache')
+                    //if this resource has been cached, then don't need to retrieve it...
+                    getStructures(resourceName,Backbone.fhirResourceCache[resourceName],function(){
                         cb();       //and tell async we're done...
                     })
-                });
+
+                } else {
+
+                    //get the profile. Note that this will be a 'contains' string search, so can return multiple matches...
+                    $.get( "/api/profile/"+resourceName+"/FHIR Project", function( data ) {
+                        //Backbone.fhirResourceCache
+                        summary.resources[resourceName].raw = data;
+
+                        var resourceProfile;       //the entry object holding the profile resource...
+                        $.each(data.entry,function(inx,entry){
+                            //>>>>>  assume that the name of the profile is the same as the resourceName
+                            if (entry.content.name.toLowerCase() === resourceName.toLowerCase()){
+                                resourceProfile = entry.content;
+                                //save resource profile in cache...
+                                Backbone.fhirResourceCache[resourceName] = resourceProfile;     //the fhir representation of the profile
+                            }
+                        })
+
+                        if (! resourceProfile) {
+                            alert('The profile for the ' + resourceName + ' resource was not found');
+                            cb();
+                        } else {
+                            //console.log('back')
+                            //pulls the properties from the resource and from the profile into the summary
+                            getStructures(resourceName,resourceProfile,function(){
+                                cb();       //and tell async we're done...
+                            })
+                        }
+                    });
+
+                }
             })
         })
 
@@ -106,7 +116,7 @@ ProfileSummaryModel = Backbone.Model.extend({
 
 
         //get all the structures that are defined in this profile, and all extensions for this resorucetype
-        function getStructures(resourceName,profileBundle,cb){
+        function getStructures(resourceName,resource,cb){
 
             //possible 'structures' is a better name than 'properties'
             var arStructures = summary.resources[resourceName].properties;
@@ -117,7 +127,7 @@ ProfileSummaryModel = Backbone.Model.extend({
             var resource;
             var cnt = 0;        //the count of all properties for this resource in this profile...
 
-
+/*
             $.each(profileBundle.entry,function(inx,entry){
                 //>>>>>  assume that the name of the profile is the same as the resourceName
                 if (entry.content.name.toLowerCase() === resourceName.toLowerCase()){
@@ -131,6 +141,7 @@ ProfileSummaryModel = Backbone.Model.extend({
                 cb();
             }
 
+            */
 
             //go through all the structures defined in the core definition for this resource. We are using the path
             //as the discriminator - if a particluar path is defined in the profile then we use that, otherwise we use
@@ -154,13 +165,13 @@ ProfileSummaryModel = Backbone.Model.extend({
 
                         if (profile.structure) {
 
-                            console.log('profile has structure')
+                            //console.log('profile has structure')
 
                             //does the profile have any structures? (note visibility due to js closure...)
                             //if so check each strcutire to find one that matches this resource...
                             _.each(profile.structure,function(struc){
 
-                                console.log(struc)
+                                //console.log(struc)
 
                                 if (struc.name.toLowerCase() === resourceName.toLowerCase()) {
                                     //yep, we've got at least one modification for this resource

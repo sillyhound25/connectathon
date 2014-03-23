@@ -3,8 +3,8 @@
  * I'll do a real mediator when I figure out how to do it!
  */
 
-
-    Backbone.fhirResourceCache = [];
+//a cache of resource profiles. used by profileSummaryModel. keyed on resource name.
+Backbone.fhirResourceCache = {};
 
 
 var Mediator={};
@@ -205,13 +205,13 @@ Backbone.on('profileSummary:slice',function(vo){
 //when a structure.element is altered in the UI but not yet saved......
 Backbone.listenTo(profileStructureView,'element:updated',function(vo){
 
-    console.log(vo);
-    console.log( profileStructureView.profileModel);
+    //console.log(vo);
+    //console.log( profileStructureView.profileModel);
     //todo move this business logic to a model
     if (vo.type === 'core') {
         //this element comes from the core, so we simply add it to the profile...
         var profileModel = profileStructureView.profileModel;       //the profile model was set as an attribute when the profileStructureView was displayed...
-console.log(profileModel)
+//console.log(profileModel)
 
         var profileJson = profileModel.get('content');
 
@@ -224,7 +224,9 @@ console.log(profileModel)
         profileJson.structure.push(structure);
 
 
-        profileSummaryView.createSummary();
+        profileSummaryView.updatePath(vo.resourceName,vo.element.path);
+
+        //profileSummaryView.createSummary();
 
 
         //profileDetailView.render();

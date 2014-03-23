@@ -6,17 +6,49 @@
 var ProfileSummaryView = Backbone.View.extend({
     initialize : function() {
         var that = this;
-        this.childViews = [];       //this will contain all the child views that represent table rows...
+        this.childViews = {};       //this will contain all the child views that represent table rows...
         //get the template for the item views - todo needs refactoring...
         $.get('templates/profileSummaryItem.html',function(html){
             that.itemTemplate = Handlebars.compile(html);
         })
     },
     events : {
-        "click #btnCreateSummary" : "createSummary",
+        "click #btnCreateSummary" : "createAndShowSummary",
         "click .ps_resource" : "toggleResource"
     },
 
+    createAndShowSummary : function() {
+        //called when the 'create summary' button is clicked...
+        var that=this;
+        this.createSummary(function() {
+            that.render();
+        });
+    },
+    updatePath : function(resourceName,path) {
+        var that = this;
+        //update a single row in the summary table...
+        //first, re-generate the whole summary
+        this.profileSummaryModel.getSummary(this.model,function(err, arSummary){
+            //now locate the model and the view based on this path
+            that.arSummary = arSummary;
+            var resourceElements = that.arSummary.resources[resourceName];
+            _.each(resourceElements.models.models,function(m){
+                //console.log(path,resourceName,m)
+
+                if (m.toJSON().path === path) {
+                    console.log(m.toJSON())
+                    var view = that.childViews[resourceName+"_"+path];
+                    //m.set('path','XxXXXX');
+                    console.log(view);
+                    view.content = m.toJSON();
+                    view.model = m;
+                    view.render();
+                }
+            })
+
+
+        })
+    },
     toggleResource : function(ev){
         var resource = $(ev.currentTarget).attr('data-code');
         console.log(resource);
@@ -26,7 +58,7 @@ var ProfileSummaryView = Backbone.View.extend({
         //ps_row_{{resource}}
 
     },
-    createSummary : function(){
+    createSummary : function(callback){
         //generate the profile summary. This is quite time consuming...
         var that=this;
 
@@ -36,38 +68,41 @@ var ProfileSummaryView = Backbone.View.extend({
         })
         //console.log(this.model);
         var model = this.model;
-        var profileSummaryModel = new ProfileSummaryModel();
+        this.profileSummaryModel = new ProfileSummaryModel();
         //profileSummaryModel.setProfile(this.model);
         this.$el.html("Generating summary, please wait...");
-        profileSummaryModel.getSummary(model,function(err, arSummary){
+        this.profileSummaryModel.getSummary(model,function(err, arSummary){
             //console.log(err,arSummary);
           //  _.each(arSummary.resources,function(r){
            //     console.log(r.models.toJSON());
            // })
             that.arSummary = arSummary;
-            that.render(arSummary)
+           // that.render(arSummary)
             //console.log(models.toJSON());
+            if (callback) {callback();}
         })
 
     },
 
-    render : function(arSummary){
+    render : function(){
+
         var that=this;
         //retrieve the template the first time render is called...
         if (! this.template) {
             $.get('templates/profileSummaryContainer.html',function(html){
                 that.template = Handlebars.compile(html);
-                that.draw(arSummary);
+                that.draw();
             })
         } else {
-            this.draw(arSummary);
+            this.draw();
         }
     },
-    draw : function(arSummary){
+    draw : function(){
         var that = this;
         //actually render out the collection...
+
         var template = this.template;
-        this.$el.html(template(arSummary));
+        this.$el.html(template(this.arSummary));
 
         //$('#ps_content').html('content');
 
@@ -80,11 +115,11 @@ var ProfileSummaryView = Backbone.View.extend({
                 console.log(resourceName)
                 var colModels = res.models;     //this is a BB Collection
                 _.each(colModels.models,function(model,inx){
-                    console.log(model.toJSON())          //this is a BB model - not a fhir model!!!
+                    var jsonModel = model.toJSON();          //this is a BB model - not a fhir model!!!
                     //add a row with an ID. This will be the container for the child view...
                     var elID = 'tst'+inx;
                     var klass = "";
-                    if (model.toJSON().max === '0' || model.toJSON().max === 0) {
+                    if (jsonModel.max === '0' || jsonModel.max === 0) {
                         klass = " class='notUsed' ";
                     }
 
@@ -92,8 +127,9 @@ var ProfileSummaryView = Backbone.View.extend({
 
                     $('#ps_table tr:last').after("<tr "+klass+"id='"+ elID +"'></tr>");
                     //now create the child view responsible for this row...
+                    var key =resourceName + "_"+jsonModel.path;
                     var v = new ProfileSummaryItemView({model:model,el:$('#'+elID)});
-                    that.childViews.push(v);        //save a reference to the view. We'll need it to release the view to avoid zombies...
+                    that.childViews[key] = v;        //save a reference to the view. We'll need it to release the view to avoid zombies...
                     v.template = that.itemTemplate;
                     v.content = model.get('content');       //this is the json representation of the structure.element
                     v.resourceName = resourceName;
@@ -140,29 +176,12 @@ ProfileSummaryItemView = Backbone.View.extend({
 
     },
     render : function(){
-        //console.log(this.model.toJSON())
         var json = this.model.toJSON();
-
-      ///  if (json.max = 0) {
-        //    json.notUsed = true;
-       // }
-        //this.content =
-        //json.profileid = this.profileID;
-        //console.log(json);
+        console.log(json);
         this.$el.html(this.template({item:json}));
+        //this.$el.html(this.template({item:json}));
 
     }
 
 });
 
-
-/*
-* {{#with item}}
- <tr class="ps_row ps_row_{{resource}} {{#if notUsed}} notUsed {{/if}}">
- <td><a href='#' class="ps_row_item" data-type="{{datatype}}" data-path="{{path}}">{{path}}</a> </td>
- <td>{{min}}..{{max}}</td>
- <td>{{datatype}}</td>
- <td>{{description}}</td>
- </tr>
- {{/with}}
-* */

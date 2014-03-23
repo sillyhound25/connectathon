@@ -10,7 +10,7 @@ var ProfileStructureView =  Backbone.View.extend({
 
     saveStructure : function() {
 
-        var element = this.model;       //the JSON representation of a structire.element
+        var element = this.model;       //the JSON representation of a structure.element
 
         element.definition.min = $('#esMin').val();
         element.definition.max = $('#esMax').val();
