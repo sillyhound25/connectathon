@@ -10,11 +10,22 @@ var ProfileStructureView =  Backbone.View.extend({
 
     saveStructure : function() {
 
+        var element = this.model;       //the JSON representation of a structire.element
+
+        element.definition.min = $('#esMin').val();
+        element.definition.max = $('#esMax').val();
+
+
+        $('#editStructureDlg').modal('hide');
+
+        this.trigger('element:updated',{element:element,type:this.type,resourceName : this.resourceName});
+
+
     },
-    setPath : function(path) {
-        //set the path that is to be edited...
-        this.path = path;
-        console.log(path);
+    setType : function(type) {
+        //the type can be 'core' or 'prof' - whether this element comes from the core, or is already profiled...
+        this.type = type;
+        //console.log(path);
     },
     render : function(){
 
@@ -34,9 +45,12 @@ var ProfileStructureView =  Backbone.View.extend({
     draw : function(){
         var that = this;
 
-        var json = this.model.toJSON();
+        var json = this.model;
         console.log(json);
 
+
+
+        //eePath
 
 /*
         //get the existing extension (if any)
@@ -51,7 +65,7 @@ var ProfileStructureView =  Backbone.View.extend({
 
         */
         //now render the template, setting the current values
-        console.log(this.$el);
+        //console.log(this.$el);
         this.$el.html(this.template(json));      //render the dialog
 
         $('#editStructureDlg').modal();

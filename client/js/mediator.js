@@ -4,6 +4,7 @@
  */
 
 
+    Backbone.fhirResourceCache = [];
 
 
 var Mediator={};
@@ -178,6 +179,7 @@ Backbone.on('profileSummary:slice',function(vo){
 
     console.log(selectedProfileModel)
         if (selectedProfileModel) {
+
             if (vo.type==='ext') {
                 //this is an extensio
                 //todo - changes are not being saved here...
@@ -186,8 +188,11 @@ Backbone.on('profileSummary:slice',function(vo){
                 profileExtensionView.render();
             } else {
                 //this is a structure
-                profileStructureView.model = selectedProfileModel;     //this is a profile model
-                profileStructureView.setPath(vo.path);  //the code of the extension is in the path in the summary view...
+                profileStructureView.resourceName = vo.resourceName;
+                profileStructureView.profileModel = selectedProfileModel
+                profileStructureView.model = vo.element;     //this is json structure.element
+
+                profileStructureView.setType(vo.type);  //the code of the extension is in the path in the summary view...
                 profileStructureView.render();
             }
         } else {
@@ -196,6 +201,38 @@ Backbone.on('profileSummary:slice',function(vo){
 
 
 });
+
+//when a structure.element is altered in the UI but not yet saved......
+Backbone.listenTo(profileStructureView,'element:updated',function(vo){
+
+    console.log(vo);
+    console.log( profileStructureView.profileModel);
+    //todo move this business logic to a model
+    if (vo.type === 'core') {
+        //this element comes from the core, so we simply add it to the profile...
+        var profileModel = profileStructureView.profileModel;       //the profile model was set as an attribute when the profileStructureView was displayed...
+console.log(profileModel)
+
+        var profileJson = profileModel.get('content');
+
+        //find the structure (resource)
+        profileJson.structure = profileJson.structure || [];
+
+        //add a new resource (structure)
+        var structure = {name:vo.resourceName,element:[]}
+        structure.element.push(vo.element);
+        profileJson.structure.push(structure);
+
+
+        profileSummaryView.createSummary();
+
+
+        //profileDetailView.render();
+        //profileStructureView.render();
+    }
+
+
+})
 
 colProfile.fetch({
     success : function() {

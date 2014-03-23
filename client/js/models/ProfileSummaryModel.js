@@ -3,6 +3,7 @@
  */
 
 
+//represents a structure.element in the profile...
 ProfileSummaryItemModel = Backbone.Model.extend({
     defaults : {
         path : "",
@@ -12,7 +13,8 @@ ProfileSummaryItemModel = Backbone.Model.extend({
         description : "",
         type : "",
         resource : "",
-        profileid : ""
+        profileid : "",
+        content : {}     //the actual JSON represnetation of the profile structure element
     }
 })
 
@@ -51,7 +53,7 @@ ProfileSummaryModel = Backbone.Model.extend({
                 summary.resources[resource] = {properties : [],name:resource}
             }
         })
-        console.log(summary);
+        //console.log(summary);
 
 
 
@@ -63,7 +65,25 @@ ProfileSummaryModel = Backbone.Model.extend({
             arTasks.push(function(cb){
                 //get the profile. Note that this will be a 'contains' string search, so can return multiple matches...
                 $.get( "/api/profile/"+resourceName+"/FHIR Project", function( data ) {
+                    //Backbone.fhirResourceCache
                     summary.resources[resourceName].raw = data;
+
+
+                    $.each(profileBundle.entry,function(inx,entry){
+                        //>>>>>  assume that the name of the profile is the same as the resourceName
+                        if (entry.content.name.toLowerCase() === resourceName.toLowerCase()){
+                            resource = entry.content;
+                            Backbone.fhirResourceCache[resourceName] = entry;
+                        }
+                    })
+
+                    if (! resource) {
+                        alert('The profile for the ' + resourceName + ' resource was not found');
+                        cb();
+                    }
+
+
+
                     //console.log('back')
                     //pulls the properties from the resource and from the profile into the summary
                     getStructures(resourceName,data,function(){
@@ -96,10 +116,13 @@ ProfileSummaryModel = Backbone.Model.extend({
             //because there may be multiple returns we need to search the bundle...
             var resource;
             var cnt = 0;        //the count of all properties for this resource in this profile...
+
+
             $.each(profileBundle.entry,function(inx,entry){
                 //>>>>>  assume that the name of the profile is the same as the resourceName
                 if (entry.content.name.toLowerCase() === resourceName.toLowerCase()){
                     resource = entry.content;
+                    Backbone.fhirResourceCache[resourceName] = entry;
                 }
             })
 
@@ -107,9 +130,12 @@ ProfileSummaryModel = Backbone.Model.extend({
                 alert('The profile for the ' + resourceName + ' resource was not found');
                 cb();
             }
-            //var resource = profileBundle.entry[0].content;
 
-            //go through all the structures defined in the core definition for this resource.
+
+            //go through all the structures defined in the core definition for this resource. We are using the path
+            //as the discriminator - if a particluar path is defined in the profile then we use that, otherwise we use
+            //the one form core. We assume that there cannot be a path in the profile that is not in the core
+            //todo is this assumption correct?
             $.each(resource.structure[0].element, function(inx,el){
                 //console.log(el);
                 if (el.definition.type) {
@@ -122,14 +148,49 @@ ProfileSummaryModel = Backbone.Model.extend({
                         //and path. If there is, then that is what we'll include in the list of 'properties' (where a
                         //'property' could be core, profiled or an extension). Otherwise we'll use the core
 
-                        var modelFromProfile = false;
+                        var pathName = el.path.toLowerCase();       //the path name from the core...
+
+                        var pathFromProfile = false;               //will be true if we get the definition for this path from the profile
 
                         if (profile.structure) {
-                            //does the profile have any structures? (note visibility due to js closure...
+
+                            console.log('profile has structure')
+
+                            //does the profile have any structures? (note visibility due to js closure...)
                             //if so check each strcutire to find one that matches this resource...
                             _.each(profile.structure,function(struc){
+
+                                console.log(struc)
+
                                 if (struc.name.toLowerCase() === resourceName.toLowerCase()) {
-                                    //yep, we've got at least one modification for this 
+                                    //yep, we've got at least one modification for this resource
+                                    if (struc.element) {
+                                        _.each(struc.element,function(profileEl){
+                                            //if the path's match then we'll add the definition from the profile
+                                            //rather than the defintiopn in the core...
+                                            if (profileEl.path.toLowerCase() ===  pathName) {
+                                                //yes! This path is defined in the profile
+                                                pathFromProfile = true;
+
+
+                                                //create the model - this will be the way forward...
+                                                models.push(new ProfileSummaryItemModel({
+                                                    content : profileEl,
+                                                    profileid : profileModel.get('id'),
+                                                    path : pathName,
+                                                    description: profileEl.definition.short,
+                                                    datatype:type,
+                                                    min:profileEl.definition.min,
+                                                    max:profileEl.definition.max,
+                                                    resource:resourceName,
+                                                    type:'prof'     //indicates that this model represents the core definition. It may be overridden by a profile of course...
+                                                }));
+
+
+                                            }
+                                        })
+                                    }
+
                                 }
                             })
 
@@ -137,12 +198,13 @@ ProfileSummaryModel = Backbone.Model.extend({
 
 
 
-                        if (! modelFromProfile) {
+                        if (! pathFromProfile) {
                             arStructures.push({path : el.path, description: el.definition.short,type:type,
                                 min:el.definition.min,max:el.definition.max,resource:resourceName,type:'core'})
 
                             //create the model - this will be the way forward...
                             models.push(new ProfileSummaryItemModel({
+                                content : el,
                                 profileid : profileModel.get('id'),
                                 path : el.path,
                                 description: el.definition.short,

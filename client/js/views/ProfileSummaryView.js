@@ -34,16 +34,16 @@ var ProfileSummaryView = Backbone.View.extend({
         _.each(this.childViews,function(view){
             view.remove();
         })
-        console.log(this.model);
+        //console.log(this.model);
         var model = this.model;
         var profileSummaryModel = new ProfileSummaryModel();
         //profileSummaryModel.setProfile(this.model);
         this.$el.html("Generating summary, please wait...");
         profileSummaryModel.getSummary(model,function(err, arSummary){
-            console.log(err,arSummary);
-            _.each(arSummary.resources,function(r){
-                console.log(r.models.toJSON());
-            })
+            //console.log(err,arSummary);
+          //  _.each(arSummary.resources,function(r){
+           //     console.log(r.models.toJSON());
+           // })
             that.arSummary = arSummary;
             that.render(arSummary)
             //console.log(models.toJSON());
@@ -76,17 +76,27 @@ var ProfileSummaryView = Backbone.View.extend({
         if (this.arSummary) {
             //create a view for each item and render
             var html = "";
-            _.each(this.arSummary.resources,function(res){
+            _.each(this.arSummary.resources,function(res,resourceName){
+                console.log(resourceName)
                 var colModels = res.models;     //this is a BB Collection
                 _.each(colModels.models,function(model,inx){
-                    //console.log(model.toJSON())          //this is a BB model
+                    console.log(model.toJSON())          //this is a BB model - not a fhir model!!!
                     //add a row with an ID. This will be the container for the child view...
                     var elID = 'tst'+inx;
-                    $('#ps_table tr:last').after("<tr id='"+ elID +"'");
+                    var klass = "";
+                    if (model.toJSON().max === '0' || model.toJSON().max === 0) {
+                        klass = " class='notUsed' ";
+                    }
+
+
+
+                    $('#ps_table tr:last').after("<tr "+klass+"id='"+ elID +"'></tr>");
                     //now create the child view responsible for this row...
                     var v = new ProfileSummaryItemView({model:model,el:$('#'+elID)});
                     that.childViews.push(v);        //save a reference to the view. We'll need it to release the view to avoid zombies...
                     v.template = that.itemTemplate;
+                    v.content = model.get('content');       //this is the json representation of the structure.element
+                    v.resourceName = resourceName;
                     //v.profileID = that.model.toJSON().meta.id;
                     //console.log(v.profileID)
                     v.render();
@@ -113,8 +123,10 @@ ProfileSummaryItemView = Backbone.View.extend({
         var path = $(ev.currentTarget).attr('data-path');
         var type = $(ev.currentTarget).attr('data-type');
         var profileID = $(ev.currentTarget).attr('data-profileid');
+        console.log(this.content);
         //console.log('x')
-        Backbone.trigger('profileSummary:slice',{profileid : profileID,type:type,path:path});
+        Backbone.trigger('profileSummary:slice',
+            {profileid : profileID,type:type,path:path,element:this.content,resourceName:this.resourceName});
     },
     selectXXX : function(ev) {
         ev.preventDefault();
@@ -130,9 +142,15 @@ ProfileSummaryItemView = Backbone.View.extend({
     render : function(){
         //console.log(this.model.toJSON())
         var json = this.model.toJSON();
+
+      ///  if (json.max = 0) {
+        //    json.notUsed = true;
+       // }
+        //this.content =
         //json.profileid = this.profileID;
         //console.log(json);
         this.$el.html(this.template({item:json}));
+
     }
 
 });

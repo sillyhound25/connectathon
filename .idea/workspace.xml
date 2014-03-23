@@ -2,64 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3a9b3cc9-926c-402b-bbe7-016794926cb7" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/templates/editStructure.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/templates/profileSummaryContainer.html" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bundleBackup/testData-1395116826446.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bundleBackup/testData-1395116897821.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bundleBackup/testData-1395117026619.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bundleBackup/testData-1395117372526.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bundleBackup/testData-1395177233810.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bundleBackup/testData-1395177554573.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bundleBackup/testData-1395177716474.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bundleBackup/testData-1395194604380.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/collections/ProfileCollection.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/collections/ValueSetCollection.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/js/async.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/js/backbone-min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/js/handlebars-v1.3.0.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/js/jquery-1.9.0.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/js/moment.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/js/typeahead.bundle.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/js/underscore-min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/models/ProfileModel.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/models/ProfileSummaryModel.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/models/ProfileTestFormModel.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/models/ValueSetModel.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/views/ProfileDetailView.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/views/ProfileListView.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/views/ProfileSummaryView.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/views/ProfileTestFormView.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/views/ValueSetDetailView.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/views/ValueSetListView.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/views/ValueSetSummaryView.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/views/queryView.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/public/views/testDataViewDEP.js" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/public/views/ProfileExtensionView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileStructureView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/collections/ProfileCollection.js" afterPath="$PROJECT_DIR$/client/js/collections/ProfileCollection.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ProfileContentView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileContentView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ProfileDetailView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileDetailView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ProfileExtensionView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileExtensionView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ProfileListView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileListView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ProfileQueryView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileQueryView.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ProfileStructureView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileStructureView.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/models/ProfileSummaryModel.js" afterPath="$PROJECT_DIR$/client/js/models/ProfileSummaryModel.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ProfileSummaryView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileSummaryView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/models/ProfileTestFormModel.js" afterPath="$PROJECT_DIR$/client/js/models/ProfileTestFormModel.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ProfileTestFormView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileTestFormView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ValueSetDetailView.js" afterPath="$PROJECT_DIR$/client/js/views/ValueSetDetailView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ValueSetSummaryView.js" afterPath="$PROJECT_DIR$/client/js/views/ValueSetSummaryView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.js" afterPath="$PROJECT_DIR$/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/front.html" afterPath="$PROJECT_DIR$/client/front.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/editStructure.html" afterPath="$PROJECT_DIR$/client/templates/editStructure.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/mediator.js" afterPath="$PROJECT_DIR$/client/js/mediator.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/medicationadministration.js" afterPath="$PROJECT_DIR$/server/medicationadministration.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/oneProfile.html" afterPath="$PROJECT_DIR$/client/templates/oneProfile.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/oneVS.html" afterPath="$PROJECT_DIR$/client/templates/oneVS.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/orionProfileList.html" afterPath="$PROJECT_DIR$/client/templates/orionProfileList.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/profileContent.html" afterPath="$PROJECT_DIR$/client/templates/profileContent.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/profileQuery.html" afterPath="$PROJECT_DIR$/client/templates/profileQuery.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/profileSummary.html" afterPath="$PROJECT_DIR$/client/templates/profileSummary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/queryView.js" afterPath="$PROJECT_DIR$/client/js/views/queryView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/serverSample.js" afterPath="$PROJECT_DIR$/server/serverSample.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/testDataForm.html" afterPath="$PROJECT_DIR$/client/templates/testDataForm.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/profileSummaryItem.html" afterPath="$PROJECT_DIR$/client/templates/profileSummaryItem.html" />
     </list>
     <ignored path="AlexUpdate.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -97,22 +45,22 @@
     <file path="/ProfileDetailView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395341826498" ignored="false" />
     <file path="/orionProfileList.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395341731274" ignored="false" />
     <file path="/ProfileExtensionView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395269239082" ignored="false" />
-    <file path="/ProfileSummaryModel.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395526449686" ignored="false" />
-    <file path="/ProfileSummaryView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395521684373" ignored="false" />
+    <file path="/ProfileSummaryModel.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395544763488" ignored="false" />
+    <file path="/ProfileSummaryView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395542058524" ignored="false" />
     <file path="/ProfileTestFormView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395365347437" ignored="false" />
     <file path="/ProfileTestFormModel.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395365637490" ignored="false" />
     <file path="/ValueSetSummary.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395031807193" ignored="false" />
-    <file path="/mediator.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395523577536" ignored="false" />
+    <file path="/mediator.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395542475061" ignored="false" />
     <file path="/ProfileQueryView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395347015702" ignored="false" />
     <file path="/profileQuery.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395277032702" ignored="false" />
     <file path="/a.dummy" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395516723585" ignored="false" />
     <file path="/medicationadministration.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395263223380" ignored="false" />
     <file path="/profileContent.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395361586353" ignored="false" />
     <file path="/ProfileContentView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395361496631" ignored="false" />
-    <file path="/profileSummaryItem.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395522027704" ignored="false" />
+    <file path="/profileSummaryItem.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395541540841" ignored="false" />
     <file path="/profileSummaryContainer.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395517834185" ignored="false" />
-    <file path="/editStructure.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395524375216" ignored="false" />
-    <file path="/ProfileStructureView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395524679676" ignored="false" />
+    <file path="/editStructure.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395534306996" ignored="false" />
+    <file path="/ProfileStructureView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395535648623" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -135,9 +83,9 @@
       <file leaf-file-name="ProfileSummaryView.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/js/views/ProfileSummaryView.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="101" column="0" selection-start="3678" selection-end="3678" vertical-scroll-proportion="-5.8076925">
+            <state line="86" column="78" selection-start="3251" selection-end="3251" vertical-scroll-proportion="-42.115383">
               <folding>
-                <element signature="e#3727#4643#0" expanded="false" />
+                <element signature="e#1931#2306#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -146,16 +94,25 @@
       <file leaf-file-name="ProfileStructureView.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/js/views/ProfileStructureView.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="0" selection-start="47" selection-end="47" vertical-scroll-proportion="0.0">
+            <state line="20" column="103" selection-start="545" selection-end="545" vertical-scroll-proportion="-10.961538">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="editStructure.html" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/templates/editStructure.html">
+      <file leaf-file-name="profileSummaryItem.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/templates/profileSummaryItem.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="60" column="72" selection-start="3143" selection-end="3149" vertical-scroll-proportion="-29.5">
+            <state line="4" column="8" selection-start="53" selection-end="53" vertical-scroll-proportion="-2.5">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="profileSummary.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/templates/profileSummary.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="2" column="12" selection-start="14" selection-end="21" vertical-scroll-proportion="-1.25">
               <folding />
             </state>
           </provider>
@@ -164,8 +121,10 @@
       <file leaf-file-name="mediator.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/js/mediator.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="189" column="15" selection-start="7609" selection-end="7609" vertical-scroll-proportion="-5.1538463">
-              <folding />
+            <state line="6" column="30" selection-start="178" selection-end="204" vertical-scroll-proportion="78.46154">
+              <folding>
+                <element signature="e#6881#8061#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -173,7 +132,16 @@
       <file leaf-file-name="ProfileSummaryModel.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/js/models/ProfileSummaryModel.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="131" column="88" selection-start="5944" selection-end="5944" vertical-scroll-proportion="0.59359604">
+            <state line="71" column="40" selection-start="2382" selection-end="2395" vertical-scroll-proportion="0.3898305">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="app.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="112" column="22" selection-start="3238" selection-end="3238" vertical-scroll-proportion="-8.884615">
               <folding />
             </state>
           </provider>
@@ -204,14 +172,14 @@
         <option value="$PROJECT_DIR$/client/js/models/ProfileTestFormModel.js" />
         <option value="$PROJECT_DIR$/client/templates/profileSummary.html" />
         <option value="$PROJECT_DIR$/client/templates/profileSummaryContainer.html" />
-        <option value="$PROJECT_DIR$/client/templates/profileSummaryItem.html" />
         <option value="$PROJECT_DIR$/client/js/views/ProfileExtensionView.js" />
         <option value="$PROJECT_DIR$/client/front.html" />
         <option value="$PROJECT_DIR$/client/templates/oneProfile.html" />
         <option value="$PROJECT_DIR$/client/templates/editStructure.html" />
-        <option value="$PROJECT_DIR$/client/js/mediator.js" />
         <option value="$PROJECT_DIR$/client/js/views/ProfileStructureView.js" />
+        <option value="$PROJECT_DIR$/client/templates/profileSummaryItem.html" />
         <option value="$PROJECT_DIR$/client/js/views/ProfileSummaryView.js" />
+        <option value="$PROJECT_DIR$/client/js/mediator.js" />
         <option value="$PROJECT_DIR$/client/js/models/ProfileSummaryModel.js" />
       </list>
     </option>
@@ -507,13 +475,13 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3286119" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.328125" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.06676137" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.7755682" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24819624" sideWeight="0.671875" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18759018" sideWeight="0.9332386" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.46022728" sideWeight="0.8174603" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.328125" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.06676137" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.265625" sideWeight="0.62842715" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -587,20 +555,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/client/templates/profileSummary.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="25" selection-start="1305" selection-end="1305" vertical-scroll-proportion="1.1283185">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/js/libs/jquery-1.9.0.min.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="6357" selection-start="38490" selection-end="38490" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/js/views/ProfileListView.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="11" column="28" selection-start="314" selection-end="314" vertical-scroll-proportion="0.31460676">
@@ -618,13 +572,6 @@
     <entry file="file://$PROJECT_DIR$/client/js/models/ProfileModel.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/templates/profileSummaryItem.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="84" selection-start="129" selection-end="129" vertical-scroll-proportion="-2.5">
           <folding />
         </state>
       </provider>
@@ -676,37 +623,60 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/templates/editStructure.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="60" column="72" selection-start="3143" selection-end="3149" vertical-scroll-proportion="-29.5">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/js/mediator.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="189" column="15" selection-start="7609" selection-end="7609" vertical-scroll-proportion="-5.1538463">
+        <state line="31" column="89" selection-start="1699" selection-end="1699" vertical-scroll-proportion="0.76859504">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/js/views/ProfileStructureView.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="0" selection-start="47" selection-end="47" vertical-scroll-proportion="0.0">
+        <state line="20" column="103" selection-start="545" selection-end="545" vertical-scroll-proportion="-10.961538">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/templates/profileSummaryItem.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="8" selection-start="53" selection-end="53" vertical-scroll-proportion="-2.5">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/templates/profileSummary.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="12" selection-start="14" selection-end="21" vertical-scroll-proportion="-1.25">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/js/views/ProfileSummaryView.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="101" column="0" selection-start="3678" selection-end="3678" vertical-scroll-proportion="-5.8076925">
+        <state line="86" column="78" selection-start="3251" selection-end="3251" vertical-scroll-proportion="-42.115383">
           <folding>
-            <element signature="e#3727#4643#0" expanded="false" />
+            <element signature="e#1931#2306#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="112" column="22" selection-start="3238" selection-end="3238" vertical-scroll-proportion="-8.884615">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/js/mediator.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="30" selection-start="178" selection-end="204" vertical-scroll-proportion="78.46154">
+          <folding>
+            <element signature="e#6881#8061#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/js/models/ProfileSummaryModel.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="131" column="88" selection-start="5944" selection-end="5944" vertical-scroll-proportion="0.59359604">
+        <state line="71" column="40" selection-start="2382" selection-end="2395" vertical-scroll-proportion="0.3898305">
           <folding />
         </state>
       </provider>
