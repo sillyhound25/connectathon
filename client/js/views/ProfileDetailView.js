@@ -25,30 +25,7 @@ var ProfileDetailView =  Backbone.View.extend({
         var vsURI = ev.currentTarget.getAttribute('data-code');
         console.log(vsURI);
         this.trigger('profileDetail:showVS',{uri:vsURI});
-        return;
 
-        //alert(encodeURIComponent(vsURI));
-
-        //get the resource. Note this is the actual resource - not a bundle.entry
-        $.get( "/api/valueset/id/"+encodeURIComponent(vsURI), function( vsResource ) {
-            //alert(data);
-            console.log(vsResource)
-            var genDialogFrame = $('#generalModelDlg').html();      //the frams for the modal dialog
-            $('#modalDialogDiv').html(genDialogFrame);      //write the frame to the DOM
-
-            var model = {content:vsResource};
-            model.id = vsURI;
-            model.readOnly = true;
-
-            $('#modal-content').html(Z.template.oneVS(model));    //use the BS template to write out the dialog
-
-
-
-            //and show the modal...
-            $('#generalDlg').modal();
-
-
-        });
     },
     isDirty : function() {
         return this.isDirty;
@@ -74,6 +51,7 @@ var ProfileDetailView =  Backbone.View.extend({
 
         model.set('content',content);
         $('#save_profile_changes').text('Updating...').attr('disabled',true)
+        console.log(model.toJSON())
         model.save({},{
             success : function() {
                 $('#save_profile_changes').text('Update Profile').attr('disabled',false)
@@ -81,7 +59,8 @@ var ProfileDetailView =  Backbone.View.extend({
                 alert('Profile Updated');
                 that.trigger('profile:added',{model:model});
             },
-            error : function() {
+            error : function(xhr,status,err) {
+                //console.log(xhr,status,err);
                 $('#save_profile_changes').text('Update Profile').attr('disabled',false)
                 alert('sorry, there was an error saving the profile')
             }
@@ -96,6 +75,16 @@ var ProfileDetailView =  Backbone.View.extend({
     },
     addExtension : function(ev){
         //add a new extension
+      //  if (! this.model) {
+          //  this.model = new ProfileModel();
+      //  }
+        content = this.model.get('content');
+
+        //set the value for the profile 'header' contents...
+        content.name = $('#profileName').val();
+        content.description = $('#profileDescription').val();
+        content.requirements = $('#profileRequirements').val();
+
         var jsonModel = this.model.toJSON();
         this.isDirty = true;    //will be dirty even if the addition is cancelled...
         this.trigger('profileDetail:addExtension',{id:jsonModel.meta.id});
@@ -115,13 +104,6 @@ var ProfileDetailView =  Backbone.View.extend({
         var jsonModel = this.model.toJSON();
         var code = ev.currentTarget.getAttribute('data-code');      //the code of the extension
         this.trigger('profileDetail:editExtension',{id:jsonModel.meta.id,code:code});
-    },
-    showDetailXXX : function(ev) {
-        //alert('dirty VS');
-        var id = $(ev.currentTarget).attr('data-id');
-        this.trigger('profileList:select',{id:id});
-
-
     },
     render : function(){
         //this.undelegateEvents();

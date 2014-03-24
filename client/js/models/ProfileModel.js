@@ -89,11 +89,11 @@ ProfileModel = Backbone.Model.extend({
                 'content-type' : 'application/json'
             },
             success : function(xhr,status){
-                options.success(model)
+                options.success(xhr,status)
 
             },
             error : function(xhr,status,err){
-                options.error(model,err)
+                options.error(xhr,status,err)
 
             }
         })

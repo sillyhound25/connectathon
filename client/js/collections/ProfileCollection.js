@@ -9,7 +9,15 @@ var ProfileCollection = Backbone.Collection.extend({
     findModelByResourceID : function(resourceID) {
         //return a model with the given resourceID
         //console.log(resourceID);
-        return _.findWhere(this.models,{'id':resourceID})
+        var m = _.findWhere(this.models,{'id':resourceID});
+        if (m) {return m;}
+        //couldn't find a macthing model. Is this a new one?
+        console.log(this.toJSON())
+
+
+        var m1 = _.findWhere(this.models,{'cid':"new"});
+        console.log(m1);
+        return m1;
     },
     toJSON : function(){
         //return an array containing the contents

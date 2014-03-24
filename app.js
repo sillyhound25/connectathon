@@ -4,7 +4,7 @@
  */
 
 var express = require('express');
-var request = require('request');
+var request = require('request');   //https://github.com/mikeal/request
 var moment = require('moment');
 var async = require('async');
 var _ = require('underscore');
@@ -24,7 +24,10 @@ var mSample = require('./server/serverSample.js');  //used to generate sample me
 //var app = module.exports = express.createServer();
 var app = express.createServer();
 
-var FHIRServerUrl = 'http://spark.furore.com/fhir/';
+var FHIRCoreRegistry = 'http://spark.furore.com/fhir/';
+
+var FHIRServerUrl = 'http://hisappakl/blaze/fhir/';
+// var FHIRServerUrl = 'http://spark.furore.com/fhir/';
 //var FHIRServerUrl = 'http://fhir.healthintersections.com.au/open/';
 // Configuration
 
@@ -52,7 +55,7 @@ app.get('/api/generalquery/:query', function(req, res){
     console.log(url)
 
 
-    performQueryAgainstFHIRServer(url,function(resp){
+    performQueryAgainstFHIRServer(url,null,function(resp){
         res.json(resp);
     })
 
@@ -106,19 +109,27 @@ app.post('/api/createprofilesample', function(req, res){
 });
 
 
-
 //get a specific profile by name and publisher
 app.get('/api/profile/:name/:publisher', function(req, res){
     var query = 'Profile?name='+req.params.name + '&publisher=' + req.params.publisher;
-    performQueryAgainstFHIRServer(query,function(resp){
+
+    //if the profile that is being requested is one of the core ones, then get is from the
+    //core registry server.
+    var server = null;
+    if (req.params.publisher === 'FHIR Project') {
+        server = FHIRCoreRegistry;
+    }
+
+    performQueryAgainstFHIRServer(query,server,function(resp){
         res.json(resp);
     })
+
 });
 
 //get a specific profile by name and publisher
 app.get('/api/conformance', function(req, res){
     var query = 'metadata';
-    performQueryAgainstFHIRServer(query,function(resp){
+    performQueryAgainstFHIRServer(query,null,function(resp){
         res.json(resp);
     })
 });
@@ -141,7 +152,7 @@ app.put('/api/:id', function(req, res){
 //get all profiles published by a specific publisher
 app.get('/api/profile/:publisher', function(req, res){
     var query = 'Profile?publisher=' + req.params.publisher;
-    performQueryAgainstFHIRServer(query,function(resp){
+    performQueryAgainstFHIRServer(query,null,function(resp){
         res.json(resp);
     })
 });
@@ -159,7 +170,7 @@ app.get('/api/valueset/id/:id', function(req, res){
     //console.log(ID)
 
     var query = 'ValueSet/'+ ID;
-    performQueryAgainstFHIRServer(query,function(resp){
+    performQueryAgainstFHIRServer(query,null,function(resp){
         res.json(resp);
     })
 })
@@ -197,7 +208,7 @@ app.post('/api', function(req, res){
         resp.content = resource;
 
         logResource(resource,function(){
-            res.json(resp.body,resp.statusCode);
+            res.json(resp,resp.statusCode);
         })
 
 
@@ -227,6 +238,7 @@ app.get('/api/valueset/:publisher', function(req, res){
 
     request(getOptions(FHIRServerUrl+ 'ValueSet?publisher='+publisher),function(error,response,body){
         var resp1={};
+        console.log(response);
         resp1.id = response.headers.location;
         resp1.statusCode = response.statusCode;
         resp1.response = JSON.parse(body);
@@ -343,6 +355,7 @@ function postToFHIRServer(resource,callback) {
         resp.statusCode = response.statusCode;
         resp.body = body;
         resp.headers = response.headers;
+        resp.error = error;
         callback(resp);
     })
 }
@@ -365,29 +378,68 @@ function putToFHIRServer(resource,id,callback) {
         resp.statusCode = response.statusCode;
         resp.body = body;
         resp.headers = response.headers;
+        resp.error = error;
         callback(resp);
     })
 }
 
 
-function performQueryAgainstFHIRServer(query,callback){
+function performQueryAgainstFHIRServer(query,server,callback){
+
+    //default the server URL...
+    var fhirServer = FHIRServerUrl;
+    if (server) {
+        fhirServer = server;
+    }
+
     var options = {
         method:'GET',
         headers : {
-            "content-type" : 'application/json+fhir'
+            "Accept" : 'application/json+fhir'
         },
-        uri : FHIRServerUrl + query
+        uri : fhirServer + query
     }
 
+
+
+    console.log(options);
     //console.log(options);
 
     request(options,function(error,response,body){
 
+        //console.log(error,response.statusCode,body);
         if (error) {
             throw error;
         }
+
+        console.log(body);
+
+        var b = body.substring(1)
+        var c = body.substring(0,1);
+
+
+
+        console.log('-' + c + '-');
+        /*
+
+        var
+        var b = body.replace('\r','');
+        var c = b.replace('\n','')
+
+        console.log('=========')
+        console.log(b);
+
+console.log('---------------')
+        console.log(c);
+
+        console.log('xxxxxxxxxxx')
+*/
+
+
+
         if (response.statusCode != 200) {
-            console.log(JSON.parse(body));
+            //console.log(JSON.parse(body));
+            console.log(body);
             throw 'error';
         }
         callback(JSON.parse(body));
@@ -499,7 +551,7 @@ function getOptions(uri)  {
     var options = {
         method:'GET',
         headers : {
-            "content-type" : 'application/json+fhir'
+            "Accept" : 'application/json+fhir'
         },
         uri : uri
     }
@@ -533,5 +585,5 @@ function postBundleToFHIRServer(bundle,callback) {
     })
 }
 
-app.listen(4000);
-console.log("Express server listening on port %d in %s mode", 4000, app.settings.env);
+app.listen(4001);
+console.log("Express server listening on port %d in %s mode", 4001, app.settings.env);

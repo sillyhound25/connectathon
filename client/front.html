@@ -62,7 +62,8 @@
         <ul class="nav navbar-nav">
             <li class="active  navMainOption" data-page='homeTab'><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a> </li>
             <li class="navMainOption" data-page='profileTab'><a href="#" ><i class="glyphicon glyphicon-file"></i> Profiles</a></li>
-            <li class=" navMainOption" data-page='vsTab'><a href="#"><i class="glyphicon glyphicon-list"></i>  ValueSet</a></li>
+            <li class=" navMainOption" data-page='vsTab'><a href="#"><i class="glyphicon glyphicon-list"></i>  ValueSets</a></li>
+            <li class=" navMainOption" data-page='extensionPage'><a href="#"><i class="glyphicon glyphicon-list"></i>  Extensions</a></li>
             <li class="navMainOption" data-page='queryTab'><a href="#"><i class="glyphicon glyphicon-fire"></i>  Resource basedSearch</a></li>
             <li class="navMainOption" data-page='profileQueryTab'><a href="#"><i class="glyphicon glyphicon-fire"></i>  Patient based Search</a></li>
         </ul>
@@ -113,14 +114,15 @@
                     <ul class="nav nav-tabs">
                         <li class="pull-right"><a href="#profileTestDataSubTab" data-toggle="tab">Test Data</a></li>
                         <li class="pull-right"><a href="#profileContentSubTab" data-toggle="tab">Content</a></li>
-                        <li class="pull-right"><a href="#profileSummarySubTab" data-toggle="tab">All Properties</a></li>
-                        <li class="active pull-right"><a href="#profileDetailSubTab" data-toggle="tab">Extensions</a></li>
+                        <li class="pull-right"><a href="#profileDetailSubTab" data-toggle="tab">Extensions</a></li>
+                        <li class="active pull-right"><a href="#profileSummarySubTab" data-toggle="tab">All Properties</a></li>
+
 
                     </ul>
                     <br />
                     <div class="tab-content" >
 
-                        <div class="tab-pane active" id="profileDetailSubTab">
+                        <div class="tab-pane" id="profileDetailSubTab">
                             <!--<h4>Profile Detail</h4>-->
                             <div id="workAreaProfile"></div>
                         </div>
@@ -130,7 +132,7 @@
                             <div id="workAreaContentProfile"></div>
                         </div>
 
-                        <div class="tab-pane" id="profileSummarySubTab">
+                        <div class=" active tab-pane" id="profileSummarySubTab">
                             <!--<button  class="btn btn-success pull-right" id="btnCreateSummaryXXX">Generate summary</button>-->
 
                             <div id='updatingProfileSummaryMsg' style="display:none" class="alert alert-warning">Reading data for the summary. This can take a while...</div>
@@ -162,6 +164,15 @@
             </div>
 
         </div>
+
+        <div class="myPane" id="extensionPage">
+            <div class="row">
+                <div class="col-md-2">
+                </div>
+            </div>
+        </div>
+
+
 
         <div class="myPane" id="queryTab">
             <div class="row">
@@ -218,6 +229,9 @@
         $('#profileTab').show();       //show the profile tab
 
 
+        //set up the help frame,,
+
+        $('#myIFrame').attr('src','http://wp.me/P4qCEG-3');
 
 
 

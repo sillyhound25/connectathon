@@ -1,6 +1,8 @@
 /**
  * This was supposed to be a mediator - but it's really just a collection of event handlers in one plce.
  * I'll do a real mediator when I figure out how to do it!
+ *
+ * todo: all the views/models should be scoped to another object - ?the Mediator???
  */
 
 //a cache of resource profiles. used by profileSummaryModel. keyed on resource name.
@@ -92,23 +94,37 @@ var valueSetSummaryView = new ValueSetSummaryView();
 //The user selects a Profile from the  in the list. Make sure that all the views that have an interest in
 //this profile have their model set...
 Backbone.listenTo(listProfiles,'profileList:select',function(vo){
-    var selectedModel = colProfile.findModelByResourceID(vo.id);       //the vs selected in the list view
-    profileDetailView.setModel(selectedModel);
-    profileSummaryView.model = selectedModel;
-    profileTestFormView.model = selectedModel;
-    profileContentView.setModel(selectedModel);     //set the model and render
 
-    //make sure the details tab is displayed...
-    $('.nav-tabs a[href="#profileDetailSubTab"]').tab('show');
+    //check for unsaved changes...
+   // if (Mediator.canSelectNewProfile() ) {
+        var selectedModel = colProfile.findModelByResourceID(vo.id);       //the vs selected in the list view
+        profileDetailView.setModel(selectedModel);
+        profileSummaryView.clearView();         //clears the models and views...
+        profileSummaryView.model = selectedModel;
+        profileSummaryView.createSummary(function(){
+            profileSummaryView.render();            //render the summary. This might be slow if the resource profile needs to be loaded...
+        })
 
-    //and render the details of the profile
-    profileDetailView.render();
+        profileTestFormView.model = selectedModel;
+        profileContentView.setModel(selectedModel);     //set the model and render
+
+        //make sure the details tab is displayed...
+        //$('.nav-tabs a[href="#profileDetailSubTab"]').tab('show');
+
+        //and render the details of the profile
+        profileDetailView.render();
+  //  } else {
+
+  //  }
 });
 
 //creating a new profile
 Backbone.listenTo(listProfiles,'profileList:new',function(vo){
     $('.nav-tabs a[href="#profileDetailSubTab"]').tab('show');
-    profileDetailView.model = null;     //this means no model - ie new...
+    var m = new ProfileModel();
+    m.set('cid','new');
+    colProfile.add(m);
+    profileDetailView.model =  m;// null;     //this means no model - ie new...
     profileDetailView.render();
 })
 
@@ -126,7 +142,7 @@ Backbone.listenTo(profileDetailView,'profileDetail:editExtension',function(vo){
 //handler for when a new extension is to be added to a profile
 Backbone.listenTo(profileDetailView,'profileDetail:addExtension',function(vo){
     console.log(vo);
-    var selectedModel = colProfile.findModelByResourceID(vo.id);       //the vs selected in the list view
+    var selectedModel = colProfile.findModelByResourceID(vo.id);       //the profile selected in the list view
     profileExtensionView.model = selectedModel;
     profileExtensionView.setCode("");   //an empty code will mean a new extension...
     profileExtensionView.render();
@@ -239,14 +255,15 @@ Backbone.listenTo(profileStructureView,'element:updated',function(vo){
 colProfile.fetch({
     success : function() {
         $('#loading').hide();
-        //_.each(colProfile.models,function(m){
-        //    console.log(m.id);
-        // })
+      _.each(colProfile.models,function(m){
+            console.log(m.toJSON());
+         })
         //console.log(colProfile.models);
         listProfiles.render();      //render the list of valuesets...
         profileQueryView.setProfiles(colProfile);
     },
-    error : function() {
+    error : function(collection,response,options) {
+        console.log(response);
         alert('There was an error loading the Profiles')
     }
 });
@@ -254,3 +271,14 @@ colProfile.fetch({
 
 var viewQuery = new QueryView({el:$('#workAreaQuery')});
 viewQuery.render();
+
+//check if the current profile has been altered. If is has, then prompt the user to save or abandon changes...
+
+Mediator.canSelectNewProfile = function() {
+    console.log(profileSummaryView.isDirty());
+    if (profileSummaryView.isDirty()) {
+        var msg = 'The current profile has been changed. Do you wish to abandon these changes and proceed, or cancel';
+        return window.prompt(msg);
+
+    } else return true
+}

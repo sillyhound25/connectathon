@@ -6,6 +6,7 @@
 var ProfileSummaryView = Backbone.View.extend({
     initialize : function() {
         var that = this;
+        this.changesMade = false;
         this.childViews = {};       //this will contain all the child views that represent table rows...
         //get the template for the item views - todo needs refactoring...
         $.get('templates/profileSummaryItem.html',function(html){
@@ -14,9 +15,29 @@ var ProfileSummaryView = Backbone.View.extend({
     },
     events : {
         "click #btnCreateSummary" : "createAndShowSummary",
-        "click .ps_resource" : "toggleResource"
+        "click .ps_resource" : "toggleResource",
+             "click .btnSaveChanges" : "saveChanges"
     },
 
+
+
+    isDirty : function() {
+        //return true if there have been any modifications to the profile...
+        return this.changesMade;
+    },
+
+    clearView : function() {
+        //clear the view and all related models. called when the user selects another profile...
+        delete this.model;
+        this.$el.html("");
+        this.changesMade = false;
+        if (this.childViews) {
+            _.each(this.childViews,function(view){
+                view.remove();
+            })
+        }
+
+    },
     createAndShowSummary : function() {
         //called when the 'create summary' button is clicked...
         var that=this;
@@ -25,24 +46,30 @@ var ProfileSummaryView = Backbone.View.extend({
         });
     },
     updatePath : function(resourceName,path) {
+        //update a single structire (=row in the display table)...
         var that = this;
-        //update a single row in the summary table...
+
         //first, re-generate the whole summary
         this.profileSummaryModel.getSummary(this.model,function(err, arSummary){
             //now locate the model and the view based on this path
             that.arSummary = arSummary;
             var resourceElements = that.arSummary.resources[resourceName];
+
             _.each(resourceElements.models.models,function(m){
+                //m is of type ProfileSummaryItemModel
+
                 //console.log(path,resourceName,m)
 
-                if (m.toJSON().path === path) {
+                //console.log(path, m.toJSON().path)
+                if (m.toJSON().path.toLowerCase() === path.toLowerCase()) {
                     console.log(m.toJSON())
                     var view = that.childViews[resourceName+"_"+path];
-                    //m.set('path','XxXXXX');
                     console.log(view);
                     view.content = m.toJSON();
                     view.model = m;
                     view.render();
+                    //if a re-render is being called, then the profile is likely to have been changed...
+                    that.changesMade = true;
                 }
             })
 
@@ -118,14 +145,14 @@ var ProfileSummaryView = Backbone.View.extend({
                     var jsonModel = model.toJSON();          //this is a BB model - not a fhir model!!!
                     //add a row with an ID. This will be the container for the child view...
                     var elID = 'tst'+inx;
-                    var klass = "";
-                    if (jsonModel.max === '0' || jsonModel.max === 0) {
-                        klass = " class='notUsed' ";
-                    }
+                   // var klass = "";
+                   // if (jsonModel.max === '0' || jsonModel.max === 0) {
+                    //    klass = " class='notUsed' ";
+                  //  }
 
 
-
-                    $('#ps_table tr:last').after("<tr "+klass+"id='"+ elID +"'></tr>");
+                    //$('#ps_table tr:last').after("<tr "+klass+"id='"+ elID +"'></tr>");
+                    $('#ps_table tr:last').after("<tr id='"+ elID +"'></tr>");
                     //now create the child view responsible for this row...
                     var key =resourceName + "_"+jsonModel.path;
                     var v = new ProfileSummaryItemView({model:model,el:$('#'+elID)});
@@ -177,9 +204,16 @@ ProfileSummaryItemView = Backbone.View.extend({
     },
     render : function(){
         var json = this.model.toJSON();
-        console.log(json);
+        //console.log(json);
         this.$el.html(this.template({item:json}));
         //this.$el.html(this.template({item:json}));
+
+        //if teh max is 0, then this is not used...
+        if (json.max === '0' || json.max === 0) {
+            this.$el.addClass('notUsed')
+            //klass = " class='notUsed' ";
+        }
+
 
     }
 

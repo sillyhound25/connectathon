@@ -124,24 +124,9 @@ ProfileSummaryModel = Backbone.Model.extend({
             var models = summary.resources[resourceName].models;        //just a convenience variable...
             //var models = new ProfileSummaryItemCollection();
             //because there may be multiple returns we need to search the bundle...
-            var resource;
+           // var resource;
             var cnt = 0;        //the count of all properties for this resource in this profile...
 
-/*
-            $.each(profileBundle.entry,function(inx,entry){
-                //>>>>>  assume that the name of the profile is the same as the resourceName
-                if (entry.content.name.toLowerCase() === resourceName.toLowerCase()){
-                    resource = entry.content;
-                    Backbone.fhirResourceCache[resourceName] = entry;
-                }
-            })
-
-            if (! resource) {
-                alert('The profile for the ' + resourceName + ' resource was not found');
-                cb();
-            }
-
-            */
 
             //go through all the structures defined in the core definition for this resource. We are using the path
             //as the discriminator - if a particluar path is defined in the profile then we use that, otherwise we use
@@ -153,6 +138,7 @@ ProfileSummaryModel = Backbone.Model.extend({
                     //only include elements with a type (ie a datatype). 'header' properties (like medicationAdministration.dosage) aren't neeed (I think)
                     var type = el.definition.type[0].code;
                     //don't include extensions on the standard profile - they all have them and it's clutter at the moment...
+
                     if (type.toLowerCase() !== 'extension') {
 
                         //now see if there is a structure defined in the profile that matches the resource name

@@ -19,8 +19,9 @@ var ProfileListView = Backbone.View.extend({
     },
     showDetail : function(ev) {
         //alert('dirty VS');
-        $('.orionProfileDetail').removeClass('active');
 
+
+        $('.orionProfileDetail').removeClass('active');
         var id = $(ev.currentTarget).attr('data-id');
         $(ev.currentTarget).addClass('active');
 

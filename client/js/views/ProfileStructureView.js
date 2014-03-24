@@ -9,18 +9,17 @@ var ProfileStructureView =  Backbone.View.extend({
     },
 
     saveStructure : function() {
+        //save any changes made to a structure. This is where we'd check to ensure they were valid changes...
 
         var element = this.model;       //the JSON representation of a structure.element
 
         element.definition.min = $('#esMin').val();
         element.definition.max = $('#esMax').val();
 
-
         $('#editStructureDlg').modal('hide');
 
+        //the medicator will save the changes and re-draw...
         this.trigger('element:updated',{element:element,type:this.type,resourceName : this.resourceName});
-
-
     },
     setType : function(type) {
         //the type can be 'core' or 'prof' - whether this element comes from the core, or is already profiled...
