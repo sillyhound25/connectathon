@@ -79,14 +79,17 @@ ProfileModel = Backbone.Model.extend({
             }
         }
 
-
+        //need to include the versionid
+        var vid = this.get('vid');
+        console.log(vid)
 
 
         $.ajax (uri,{
             method : rest_method,
             data : JSON.stringify(vs),
             headers : {
-                'content-type' : 'application/json'
+                'content-type' : 'application/json',
+                'content-location' : vid
             },
             success : function(xhr,status){
                 options.success(xhr,status)

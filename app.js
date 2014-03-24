@@ -26,8 +26,8 @@ var app = express.createServer();
 
 var FHIRCoreRegistry = 'http://spark.furore.com/fhir/';
 
-var FHIRServerUrl = 'http://hisappakl/blaze/fhir/';
-// var FHIRServerUrl = 'http://spark.furore.com/fhir/';
+//var FHIRServerUrl = 'http://hisappakl/blaze/fhir/';
+ var FHIRServerUrl = 'http://spark.furore.com/fhir/';
 //var FHIRServerUrl = 'http://fhir.healthintersections.com.au/open/';
 // Configuration
 
@@ -56,7 +56,7 @@ app.get('/api/generalquery/:query', function(req, res){
 
 
     performQueryAgainstFHIRServer(url,null,function(resp){
-        res.json(resp);
+        res.json(resp,resp.statusCode);
     })
 
 });
@@ -121,7 +121,7 @@ app.get('/api/profile/:name/:publisher', function(req, res){
     }
 
     performQueryAgainstFHIRServer(query,server,function(resp){
-        res.json(resp);
+        res.json(resp,resp.statusCode);
     })
 
 });
@@ -130,30 +130,35 @@ app.get('/api/profile/:name/:publisher', function(req, res){
 app.get('/api/conformance', function(req, res){
     var query = 'metadata';
     performQueryAgainstFHIRServer(query,null,function(resp){
-        res.json(resp);
+        res.json(resp,resp.statusCode);
     })
 });
 
 //update a resource (the resource type is inside teh resource
 app.put('/api/:id', function(req, res){
-    var vsID = req.params.id;
+    var resourceID = req.params.id;
     var resource = req.body;
 
-    putToFHIRServer(resource,vsID,function(resp){
+    var vid = req.headers['content-location'];
+//console.log(req.headers);
+    putToFHIRServer(resource,resourceID,vid,function(resp){
         resp.content = resource;
         logResource(resource,function(){
-            res.json(resp);
+            //resp.statusCode
+            res.json(resp,resp.statusCode);
         })
-
     })
 
 });
 
 //get all profiles published by a specific publisher
 app.get('/api/profile/:publisher', function(req, res){
-    var query = 'Profile?publisher=' + req.params.publisher;
+    //note the use of :exact to limit the search...
+    var query = 'Profile?publisher:exact=' + req.params.publisher;
+
+    //var query = 'Profile?publisher=' + req.params.publisher;
     performQueryAgainstFHIRServer(query,null,function(resp){
-        res.json(resp);
+        res.json(resp,resp.statusCode);
     })
 });
 
@@ -171,30 +176,9 @@ app.get('/api/valueset/id/:id', function(req, res){
 
     var query = 'ValueSet/'+ ID;
     performQueryAgainstFHIRServer(query,null,function(resp){
-        res.json(resp);
+        res.json(resp,resp.statusCode);
     })
 })
-/*
-//add a new valueset
-app.post('/api/valuesetXXXXX', function(req, res){
-    var vsID = req.params.id;
-    var resource = req.body;
-
-    //console.log(resource,vsID)
-
-
-    postToFHIRServer(resource,function(resp){
-        resp.content = resource;
-        putToFHIRServer(resource,vsID,function(resp){
-            resp.content = resource;
-            logResource(resource,function(){
-                res.json(resp);
-            })
-        //res.json(resp);
-    })
-});
-    */
-
 
 //the resource name is in the resource. todo - change
 app.post('/api', function(req, res){
@@ -238,7 +222,7 @@ app.get('/api/valueset/:publisher', function(req, res){
 
     request(getOptions(FHIRServerUrl+ 'ValueSet?publisher='+publisher),function(error,response,body){
         var resp1={};
-        console.log(response);
+       // console.log(response);
         resp1.id = response.headers.location;
         resp1.statusCode = response.statusCode;
         resp1.response = JSON.parse(body);
@@ -361,16 +345,20 @@ function postToFHIRServer(resource,callback) {
 }
 
 //put a resource to a FHIR server - ie an update...
-function putToFHIRServer(resource,id,callback) {
+function putToFHIRServer(resource,id,vid,callback) {
     var resourceType = resource.resourceType;
     var options = {
         method:'PUT',
         headers : {
-            "content-type" : 'application/json+fhir'
+            "content-type" : 'application/json+fhir',
+            "accept" : 'application/json+fhir',
+            "content-location" : vid
         },
         body : JSON.stringify(resource),
         uri : FHIRServerUrl + resourceType + "/" + id
     }
+
+    console.log(options);
 
     request(options,function(error,response,body){
         var resp = {};
@@ -379,6 +367,9 @@ function putToFHIRServer(resource,id,callback) {
         resp.body = body;
         resp.headers = response.headers;
         resp.error = error;
+
+        //console.log(resp);
+
         callback(resp);
     })
 }
@@ -402,43 +393,14 @@ function performQueryAgainstFHIRServer(query,server,callback){
 
 
 
-    console.log(options);
-    //console.log(options);
 
     request(options,function(error,response,body){
 
-        //console.log(error,response.statusCode,body);
         if (error) {
             throw error;
         }
 
-        console.log(body);
-
-        var b = body.substring(1)
-        var c = body.substring(0,1);
-
-
-
-        console.log('-' + c + '-');
-        /*
-
-        var
-        var b = body.replace('\r','');
-        var c = b.replace('\n','')
-
-        console.log('=========')
-        console.log(b);
-
-console.log('---------------')
-        console.log(c);
-
-        console.log('xxxxxxxxxxx')
-*/
-
-
-
         if (response.statusCode != 200) {
-            //console.log(JSON.parse(body));
             console.log(body);
             throw 'error';
         }

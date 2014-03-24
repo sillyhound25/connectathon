@@ -28,7 +28,16 @@ var ValueSetCollection = Backbone.Collection.extend({
         //console.log(response);
         var ar = [];
         _.each(response.content.response.entry,function(entry){
-            ar.push({content:entry.content,id:entry.id});
+
+            //pull out the versionID if it exists...
+            var vid = '';
+            _.each(entry.link,function(link){
+                if (link.rel === 'self') {
+                    vid = link.href;
+                }
+            })
+
+            ar.push({content:entry.content,id:entry.id,vid:vid});
         })
         return ar;
     }

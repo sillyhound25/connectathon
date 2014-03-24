@@ -256,7 +256,7 @@ colProfile.fetch({
     success : function() {
         $('#loading').hide();
       _.each(colProfile.models,function(m){
-            console.log(m.toJSON());
+            console.log(m.get('vid'));
          })
         //console.log(colProfile.models);
         listProfiles.render();      //render the list of valuesets...
