@@ -58,48 +58,94 @@ ProfileModel = Backbone.Model.extend({
         resource.meta = {id :this.get('id')};
         return resource;
     },
+    validateAndClean : function(model,callback) {
+        //validate the profile and remote any meta nodes...
+        //todo this could be tidied...
+        var fhirProfile = model.get('content');
+        var err = "";
+        delete fhirProfile.meta;
+
+        _.each(fhirProfile.extensionDefn,function(ext){
+            if (ext.meta) {
+                delete ext.meta;
+                if (! ext.context[0]) {
+                    err += 'There is an empty context field in an extension';
+                }
+            }
+        })
+        console.log(fhirProfile);
+        callback(err,fhirProfile);
+
+    },
     sync : function(method,model,options) {
         //todo - apparently thic can be done once for all modela - Backbone.sync ...
         var uri = '/api/';
         var rest_method = 'PUT';
-        var vs = model.get('content');
-        delete vs.meta;
 
-        switch (method){
-            case 'create' : {
-                rest_method = 'POST';
-                break;
+
+        var userEnteredId= this.get('userEnteredId');
+        //alert(userEnteredId);
+        //return;
+
+        this.validateAndClean(model,function(err,fhirProfile){
+            if (err) {
+                alert(err);
+                options.error(null,null,err);
+                return;
+            } else {
+
+                //console.log(vs);
+
+                switch (method){
+                    case 'create' : {
+                        rest_method = 'POST';
+                        break;
+                    }
+                    case 'update' : {
+                        //get the logical id
+                        var ar = model.get('id').split('/');
+                        var id = ar[ar.length-1]
+                        uri = uri +id;
+                        break;
+                    }
+                }
+
+
+                //if  the user has entered an id for a new profile, need to be able to execure a PUT
+                if (userEnteredId) {
+                    rest_method = 'PUT';
+                    uri = uri + userEnteredId;
+                }
+
+
+                //need to include the versionid
+                var vid = model.get('vid');
+                console.log(rest_method,vid,JSON.stringify(fhirProfile))
+
+
+
+                $.ajax (uri,{
+                    method : rest_method,
+                    data : JSON.stringify(fhirProfile),
+                    headers : {
+                        'content-type' : 'application/json',
+                        'content-location' : vid
+                    },
+                    success : function(xhr,status){
+                        options.success(xhr,status)
+
+                    },
+                    error : function(xhr,status,err){
+                        options.error(xhr,status,err)
+
+                    }
+                })
+
             }
-            case 'update' : {
-                //get the logical id
-                var ar = model.get('id').split('/');
-                var id = ar[ar.length-1]
-                uri = uri +id;
-                break;
-            }
-        }
-
-        //need to include the versionid
-        var vid = this.get('vid');
-        console.log(vid)
 
 
-        $.ajax (uri,{
-            method : rest_method,
-            data : JSON.stringify(vs),
-            headers : {
-                'content-type' : 'application/json',
-                'content-location' : vid
-            },
-            success : function(xhr,status){
-                options.success(xhr,status)
-
-            },
-            error : function(xhr,status,err){
-                options.error(xhr,status,err)
-
-            }
         })
+
 
 
 

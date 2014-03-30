@@ -14,11 +14,28 @@ var ProfileDetailView =  Backbone.View.extend({
         "click #add_new_extension": "addExtension",
         "click .vsInExt" : "showValueSet",
         "click #save_profile_changes" : "save",
-
+        "click #checkNewId" : "checkUniqueId",
          "blur .profile_header": function(){
              this.isDirty = true;
              $('#save_profile_changes').show();
          }
+    },
+    checkUniqueId : function() {
+        //check that an ID that has been entered is unique...
+        var id = $('#profile_id').val();
+        var that = this;
+        if (id) {
+            var url = '/api/oneresource/Profile/'+id;
+
+            var jqxhr = $.get(url, function() {
+                alert( "There is already a Profile with the ID: " );
+                $('#profile_id').val("");
+            })
+            .fail(function() {
+                $('#profile_id').addClass('alert alert-success');
+                that.checkedId = true;
+            })
+        }
     },
     showValueSet : function(ev) {
         //todo thi should be a separate view...
@@ -26,6 +43,10 @@ var ProfileDetailView =  Backbone.View.extend({
         console.log(vsURI);
         this.trigger('profileDetail:showVS',{uri:vsURI});
 
+    },
+    setNewProfile : function() {
+        //set by the caller to indicate a new profile...
+         this.isNew = true;
     },
     isDirty : function() {
         return this.isDirty;
@@ -49,6 +70,19 @@ var ProfileDetailView =  Backbone.View.extend({
             return;
         }
 
+        if (this.isNew) {
+            //if a new profile, then see if the user entered an Id, and also validated that it is new...
+            var profileId = $('#profile_id').val();
+            if (profileId) {
+                if (!this.checkedId) {
+                    alert("You entered an Id, so you need to check it doesn't already exist");
+                    return;
+                } else {
+                    model.set('userEnteredId',profileId);
+                }
+            }
+        }
+
         model.set('content',content);
         $('#save_profile_changes').text('Updating...').attr('disabled',true)
         console.log(model.toJSON())
@@ -60,9 +94,9 @@ var ProfileDetailView =  Backbone.View.extend({
                 that.trigger('profile:added',{model:model});
             },
             error : function(xhr,status,err) {
-                //console.log(xhr,status,err);
+                console.log(xhr,status,err);
                 $('#save_profile_changes').text('Update Profile').attr('disabled',false)
-                alert('sorry, there was an error saving the profile')
+                alert('sorry, there was an error saving the profile ')
             }
         });
     },
@@ -128,13 +162,26 @@ var ProfileDetailView =  Backbone.View.extend({
 //console.log(this.model.toJSON());
             //$('#op_profilename_label').html(this.template(this.model.toJSON().name));
 
+
+            if (! this.isNew) {
+                //if this is a new profile, then allow the ID to be entered
+                $('#profile_id').attr('disabled',true)
+            }
+
+
+
+
         } else {
             this.$el.html(this.template());
         }
 
         if (! this.isDirty) {
+            //if tehre are no changes yet, then don't show the save changes button
             $('#save_profile_changes').hide();
         }
+
+
+
 
         //this.delegateEvents();
         $('#updatingProfileMsg').hide();

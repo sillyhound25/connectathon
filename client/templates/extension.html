@@ -1,0 +1,20 @@
+<table class="table table-bordered table-condensed sortable" id="allextensions_tbl">
+    <thead>
+        <tr><th>Code</th><th>Profile</th><th>Resource</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+    {{#each entry}}
+        <tr>
+            <td>{{code}}</td>
+            <td>{{meta.profileName}}</td>
+            <td>
+                {{#each context}}
+                    {{this}}
+                {{/each}}
+            </td>
+            <td width='25%'>{{definition.short}}</td>
+        </tr>
+    {{/each}}
+    </tbody>
+</table>
+

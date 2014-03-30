@@ -41,8 +41,8 @@ var ProfileCollection = Backbone.Collection.extend({
         return ar;
     },
     parse : function(response,options) {
-        //called when loading up a collection..
-        //console.log(response);
+        //called when loading up a collection of profiles..
+        var that=this;
         var ar = [];
         _.each(response.entry,function(entry){
             //console.log(entry);
@@ -56,7 +56,14 @@ var ProfileCollection = Backbone.Collection.extend({
 
             ar.push({content:entry.content,id:entry.id,vid:vid});
             //console.log(entry.id);
+            //if there are extensions in this profile, then fire an event so they can be parsed out...
+            if (entry.content.extensionDefn) {
+//console.log(entry.content.name);
+                that.trigger("profile:extensiondefs",{ext:entry.content.extensionDefn,profile:entry.content})
+            }
         })
+
+
         return ar;
     }
 });

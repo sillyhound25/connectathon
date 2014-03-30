@@ -5,9 +5,39 @@
 
 var ProfileExtensionView =  Backbone.View.extend({
     events : {
-        "click #eeSave" : "saveExtension"
+        "click #eeSave" : "saveExtension",
+        "change #eeContextResource" : "selectResource"
     },
 
+    selectResource : function(callback) {
+        //when a resource is selected, we want to load the path options...
+        var resourceName = $('#eeContextResource').val();//.toLowerCase();
+        //alert(resourceName);
+        //trigger an event that will get all the paths for this resource defined in core.
+        //(some are stripped off)
+        var $el = $('#eeContextResourcePath');
+        $el.empty();
+        var lne = "<option value=''>Looking up paths...</option>";
+        $el.append(lne);
+        this.trigger('profileExtension:selectedResource',{resourceName: resourceName,callback : function(arPaths){
+            //OK got all the paths - update the path list combo
+            $el.empty();
+            _.each(arPaths,function(path){
+                var lne = "<option value='"+path + "'";
+                //note that we only support one resource
+                //if (extension.context && name === extension.context[0]) {
+               //     lne += " selected='selected' ";
+              //  }
+                lne += ">"+path+"</option>";
+                $el.append(lne);
+
+            })
+            if (callback) {
+                callback();
+            }
+            //console.log(arPaths);
+        }})
+    },
     saveExtension : function() {
         //update the extension
         var isNew = false;
@@ -30,7 +60,13 @@ var ProfileExtensionView =  Backbone.View.extend({
         extension.definition.max=$('#eeMax').val();
         extension.definition.type = [{code:$('#eeDataType').val()}];
 
-        extension.context= [$('#eeContextResource').val()];
+        var fullContextPath = $('#eeContextResource').val() + '.' + $('#eeContextResourcePath').val();
+
+        extension.context= [fullContextPath];
+        //extension.context= [$('#eeContextResource').val()];
+
+
+
 
         if ($('#eeIsModifier').is(':checked')) {
             extension.definition.isModifier = true;
@@ -56,7 +92,7 @@ var ProfileExtensionView =  Backbone.View.extend({
             this.model.updateExtension(extension);
         }
 
-
+console.log(this.model.toJSON());
 
 
         $('#editExtensionDlg').modal('hide');
@@ -125,6 +161,31 @@ var ProfileExtensionView =  Backbone.View.extend({
             }
 
 
+        console.log(extension.context);
+            //need to get the resourceName and path from the context.
+            var resourceName = extension.context[0];
+            var path = "";
+            var g = resourceName.indexOf('.');
+            if (g > -1) {
+                path = resourceName.substr(g+1);
+                resourceName = resourceName.substr(0,g);
+            }
+
+
+        console.log(resourceName,path)
+            _.each(that.meta.resourceList,function(name){
+                var lne = "<option value='"+name + "'";
+                //note that we only support one resource
+                if (resourceName === name) {
+                    lne += " selected='selected' ";
+                }
+                lne += ">"+name+"</option>";
+                $("#eeContextResource").append(lne);
+            })
+
+
+
+/*
             //------------- set the list of resources --------------
             _.each(that.meta.resourceList,function(name){
                 var lne = "<option value='"+name + "'";
@@ -135,7 +196,15 @@ var ProfileExtensionView =  Backbone.View.extend({
                 lne += ">"+name+"</option>";
                 $("#eeContextResource").append(lne);
             })
+        */
 
+            //if (extension.context && name === extension.context[0]) {
+              //  $("#eeContextResourcePath").val(extension.context[0]);
+           // }
+
+            this.selectResource(function(){
+                $("#eeContextResourcePath").val(path);
+            });
 
             //------------set the datatype ---------------
             var dataType="";
@@ -151,6 +220,9 @@ var ProfileExtensionView =  Backbone.View.extend({
                 lne += ">"+name+"</option>";
                 $("#eeDataType").append(lne);
             })
+
+
+
 
             //---------set the valueset -------------
             var vsID = "";

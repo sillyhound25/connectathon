@@ -27,7 +27,7 @@ var app = express.createServer();
 var FHIRCoreRegistry = 'http://spark.furore.com/fhir/';
 
 //var FHIRServerUrl = 'http://hisappakl/blaze/fhir/';
- var FHIRServerUrl = 'http://spark.furore.com/fhir/';
+var FHIRServerUrl = 'http://spark.furore.com/fhir/';
 //var FHIRServerUrl = 'http://fhir.healthintersections.com.au/open/';
 // Configuration
 
@@ -39,6 +39,18 @@ app.configure(function(){
   app.use(app.router);
   app.use(express.static(__dirname + '/client'));
 });
+
+
+//get a single resource
+app.get('/api/oneresource/:type/:id', function(req, res) {
+    url = req.params.type + "/" + req.params.id;
+    //console.log(url);
+    performQueryAgainstFHIRServer(url,null,function(resp,statusCode){
+        res.json(resp,statusCode);
+    })
+
+})
+
 
 //perform a query against a fhir server
 app.get('/api/generalquery/:query', function(req, res){
@@ -126,7 +138,7 @@ app.get('/api/profile/:name/:publisher', function(req, res){
 
 });
 
-//get a specific profile by name and publisher
+//get the conformance statement
 app.get('/api/conformance', function(req, res){
     var query = 'metadata';
     performQueryAgainstFHIRServer(query,null,function(resp){
@@ -235,6 +247,7 @@ app.get('/api/valueset/:publisher', function(req, res){
 
 })
 
+//gets all the resources for a patient...
 app.get('/api/patient/:patientID', function(req, res){
     var patientID = req.params.patientID;
 
@@ -368,7 +381,7 @@ function putToFHIRServer(resource,id,vid,callback) {
         resp.headers = response.headers;
         resp.error = error;
 
-        //console.log(resp);
+        console.log(resp);
 
         callback(resp);
     })
@@ -388,23 +401,33 @@ function performQueryAgainstFHIRServer(query,server,callback){
         headers : {
             "Accept" : 'application/json+fhir'
         },
-        uri : fhirServer + query
+        uri : fhirServer + query,
+        timeout : 10000
     }
 
 
+    console.log(options);
 
 
     request(options,function(error,response,body){
 
-        if (error) {
-            throw error;
-        }
+      //  if (error) {
+       //     throw error;
+      //  }
 
         if (response.statusCode != 200) {
-            console.log(body);
-            throw 'error';
+            console.log('Error: ' + body);
+           // throw 'error';
         }
-        callback(JSON.parse(body));
+
+        var json = {}
+        try {
+            json = JSON.parse(body)
+        } catch (ex) {
+            json = {'error': body}
+        }
+
+        callback(json,response.statusCode);
 
     })
 }
@@ -424,9 +447,9 @@ function performQueryAgainstFHIRServerXML(query,callback){
 
         if (response.statusCode != 200) {
             console.log(body);
-            throw 'error';
+            //throw 'error';
         }
-        callback(body);
+        callback(body,response.statusCode);
 
     })
 }

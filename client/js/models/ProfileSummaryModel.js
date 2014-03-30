@@ -50,6 +50,15 @@ ProfileSummaryModel = Backbone.Model.extend({
             //console.log(ext)
             var resource = ext.context[0].toLowerCase();
             if ( ! summary.resources[resource]) {
+
+
+                g = resource.indexOf('.');
+                if (g > -1) {
+                    resource = resource.substr(0,g);
+                }
+                console.log(resource);
+
+
                 summary.resources[resource] = {properties : [],name:resource}
             }
         })
@@ -62,6 +71,13 @@ ProfileSummaryModel = Backbone.Model.extend({
         //todo this will require re-factoring as at the moment there must be an extension forst...
         var arTasks = [];
         $.each(summary.resources,function(resourceName) {
+            //if there is a '.' then the resource has a path associated with it. We only want the resource name
+            g = resourceName.indexOf('.');
+            if (g > -1) {
+                resourceName = resourceName.substr(0,g);
+            }
+console.log(resourceName);
+
             arTasks.push(function(cb){
                 if (Backbone.fhirResourceCache[resourceName]) {
                     console.log('load ' + resourceName + ' from cache')
@@ -267,11 +283,75 @@ ProfileSummaryModel = Backbone.Model.extend({
             cb();
         }
 
+    },
+
+
+    //get all the possible paths for a resource. Used to associate an extension with a specific path in a resource
+    getPathsForResource : function(resourceName,callback) {
+        if (Backbone.fhirResourceCache[resourceName.toLowerCase()]){
+            console.log('from cache');
+            var ar = processResourceProfile(Backbone.fhirResourceCache[resourceName.toLowerCase()])
+            callback (ar);
+        } else {
+            $.get( "/api/profile/"+resourceName+"/FHIR Project", function( data ) {
+
+                var resourceProfile;
+                $.each(data.entry,function(inx,entry){
+                    //>>>>>  assume that the name of the profile is the same as the resourceName
+                    if (entry.content.name.toLowerCase() === resourceName.toLowerCase()){
+                        resourceProfile = entry.content;
+                        //save resource profile in cache...
+                        Backbone.fhirResourceCache[resourceName.toLowerCase()] = resourceProfile;     //the fhir representation of the profile
+                    }
+                })
+
+
+
+
+                //console.log(data)
+                //Backbone.fhirResourceCache[resourceName.toLowerCase()] = data;
+                var ar = [];
+                if (resourceProfile) {
+                    ar = processResourceProfile(resourceProfile)
+                }
+
+                callback (ar);
+            })
+            //this needs a fhor call...
+
+        }
+
+        //extract all the paths into a string array...
+        function processResourceProfile(resource) {
+            var ar = [];
+
+
+            $.each(resource.structure[0].element, function(inx,el){
+//console.log(el);
+                if (el.definition.type) {
+                    //only include elements with a type (ie a datatype). 'header' properties (like medicationAdministration.dosage) aren't neeed (I think)
+                    var type = el.definition.type[0].code;
+                    //don't include extensions on the standard profile - they all have them and it's clutter at the moment...
+
+                    if (type.toLowerCase() !== 'extension') {
+
+                        var pathName = el.path;//.toLowerCase();
+                        //strip off the resource name;
+                        //console.log(resource.name);
+                        pathName = pathName.replace(resourceName+'.',"");
+
+                        ar.push(pathName);
+                    }
+                }
+            });
+
+
+            return ar;
+
+
+        }
+
     }
-
-
-
-
 
 
 })

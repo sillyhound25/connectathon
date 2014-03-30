@@ -36,6 +36,7 @@ var ProfileSummaryView = Backbone.View.extend({
                 view.remove();
             })
         }
+        this.$el.html("");
 
     },
     createAndShowSummary : function() {

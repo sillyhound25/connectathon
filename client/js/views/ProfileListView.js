@@ -15,6 +15,7 @@ var ProfileListView = Backbone.View.extend({
         alert('This will delete the profile with the ID: ' + id);
     },
     newProfile : function(){
+        $('.orionProfileDetail').removeClass('active');
         this.trigger('profileList:new');
     },
     showDetail : function(ev) {

@@ -9,9 +9,9 @@
 var ValueSetCollection = Backbone.Collection.extend({
     model: ValueSetModel,
     url : "/api/valueset/orion",
-    syncX : function() {
-        console.log('sync called');
-    },
+    //syncX : function() {
+       // console.log('sync called');
+   // },
     findModelByResourceID : function(resourceID) {
         //return a model with the given resourceID
         return _.findWhere(this.models,{'id':resourceID})

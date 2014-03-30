@@ -2,19 +2,31 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3a9b3cc9-926c-402b-bbe7-016794926cb7" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/js/collections/ExtensionCollection.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/js/models/ExtensionModel.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/js/views/ExtensionView.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/templates/extension.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/collections/ProfileCollection.js" afterPath="$PROJECT_DIR$/client/js/collections/ProfileCollection.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ProfileDetailView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileDetailView.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ProfileExtensionView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileExtensionView.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ProfileListView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileListView.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/models/ProfileModel.js" afterPath="$PROJECT_DIR$/client/js/models/ProfileModel.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/models/ProfileSummaryModel.js" afterPath="$PROJECT_DIR$/client/js/models/ProfileSummaryModel.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ProfileSummaryView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileSummaryView.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ProfileTestFormView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileTestFormView.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/collections/ValueSetCollection.js" afterPath="$PROJECT_DIR$/client/js/collections/ValueSetCollection.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/models/ValueSetModel.js" afterPath="$PROJECT_DIR$/client/js/models/ValueSetModel.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.js" afterPath="$PROJECT_DIR$/app.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/editExtension.html" afterPath="$PROJECT_DIR$/client/templates/editExtension.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/front.html" afterPath="$PROJECT_DIR$/client/front.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/mediator.js" afterPath="$PROJECT_DIR$/client/js/mediator.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/oneProfile.html" afterPath="$PROJECT_DIR$/client/templates/oneProfile.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/orionProfileList.html" afterPath="$PROJECT_DIR$/client/templates/orionProfileList.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="AlexUpdate.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/app.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395627295413" ignored="false" />
-    <file path="/front.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395614229362" ignored="false" />
+    <file path="/app.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1396213177290" ignored="false" />
+    <file path="/front.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395650233603" ignored="false" />
     <file path="/patient.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395105271779" ignored="false" />
     <file path="/encounter.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1394743158928" ignored="false" />
     <file path="/practitioner.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1394744734597" ignored="false" />
@@ -22,7 +34,7 @@
     <file path="/condition.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1392946291224" ignored="false" />
     <file path="/allergyIntolerance.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1392950416267" ignored="false" />
     <file path="/valuset.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1393825692207" ignored="false" />
-    <file path="/Dummy.txt" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395605488012" ignored="false" />
+    <file path="/Dummy.txt" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1396207891996" ignored="false" />
     <file path="/functions.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1394418387611" ignored="false" />
     <file path="/testFunctions.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1394741444274" ignored="false" />
     <file path="/testForm.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1394651471272" ignored="false" />
@@ -31,7 +43,7 @@
     <file path="/testDataView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1394744533589" ignored="false" />
     <file path="/testDataForm.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395365612217" ignored="false" />
     <file path="/serverSample.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395263305774" ignored="false" />
-    <file path="/oneProfile.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395524118479" ignored="false" />
+    <file path="/oneProfile.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1396208847812" ignored="false" />
     <file path="/queryView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395079849852" ignored="false" />
     <file path="/conformanceList.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395079687949" ignored="false" />
     <file path="/conformanceParams.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395080163861" ignored="false" />
@@ -41,21 +53,21 @@
     <file path="/ValueSetDetailView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1394853051772" ignored="false" />
     <file path="/listVS.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1394834895806" ignored="false" />
     <file path="/oneVS.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395364697899" ignored="false" />
-    <file path="/ProfileModel.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395627310618" ignored="false" />
-    <file path="/ProfileCollection.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395626071821" ignored="false" />
+    <file path="/ProfileModel.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1396214702782" ignored="false" />
+    <file path="/ProfileCollection.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395634814160" ignored="false" />
     <file path="/ProfileListView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395342024349" ignored="false" />
-    <file path="/ProfileDetailView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395621110719" ignored="false" />
-    <file path="/orionProfileList.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395341731274" ignored="false" />
-    <file path="/ProfileExtensionView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395269239082" ignored="false" />
-    <file path="/ProfileSummaryModel.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395546161832" ignored="false" />
+    <file path="/ProfileDetailView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1396214580320" ignored="false" />
+    <file path="/orionProfileList.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395782531090" ignored="false" />
+    <file path="/ProfileExtensionView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395730996804" ignored="false" />
+    <file path="/ProfileSummaryModel.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395731588756" ignored="false" />
     <file path="/ProfileSummaryView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395612434745" ignored="false" />
     <file path="/ProfileTestFormView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395365347437" ignored="false" />
     <file path="/ProfileTestFormModel.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395365637490" ignored="false" />
     <file path="/ValueSetSummary.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395031807193" ignored="false" />
-    <file path="/mediator.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395626623090" ignored="false" />
+    <file path="/mediator.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1396208217866" ignored="false" />
     <file path="/ProfileQueryView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395347015702" ignored="false" />
     <file path="/profileQuery.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395277032702" ignored="false" />
-    <file path="/a.dummy" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395516723585" ignored="false" />
+    <file path="/a.dummy" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395731165935" ignored="false" />
     <file path="/medicationadministration.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395263223380" ignored="false" />
     <file path="/profileContent.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395361586353" ignored="false" />
     <file path="/ProfileContentView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395361496631" ignored="false" />
@@ -63,6 +75,11 @@
     <file path="/profileSummaryContainer.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395619709794" ignored="false" />
     <file path="/editStructure.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395534306996" ignored="false" />
     <file path="/ProfileStructureView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395547953341" ignored="false" />
+    <file path="/ExtensionView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395642795324" ignored="false" />
+    <file path="/extension.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395643483997" ignored="false" />
+    <file path="/ExtensionModel.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395628573902" ignored="false" />
+    <file path="/ExtensionCollection.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395634911350" ignored="false" />
+    <file path="/editExtension.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395702326839" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,110 +99,133 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
+      <file leaf-file-name="ProfileDetailView.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/js/views/ProfileDetailView.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="34" column="65" selection-start="1168" selection-end="1168" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="testDataForm.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/templates/testDataForm.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="22.5">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ProfileModel.js" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/client/js/models/ProfileModel.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="116" column="46" selection-start="3720" selection-end="3720" vertical-scroll-proportion="1.4900662">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="oneProfile.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/templates/oneProfile.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="16" column="119" selection-start="579" selection-end="589" vertical-scroll-proportion="-10.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="app.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="30" column="33" selection-start="1009" selection-end="1009" vertical-scroll-proportion="-6.3461537">
+            <state line="49" column="6" selection-start="1585" selection-end="1585" vertical-scroll-proportion="-14.461538">
               <folding>
                 <element signature="e#1#32#0" expanded="false" />
-                <element signature="e#1092#1133#0" expanded="false" />
-                <element signature="e#1412#1807#0" expanded="false" />
-                <element signature="e#1565#1626#0" expanded="false" />
-                <element signature="e#1813#1904#0" expanded="false" />
-                <element signature="e#2583#3185#0" expanded="false" />
-                <element signature="e#4555#4849#0" expanded="false" />
-                <element signature="e#4935#5345#0" expanded="false" />
-                <element signature="e#5437#5727#0" expanded="false" />
-                <element signature="e#6120#6589#0" expanded="false" />
-                <element signature="e#6645#6838#0" expanded="false" />
-                <element signature="e#6749#6834#0" expanded="false" />
+                <element signature="e#1087#1313#0" expanded="false" />
+                <element signature="e#1091#1132#0" expanded="false" />
+                <element signature="e#2087#2178#0" expanded="false" />
+                <element signature="e#2306#2752#0" expanded="false" />
+                <element signature="e#2857#3459#0" expanded="false" />
+                <element signature="e#3033#3455#0" expanded="false" />
+                <element signature="e#3111#3355#0" expanded="false" />
+                <element signature="e#3163#3344#0" expanded="false" />
+                <element signature="e#3227#3328#0" expanded="false" />
+                <element signature="e#3361#3445#0" expanded="false" />
+                <element signature="e#3665#3751#0" expanded="false" />
+                <element signature="e#3852#3894#0" expanded="false" />
+                <element signature="e#3957#4004#0" expanded="false" />
+                <element signature="e#4179#4226#0" expanded="false" />
+                <element signature="e#4333#4704#0" expanded="false" />
+                <element signature="e#4534#4700#0" expanded="false" />
+                <element signature="e#4608#4693#0" expanded="false" />
+                <element signature="e#5058#5105#0" expanded="false" />
+                <element signature="e#5230#5250#0" expanded="false" />
+                <element signature="e#5554#5601#0" expanded="false" />
+                <element signature="e#5696#5986#0" expanded="false" />
+                <element signature="e#5843#5983#0" expanded="false" />
+                <element signature="e#5918#5973#0" expanded="false" />
+                <element signature="e#6058#6271#0" expanded="false" />
+                <element signature="e#6203#6267#0" expanded="false" />
+                <element signature="e#6379#6848#0" expanded="false" />
+                <element signature="e#6524#6843#0" expanded="false" />
+                <element signature="e#6946#7139#0" expanded="false" />
+                <element signature="e#7050#7135#0" expanded="false" />
                 <element signature="n#!!block;n#logResource#0" expanded="false" />
-                <element signature="e#7048#7147#0" expanded="false" />
-                <element signature="e#7066#7100#0" expanded="false" />
-                <element signature="e#7106#7141#0" expanded="false" />
+                <element signature="e#7349#7448#0" expanded="false" />
+                <element signature="e#7367#7401#0" expanded="false" />
+                <element signature="e#7407#7442#0" expanded="false" />
                 <element signature="n#!!block;n#logBundle#0" expanded="false" />
-                <element signature="e#7354#7453#0" expanded="false" />
-                <element signature="e#7372#7406#0" expanded="false" />
-                <element signature="e#7412#7447#0" expanded="false" />
-                <element signature="e#7509#9126#0" expanded="false" />
-                <element signature="e#7828#7990#0" expanded="false" />
-                <element signature="e#8753#9011#0" expanded="false" />
-                <element signature="e#9061#9123#0" expanded="false" />
-                <element signature="e#9130#9232#0" expanded="false" />
-                <element signature="e#9347#9545#0" expanded="false" />
-                <element signature="e#9390#9454#0" expanded="false" />
-                <element signature="n#!!block;n#performQueryAgainstFHIRServerXML#0" expanded="false" />
-                <element signature="e#11470#11618#0" expanded="false" />
-                <element signature="e#11512#11575#0" expanded="false" />
-                <element signature="e#11698#11841#0" expanded="false" />
-                <element signature="e#11741#11810#0" expanded="false" />
-                <element signature="e#12089#12400#0" expanded="false" />
-                <element signature="e#12434#12872#0" expanded="false" />
-                <element signature="e#12544#12860#0" expanded="false" />
-                <element signature="e#12894#13326#0" expanded="false" />
-                <element signature="e#13004#13314#0" expanded="false" />
-                <element signature="e#13348#13778#0" expanded="false" />
-                <element signature="e#13456#13766#0" expanded="false" />
-                <element signature="e#13800#13834#0" expanded="false" />
+                <element signature="e#7655#7754#0" expanded="false" />
+                <element signature="e#7673#7707#0" expanded="false" />
+                <element signature="e#7713#7748#0" expanded="false" />
+                <element signature="e#7810#9427#0" expanded="false" />
+                <element signature="e#8129#8291#0" expanded="false" />
+                <element signature="e#9054#9312#0" expanded="false" />
+                <element signature="e#9362#9424#0" expanded="false" />
+                <element signature="e#9431#9533#0" expanded="false" />
+                <element signature="n#!!block;n#postToFHIRServer#0" expanded="false" />
+                <element signature="e#9648#9846#0" expanded="false" />
+                <element signature="e#9691#9755#0" expanded="false" />
+                <element signature="e#9942#10255#0" expanded="false" />
+                <element signature="e#9952#9987#0" expanded="false" />
+                <element signature="n#!!block;n#putToFHIRServer#0" expanded="false" />
+                <element signature="e#10429#10723#0" expanded="false" />
+                <element signature="e#10471#10621#0" expanded="false" />
+                <element signature="e#10801#11071#0" expanded="false" />
+                <element signature="e#11990#12138#0" expanded="false" />
+                <element signature="e#12032#12095#0" expanded="false" />
+                <element signature="n#!!block;n#getPatientDataFromFHIRServer#0" expanded="false" />
+                <element signature="e#12509#14326#0" expanded="false" />
+                <element signature="e#12531#12954#0" expanded="false" />
+                <element signature="e#12631#12942#0" expanded="false" />
+                <element signature="e#12976#13414#0" expanded="false" />
+                <element signature="e#13086#13402#0" expanded="false" />
+                <element signature="e#13436#13868#0" expanded="false" />
+                <element signature="e#13546#13856#0" expanded="false" />
+                <element signature="e#13890#14320#0" expanded="false" />
+                <element signature="e#13998#14308#0" expanded="false" />
+                <element signature="e#14342#14376#0" expanded="false" />
                 <element signature="n#!!block;n#getOptionsXXX#0;n#!!block;n#getPatientDataFromFHIRServer#0" expanded="false" />
-                <element signature="e#13894#14049#0" expanded="false" />
-                <element signature="e#13944#14016#0" expanded="false" />
+                <element signature="e#14436#14591#0" expanded="false" />
+                <element signature="e#14486#14558#0" expanded="false" />
+                <element signature="n#!!block;n#getOptions#0" expanded="false" />
+                <element signature="e#14674#14799#0" expanded="false" />
+                <element signature="e#14716#14774#0" expanded="false" />
                 <element signature="n#!!block;n#postBundleToFHIRServer#0" expanded="false" />
-                <element signature="e#14350#14531#0" expanded="false" />
-                <element signature="e#14393#14457#0" expanded="false" />
-                <element signature="e#14609#15034#0" expanded="false" />
-                <element signature="e#14619#14647#0" expanded="false" />
-                <element signature="e#14708#14776#0" expanded="false" />
+                <element signature="e#14892#15073#0" expanded="false" />
+                <element signature="e#14935#14999#0" expanded="false" />
+                <element signature="e#15151#15576#0" expanded="false" />
+                <element signature="e#15161#15189#0" expanded="false" />
+                <element signature="e#15250#15318#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="front.html" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/front.html">
+      <file leaf-file-name="mediator.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/js/mediator.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="72" column="10" selection-start="3556" selection-end="3556" vertical-scroll-proportion="-8.125">
-              <folding>
-                <element signature="tag#head#0;tag#html#0" expanded="false" />
-                <element signature="tag#div#0;tag#div#0;tag#div#1;tag#body#0;tag#html#0" expanded="false" />
-                <element signature="tag#div#1;tag#div#0;tag#div#1;tag#body#0;tag#html#0" expanded="false" />
-                <element signature="tag#div#5;tag#div#0;tag#div#1;tag#body#0;tag#html#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ProfileCollection.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/js/collections/ProfileCollection.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="56" column="62" selection-start="1666" selection-end="1674" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ProfileModel.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/js/models/ProfileModel.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="91" column="40" selection-start="2769" selection-end="2811" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ValueSetCollection.js" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/client/js/collections/ValueSetCollection.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="39" column="62" selection-start="1185" selection-end="1185" vertical-scroll-proportion="0.8013245">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ValueSetModel.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/js/models/ValueSetModel.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="0" selection-start="755" selection-end="755" vertical-scroll-proportion="0.0">
+            <state line="133" column="31" selection-start="5533" selection-end="5533" vertical-scroll-proportion="-9.346154">
               <folding />
             </state>
           </provider>
@@ -209,22 +249,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/client/templates/editStructure.html" />
-        <option value="$PROJECT_DIR$/client/templates/profileSummaryItem.html" />
-        <option value="$PROJECT_DIR$/client/js/views/ProfileStructureView.js" />
+        <option value="$PROJECT_DIR$/client/js/views/ExtensionView.js" />
+        <option value="$PROJECT_DIR$/client/templates/extension.html" />
+        <option value="$PROJECT_DIR$/client/templates/editExtension.html" />
+        <option value="$PROJECT_DIR$/client/js/collections/ExtensionCollection.js" />
+        <option value="$PROJECT_DIR$/client/js/views/ProfileExtensionView.js" />
         <option value="$PROJECT_DIR$/client/js/models/ProfileSummaryModel.js" />
         <option value="$PROJECT_DIR$/client/js/views/ProfileListView.js" />
         <option value="$PROJECT_DIR$/client/js/views/ProfileSummaryView.js" />
-        <option value="$PROJECT_DIR$/client/templates/profileSummaryContainer.html" />
-        <option value="$PROJECT_DIR$/client/templates/orionProfileList.html" />
-        <option value="$PROJECT_DIR$/client/js/views/ProfileDetailView.js" />
-        <option value="$PROJECT_DIR$/client/js/collections/ProfileCollection.js" />
-        <option value="$PROJECT_DIR$/client/js/mediator.js" />
-        <option value="$PROJECT_DIR$/app.js" />
         <option value="$PROJECT_DIR$/client/front.html" />
+        <option value="$PROJECT_DIR$/client/templates/orionProfileList.html" />
+        <option value="$PROJECT_DIR$/client/js/mediator.js" />
+        <option value="$PROJECT_DIR$/client/templates/oneProfile.html" />
+        <option value="$PROJECT_DIR$/app.js" />
+        <option value="$PROJECT_DIR$/client/js/views/ProfileTestFormView.js" />
+        <option value="$PROJECT_DIR$/client/js/views/ProfileDetailView.js" />
         <option value="$PROJECT_DIR$/client/js/models/ProfileModel.js" />
-        <option value="$PROJECT_DIR$/client/js/models/ValueSetModel.js" />
-        <option value="$PROJECT_DIR$/client/js/collections/ValueSetCollection.js" />
       </list>
     </option>
   </component>
@@ -543,7 +583,7 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.7755682" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22005773" sideWeight="0.6784203" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15584415" sideWeight="0.6784203" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.46022728" sideWeight="0.8174603" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3215797" sideWeight="0.13275613" order="9" side_tool="true" content_ui="tabs" />
@@ -552,7 +592,7 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.06676137" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30606487" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -621,203 +661,192 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/client/js/views/ProfileSummaryView.js">
+    <entry file="file://$PROJECT_DIR$/client/css/font-awesome.min.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="52" selection-start="780" selection-end="780" vertical-scroll-proportion="0.0">
+        <state line="3" column="46" selection-start="208" selection-end="208" vertical-scroll-proportion="0.09977827">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/request/request.js">
+    <entry file="file://$PROJECT_DIR$/client/js/collections/ExtensionCollection.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="936" column="22" selection-start="29586" selection-end="29586" vertical-scroll-proportion="0.7202073">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/templates/oneProfile.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="54" selection-start="1804" selection-end="1824" vertical-scroll-proportion="-5.625">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/templates/profileSummaryContainer.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="0" selection-start="750" selection-end="750" vertical-scroll-proportion="-13.125">
+        <state line="21" column="3" selection-start="618" selection-end="618" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="n#style#0;n#button#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="e#0#160#0" expanded="false" />
           </folding>
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/templates/editExtension.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="82" selection-start="1810" selection-end="1831" vertical-scroll-proportion="-7.5" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/js/views/ProfileExtensionView.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="53" column="26" selection-start="1586" selection-end="1586" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/js/views/ProfileListView.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="0" selection-start="611" selection-end="611" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/templates/orionProfileList.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="16" selection-start="570" selection-end="570" vertical-scroll-proportion="-10.625">
-          <folding>
-            <element signature="n#style#0;n#span#0;n#a#0;n#ul#0;n#div#0;n#div#1;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/js/views/ProfileDetailView.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="38" selection-start="2153" selection-end="2153" vertical-scroll-proportion="0.0">
+        <state line="202" column="13" selection-start="6821" selection-end="6821" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/js/models/ProfileSummaryModel.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="75" column="70" selection-start="2657" selection-end="2669" vertical-scroll-proportion="0.0">
+        <state line="60" column="0" selection-start="1723" selection-end="1723" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/js/views/ProfileSummaryView.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="24" selection-start="1312" selection-end="1312" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/front.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="116" column="0" selection-start="5892" selection-end="5892" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/templates/orionProfileList.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="21" column="16" selection-start="646" selection-end="646" vertical-scroll-proportion="-13.125">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/js/mediator.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="261" column="41" selection-start="10135" selection-end="10135" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#1280#1751#0" expanded="false" />
-            <element signature="e#1410#1518#0" expanded="false" />
-            <element signature="e#1542#1745#0" expanded="false" />
-            <element signature="e#1880#1957#0" expanded="false" />
-            <element signature="e#1966#2082#0" expanded="false" />
-            <element signature="e#2131#2352#0" expanded="false" />
-            <element signature="e#2158#2260#0" expanded="false" />
-            <element signature="e#2285#2350#0" expanded="false" />
-            <element signature="e#3463#3491#0" expanded="false" />
-            <element signature="e#5527#5785#0" expanded="false" />
-            <element signature="e#6369#6413#0" expanded="false" />
-            <element signature="e#6507#7116#0" expanded="false" />
-            <element signature="e#6633#7025#0" expanded="false" />
-            <element signature="e#6664#6918#0" expanded="false" />
-            <element signature="e#6947#7019#0" expanded="false" />
-            <element signature="e#7033#7060#0" expanded="false" />
-            <element signature="e#7244#7344#0" expanded="false" />
-            <element signature="e#7414#7514#0" expanded="false" />
-            <element signature="e#7566#8746#0" expanded="false" />
-            <element signature="e#7788#8649#0" expanded="false" />
-            <element signature="e#7824#8174#0" expanded="false" />
-            <element signature="e#7842#7863#0" expanded="false" />
-            <element signature="e#8180#8639#0" expanded="false" />
-            <element signature="e#8655#8742#0" expanded="false" />
-            <element signature="e#8891#9878#0" expanded="false" />
-            <element signature="e#8898#8916#0" expanded="false" />
-            <element signature="e#9047#9874#0" expanded="false" />
-            <element signature="e#9199#9289#0" expanded="false" />
-            <element signature="e#9798#9827#0" expanded="false" />
-          </folding>
+        <state line="133" column="31" selection-start="5533" selection-end="5533" vertical-scroll-proportion="-9.346154">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/js/views/ProfileListView.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="37" selection-start="579" selection-end="594" vertical-scroll-proportion="0.5960265">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/templates/oneProfile.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="119" selection-start="579" selection-end="589" vertical-scroll-proportion="-10.0">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="33" selection-start="1009" selection-end="1009" vertical-scroll-proportion="-6.3461537">
+        <state line="49" column="6" selection-start="1585" selection-end="1585" vertical-scroll-proportion="-14.461538">
           <folding>
             <element signature="e#1#32#0" expanded="false" />
-            <element signature="e#1092#1133#0" expanded="false" />
-            <element signature="e#1412#1807#0" expanded="false" />
-            <element signature="e#1565#1626#0" expanded="false" />
-            <element signature="e#1813#1904#0" expanded="false" />
-            <element signature="e#2583#3185#0" expanded="false" />
-            <element signature="e#4555#4849#0" expanded="false" />
-            <element signature="e#4935#5345#0" expanded="false" />
-            <element signature="e#5437#5727#0" expanded="false" />
-            <element signature="e#6120#6589#0" expanded="false" />
-            <element signature="e#6645#6838#0" expanded="false" />
-            <element signature="e#6749#6834#0" expanded="false" />
+            <element signature="e#1087#1313#0" expanded="false" />
+            <element signature="e#1091#1132#0" expanded="false" />
+            <element signature="e#2087#2178#0" expanded="false" />
+            <element signature="e#2306#2752#0" expanded="false" />
+            <element signature="e#2857#3459#0" expanded="false" />
+            <element signature="e#3033#3455#0" expanded="false" />
+            <element signature="e#3111#3355#0" expanded="false" />
+            <element signature="e#3163#3344#0" expanded="false" />
+            <element signature="e#3227#3328#0" expanded="false" />
+            <element signature="e#3361#3445#0" expanded="false" />
+            <element signature="e#3665#3751#0" expanded="false" />
+            <element signature="e#3852#3894#0" expanded="false" />
+            <element signature="e#3957#4004#0" expanded="false" />
+            <element signature="e#4179#4226#0" expanded="false" />
+            <element signature="e#4333#4704#0" expanded="false" />
+            <element signature="e#4534#4700#0" expanded="false" />
+            <element signature="e#4608#4693#0" expanded="false" />
+            <element signature="e#5058#5105#0" expanded="false" />
+            <element signature="e#5230#5250#0" expanded="false" />
+            <element signature="e#5554#5601#0" expanded="false" />
+            <element signature="e#5696#5986#0" expanded="false" />
+            <element signature="e#5843#5983#0" expanded="false" />
+            <element signature="e#5918#5973#0" expanded="false" />
+            <element signature="e#6058#6271#0" expanded="false" />
+            <element signature="e#6203#6267#0" expanded="false" />
+            <element signature="e#6379#6848#0" expanded="false" />
+            <element signature="e#6524#6843#0" expanded="false" />
+            <element signature="e#6946#7139#0" expanded="false" />
+            <element signature="e#7050#7135#0" expanded="false" />
             <element signature="n#!!block;n#logResource#0" expanded="false" />
-            <element signature="e#7048#7147#0" expanded="false" />
-            <element signature="e#7066#7100#0" expanded="false" />
-            <element signature="e#7106#7141#0" expanded="false" />
+            <element signature="e#7349#7448#0" expanded="false" />
+            <element signature="e#7367#7401#0" expanded="false" />
+            <element signature="e#7407#7442#0" expanded="false" />
             <element signature="n#!!block;n#logBundle#0" expanded="false" />
-            <element signature="e#7354#7453#0" expanded="false" />
-            <element signature="e#7372#7406#0" expanded="false" />
-            <element signature="e#7412#7447#0" expanded="false" />
-            <element signature="e#7509#9126#0" expanded="false" />
-            <element signature="e#7828#7990#0" expanded="false" />
-            <element signature="e#8753#9011#0" expanded="false" />
-            <element signature="e#9061#9123#0" expanded="false" />
-            <element signature="e#9130#9232#0" expanded="false" />
-            <element signature="e#9347#9545#0" expanded="false" />
-            <element signature="e#9390#9454#0" expanded="false" />
-            <element signature="n#!!block;n#performQueryAgainstFHIRServerXML#0" expanded="false" />
-            <element signature="e#11470#11618#0" expanded="false" />
-            <element signature="e#11512#11575#0" expanded="false" />
-            <element signature="e#11698#11841#0" expanded="false" />
-            <element signature="e#11741#11810#0" expanded="false" />
-            <element signature="e#12089#12400#0" expanded="false" />
-            <element signature="e#12434#12872#0" expanded="false" />
-            <element signature="e#12544#12860#0" expanded="false" />
-            <element signature="e#12894#13326#0" expanded="false" />
-            <element signature="e#13004#13314#0" expanded="false" />
-            <element signature="e#13348#13778#0" expanded="false" />
-            <element signature="e#13456#13766#0" expanded="false" />
-            <element signature="e#13800#13834#0" expanded="false" />
+            <element signature="e#7655#7754#0" expanded="false" />
+            <element signature="e#7673#7707#0" expanded="false" />
+            <element signature="e#7713#7748#0" expanded="false" />
+            <element signature="e#7810#9427#0" expanded="false" />
+            <element signature="e#8129#8291#0" expanded="false" />
+            <element signature="e#9054#9312#0" expanded="false" />
+            <element signature="e#9362#9424#0" expanded="false" />
+            <element signature="e#9431#9533#0" expanded="false" />
+            <element signature="n#!!block;n#postToFHIRServer#0" expanded="false" />
+            <element signature="e#9648#9846#0" expanded="false" />
+            <element signature="e#9691#9755#0" expanded="false" />
+            <element signature="e#9942#10255#0" expanded="false" />
+            <element signature="e#9952#9987#0" expanded="false" />
+            <element signature="n#!!block;n#putToFHIRServer#0" expanded="false" />
+            <element signature="e#10429#10723#0" expanded="false" />
+            <element signature="e#10471#10621#0" expanded="false" />
+            <element signature="e#10801#11071#0" expanded="false" />
+            <element signature="e#11990#12138#0" expanded="false" />
+            <element signature="e#12032#12095#0" expanded="false" />
+            <element signature="n#!!block;n#getPatientDataFromFHIRServer#0" expanded="false" />
+            <element signature="e#12509#14326#0" expanded="false" />
+            <element signature="e#12531#12954#0" expanded="false" />
+            <element signature="e#12631#12942#0" expanded="false" />
+            <element signature="e#12976#13414#0" expanded="false" />
+            <element signature="e#13086#13402#0" expanded="false" />
+            <element signature="e#13436#13868#0" expanded="false" />
+            <element signature="e#13546#13856#0" expanded="false" />
+            <element signature="e#13890#14320#0" expanded="false" />
+            <element signature="e#13998#14308#0" expanded="false" />
+            <element signature="e#14342#14376#0" expanded="false" />
             <element signature="n#!!block;n#getOptionsXXX#0;n#!!block;n#getPatientDataFromFHIRServer#0" expanded="false" />
-            <element signature="e#13894#14049#0" expanded="false" />
-            <element signature="e#13944#14016#0" expanded="false" />
+            <element signature="e#14436#14591#0" expanded="false" />
+            <element signature="e#14486#14558#0" expanded="false" />
+            <element signature="n#!!block;n#getOptions#0" expanded="false" />
+            <element signature="e#14674#14799#0" expanded="false" />
+            <element signature="e#14716#14774#0" expanded="false" />
             <element signature="n#!!block;n#postBundleToFHIRServer#0" expanded="false" />
-            <element signature="e#14350#14531#0" expanded="false" />
-            <element signature="e#14393#14457#0" expanded="false" />
-            <element signature="e#14609#15034#0" expanded="false" />
-            <element signature="e#14619#14647#0" expanded="false" />
-            <element signature="e#14708#14776#0" expanded="false" />
+            <element signature="e#14892#15073#0" expanded="false" />
+            <element signature="e#14935#14999#0" expanded="false" />
+            <element signature="e#15151#15576#0" expanded="false" />
+            <element signature="e#15161#15189#0" expanded="false" />
+            <element signature="e#15250#15318#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/front.html">
+    <entry file="file://$PROJECT_DIR$/client/templates/testDataForm.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="72" column="10" selection-start="3556" selection-end="3556" vertical-scroll-proportion="-8.125">
-          <folding>
-            <element signature="tag#head#0;tag#html#0" expanded="false" />
-            <element signature="tag#div#0;tag#div#0;tag#div#1;tag#body#0;tag#html#0" expanded="false" />
-            <element signature="tag#div#1;tag#div#0;tag#div#1;tag#body#0;tag#html#0" expanded="false" />
-            <element signature="tag#div#5;tag#div#0;tag#div#1;tag#body#0;tag#html#0" expanded="false" />
-          </folding>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="22.5">
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/js/models/ValueSetModel.js">
+    <entry file="file://$PROJECT_DIR$/client/js/views/ProfileTestFormView.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="0" selection-start="755" selection-end="755" vertical-scroll-proportion="0.0">
+        <state line="46" column="57" selection-start="1847" selection-end="1847" vertical-scroll-proportion="0.47727272">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/js/views/ProfileDetailView.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="34" column="65" selection-start="1168" selection-end="1168" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/js/models/ProfileModel.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="91" column="40" selection-start="2769" selection-end="2811" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/js/collections/ProfileCollection.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="62" selection-start="1666" selection-end="1674" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/js/collections/ValueSetCollection.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="62" selection-start="1185" selection-end="1185" vertical-scroll-proportion="0.8013245">
+        <state line="116" column="46" selection-start="3720" selection-end="3720" vertical-scroll-proportion="1.4900662">
           <folding />
         </state>
       </provider>

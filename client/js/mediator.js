@@ -13,7 +13,7 @@ var Mediator={};
 
 //the list of permissable datatypes in a profile...
 var dataTypeList = ['boolean','code','date','string','integer','Coding','CodeableConcept','Period']
-var resourceList = ['Encounter','MedicationAdministration','Medication','Observation','Patient','Practitioner'];
+var resourceList = ['Encounter','MedicationAdministration','MedicationPrescription','Medication','Observation','Patient','Practitioner'];
 
 
 var colVS = new ValueSetCollection();           //collection of ValueSets
@@ -78,6 +78,7 @@ profileExtensionView.meta.resourceList = resourceList;
 var profileStructureView = new ProfileStructureView({el:$('#editStructureDiv')});
 
 
+
 var profileSummaryView = new ProfileSummaryView({el:$('#workAreaSummaryProfile')});       //generate a profile summary
 profileSummaryView.render();
 
@@ -90,6 +91,10 @@ profileTestFormView.meta.colVS = colVS;    //needse the valueset
 profileTestFormView.render();   //as there is no model, this will just render the 'create form' button...
 
 var valueSetSummaryView = new ValueSetSummaryView();
+
+var extensionCollection = new ExtensionCollection();
+var extensionView = new ExtensionView({collection:extensionCollection, el:$('#allExtensionsDiv')});
+
 
 //The user selects a Profile from the  in the list. Make sure that all the views that have an interest in
 //this profile have their model set...
@@ -124,7 +129,9 @@ Backbone.listenTo(listProfiles,'profileList:new',function(vo){
     var m = new ProfileModel();
     m.set('cid','new');
     colProfile.add(m);
-    profileDetailView.model =  m;// null;     //this means no model - ie new...
+    profileSummaryView.clearView();
+    profileDetailView.model =  m;
+    profileDetailView.setNewProfile();      //so the view knows that this is a new profile - will allow the
     profileDetailView.render();
 })
 
@@ -181,6 +188,18 @@ Backbone.listenTo(profileExtensionView,'profileExtension:updated',function(vo){
     profileDetailView.render();
 });
 
+//the user has selected a resource. Need to get the paths for that resource...
+Backbone.listenTo(profileExtensionView,'profileExtension:selectedResource',function(vo){
+    var resourceName = vo.resourceName;
+    var sum = new ProfileSummaryModel();
+    sum.getPathsForResource(resourceName,function(arPaths){
+        vo.callback(arPaths);
+    })
+
+
+})
+
+
 Backbone.listenTo(profileDetailView,'profile:updated',function(vo){
     //re-render the profile - the model should already be set...
     profileDetailView.render();
@@ -218,6 +237,13 @@ Backbone.on('profileSummary:slice',function(vo){
 
 });
 
+
+Backbone.on("extensions:render",function(ev){
+    //triggered when the 'all extensions' page is shown - re-render the page...
+    extensionView.render();
+    console.log('x')
+})
+
 //when a structure.element is altered in the UI but not yet saved......
 Backbone.listenTo(profileStructureView,'element:updated',function(vo){
 
@@ -252,11 +278,25 @@ Backbone.listenTo(profileStructureView,'element:updated',function(vo){
 
 })
 
+
+//extension definitions that were located while parsing profiles
+Backbone.listenTo(colProfile,'profile:extensiondefs',function(vo) {
+    //that.trigger("profile:extensiondefs",{ext:entry.content.extensionDefn})
+    var arED = vo.ext;
+    var profile = vo.profile;
+    extensionCollection.addExtensions(arED,profile);    //add all the extensiondefs to the collection
+
+});
+
+
+var viewQuery = new QueryView({el:$('#workAreaQuery')});
+viewQuery.render();
+
 colProfile.fetch({
     success : function() {
         $('#loading').hide();
-      _.each(colProfile.models,function(m){
-            console.log(m.get('vid'));
+        _.each(colProfile.models,function(m){
+            //console.log(m.get('vid'));
          })
         //console.log(colProfile.models);
         listProfiles.render();      //render the list of valuesets...
@@ -269,8 +309,6 @@ colProfile.fetch({
 });
 
 
-var viewQuery = new QueryView({el:$('#workAreaQuery')});
-viewQuery.render();
 
 //check if the current profile has been altered. If is has, then prompt the user to save or abandon changes...
 

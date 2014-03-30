@@ -42,6 +42,8 @@ var ProfileTestFormView = Backbone.View.extend({
                 case 1 : {
                     alert('Patient found. The new resources will be attached to that patient');
                     var ar = bundle.entry[0].id.split('/');
+                    $('input:text[data-code=patient-identifier]').addClass('alert alert-success')
+
                     //console.log(bundle.entry[0].id,ar);
                     try {
                         //set the name properties
