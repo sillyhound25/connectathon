@@ -12,7 +12,9 @@ var ProfileListView = Backbone.View.extend({
         ev.preventDefault();
         ev.stopPropagation();
         var id = $(ev.currentTarget).attr('data-id');
-        alert('This will delete the profile with the ID: ' + id);
+        if (confirm('Please confirm you wish to delete the profile with the ID: ' + id)) {
+            this.trigger('profileList:delete',{id:id});
+        }
     },
     newProfile : function(){
         $('.orionProfileDetail').removeClass('active');

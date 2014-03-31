@@ -78,14 +78,13 @@ ProfileModel = Backbone.Model.extend({
 
     },
     sync : function(method,model,options) {
-        //todo - apparently thic can be done once for all modela - Backbone.sync ...
+        //todo - apparently thic can be done once for all models - Backbone.sync ...
         var uri = '/api/';
         var rest_method = 'PUT';
 
 
         var userEnteredId= this.get('userEnteredId');
-        //alert(userEnteredId);
-        //return;
+
 
         this.validateAndClean(model,function(err,fhirProfile){
             if (err) {
@@ -108,11 +107,18 @@ ProfileModel = Backbone.Model.extend({
                         uri = uri +id;
                         break;
                     }
+                    case 'delete' : {
+                        rest_method = 'DELETE';
+                        var ar = model.get('id').split('/');
+                        var id = ar[ar.length-1]
+                        //the PUT and POST have the actual resource in the body...
+                        uri = uri + 'Profile/'+id;
+                        break;
+                    }
                 }
 
-
-                //if  the user has entered an id for a new profile, need to be able to execure a PUT
-                if (userEnteredId) {
+                //if  the user has entered an id for a new profile, need to be able to execute a PUT
+                if (userEnteredId && method === 'create') {
                     rest_method = 'PUT';
                     uri = uri + userEnteredId;
                 }
@@ -120,7 +126,7 @@ ProfileModel = Backbone.Model.extend({
 
                 //need to include the versionid
                 var vid = model.get('vid');
-                console.log(rest_method,vid,JSON.stringify(fhirProfile))
+                //console.log(rest_method,vid,JSON.stringify(fhirProfile))
 
 
 

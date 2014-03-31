@@ -7,6 +7,9 @@ var ProfileContentView =  Backbone.View.extend({
         this.model = model;
         this.render();
     },
+    clearView : function() {
+        this.$el.html();
+    },
     render : function(){
         var that=this;
         //retrieve the template the first time render is called...

@@ -13,6 +13,9 @@ var ProfileTestFormView = Backbone.View.extend({
         "click .myToggle" : "togglePanel",
         "click #td_lookup" : "lookupPatient"
     },
+    clearView : function() {
+        this.$el.html();
+    },
     lookupPatient : function(ev) {
         var that = this;
         ev.preventDefault();

@@ -43,8 +43,6 @@ fs.readFile('config.json',function(err,contents){
         FHIRServerUrl = config.FHIRServerUrl;
         console.log('Setting server URL to '+FHIRServerUrl);
     }
-
-
 })
 
 
@@ -71,7 +69,15 @@ app.get('/api/oneresource/:type/:id', function(req, res) {
     performQueryAgainstFHIRServer(url,null,function(resp,statusCode){
         res.json(resp,statusCode);
     })
+})
 
+//delete a single resource...
+app.del('/api/:type/:id', function(req, res) {
+    url = req.params.type + "/" + req.params.id;
+    console.log('del ' + url);
+    performDeleteAgainstFHIRServer(url,null,function(resp,statusCode){
+        res.json(resp,statusCode);
+    })
 })
 
 
@@ -96,8 +102,6 @@ app.get('/api/generalquery/:query', function(req, res){
 
 });
 
-
-
 //the parameters for each resource that can be set by a parameter. These are the parameters
 //that can be passed to the various builder modules - like patient.js
 app.get('/api/coreResourceTestParams', function(req, res){
@@ -110,7 +114,6 @@ app.get('/api/coreResourceTestParams', function(req, res){
     params.practitioner.push({code:'name',display:'Full Name',default:'Marcus Welby'})
     res.json(params);
 });
-
 
 //create a set of samples based op a profile
 app.post('/api/createprofilesample', function(req, res){
@@ -142,7 +145,6 @@ app.post('/api/createprofilesample', function(req, res){
     })
 
 });
-
 
 //get a specific profile by name and publisher
 app.get('/api/profile/:name/:publisher', function(req, res){
@@ -202,7 +204,7 @@ app.get('/api/profile/:publisher', function(req, res){
 app.get('/api/valueset/id/:id', function(req, res){
     var vsID = req.params.id;
     //console.log(vsID);
-    //extrct out the logicalID
+    //extract out the logicalID
     //todo - big assumption here - we are assuming that all resources come from the same server
 
     var ar = vsID.split('/');
@@ -407,6 +409,46 @@ function putToFHIRServer(resource,id,vid,callback) {
         //console.log(resp);
 
         callback(resp);
+    })
+}
+
+
+
+
+
+
+function performDeleteAgainstFHIRServer(query,server,callback){
+
+    //default the server URL...
+    var fhirServer = FHIRServerUrl;
+    if (server) {
+        fhirServer = server;
+    }
+
+    var options = {
+        method:'DELETE',
+        headers : {
+            "Accept" : 'application/json+fhir'
+        },
+        uri : fhirServer + query,
+        timeout : 10000
+    }
+    request(options,function(error,response,body){
+
+        if (response.statusCode != 200) {
+            console.log('Error: ' + body);
+
+        }
+
+        var json = {}
+        try {
+            json = JSON.parse(body)
+        } catch (ex) {
+            json = {'error': body}
+        }
+
+        callback(json,response.statusCode);
+
     })
 }
 

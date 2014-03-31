@@ -135,6 +135,34 @@ Backbone.listenTo(listProfiles,'profileList:new',function(vo){
     profileDetailView.render();
 })
 
+//delete a profile
+Backbone.listenTo(listProfiles,'profileList:delete',function(vo){
+
+    var selectedModel = colProfile.findModelByResourceID(vo.id);
+    if (selectedModel) {
+        Mediator.showWorking();
+        selectedModel.destroy({
+            success : function() {
+               // $('#save_profile_changes').text('Update Profile').attr('disabled',false)
+                //that.model.set({'isDirty':false});
+//                that.trigger('profile:added',{model:model});
+                Mediator.clearProfileWorkareas();   //clear all the work areas associated with profile editing
+                Mediator.loadProfiles();
+            },
+            error : function(xhr,status,err) {
+                console.log(xhr,status,err);
+                //$('#save_profile_changes').text('Update Profile').attr('disabled',false)
+                alert('sorry, there was an error deleting the profile ')
+            }
+        });
+
+    } else {
+        alert("can't find the model with the ID: " + vo.id)
+    }
+
+    profileDetailView.render();
+})
+
 //handler for when a user clicks on an existing extension definition in a profile
 Backbone.listenTo(profileDetailView,'profileDetail:editExtension',function(vo){
     console.log(vo);
@@ -292,6 +320,7 @@ Backbone.listenTo(colProfile,'profile:extensiondefs',function(vo) {
 var viewQuery = new QueryView({el:$('#workAreaQuery')});
 viewQuery.render();
 
+/*
 colProfile.fetch({
     success : function() {
         $('#loading').hide();
@@ -307,8 +336,58 @@ colProfile.fetch({
         alert('There was an error loading the Profiles')
     }
 });
+*/
 
 
+Mediator.loadProfiles = function(){
+    console.log(colProfile.length)
+    colProfile.fetch({
+        success : function() {
+            $('#loading').hide();
+            _.each(colProfile.models,function(m){
+                //console.log(m.get('vid'));
+            })
+            //console.log(colProfile.length)
+            Mediator.hideWorking();
+            //console.log(colProfile.models);
+            listProfiles.render();      //render the list of valuesets...
+            profileQueryView.setProfiles(colProfile);
+        },
+        error : function(collection,response,options) {
+            console.log(response);
+            alert('There was an error loading the Profiles');
+            Mediator.hideWorking();
+        }
+    });
+}
+
+
+//load the profiles...
+Mediator.loadProfiles();
+
+//====================== mediator utilities ========================
+
+
+//clear all the workareas associated with editing profiles...
+Mediator.clearProfileWorkareas = function() {
+    profileSummaryView.clearView();
+
+    profileTestFormView.clearView();
+
+    profileContentView.clearView();
+
+    //$('#workAreaContentProfile').html();
+
+}
+
+
+//show/hide the 'working' display...
+Mediator.showWorking = function() {
+    $('#loading').show();
+}
+Mediator.hideWorking = function() {
+    $('#loading').hide();
+}
 
 //check if the current profile has been altered. If is has, then prompt the user to save or abandon changes...
 

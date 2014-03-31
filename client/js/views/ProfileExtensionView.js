@@ -9,8 +9,9 @@ var ProfileExtensionView =  Backbone.View.extend({
         "change #eeContextResource" : "selectResource"
     },
 
-    selectResource : function(callback) {
+    selectResource : function(ev,callback) {
         //when a resource is selected, we want to load the path options...
+        //need to have the event and callback parameters as sometimes this function is called by an event and sometimes not...
         var resourceName = $('#eeContextResource').val();//.toLowerCase();
         //alert(resourceName);
         //trigger an event that will get all the paths for this resource defined in core.
@@ -32,6 +33,7 @@ var ProfileExtensionView =  Backbone.View.extend({
                 $el.append(lne);
 
             })
+            console.log(callback)
             if (callback) {
                 callback();
             }
@@ -148,6 +150,7 @@ console.log(this.model.toJSON());
             extension.definition.min = 0;
             extension.definition.max = 1;
             extension.definition.type = [{code:'string'}];
+            extension.context = [];
         }
         //now render the template, setting the current values
         this.$el.html(this.template(extension));      //render the dialog
@@ -156,23 +159,33 @@ console.log(this.model.toJSON());
         //there's likely a more elegant way to do this...
        // if (extension) {
 
-            if (extension.isModifier) {
-                $("#eeIsModifier").attr('checked',true);
-            }
+        if (extension.isModifier) {
+            $("#eeIsModifier").attr('checked',true);
+        }
 
 
+        //display the resource list, selecting the current resource (if any)
         console.log(extension.context);
-            //need to get the resourceName and path from the context.
-            var resourceName = extension.context[0];
-            var path = "";
-            var g = resourceName.indexOf('.');
-            if (g > -1) {
-                path = resourceName.substr(g+1);
-                resourceName = resourceName.substr(0,g);
+
+            var resourceName;
+            var path;
+
+
+            if (extension.context && extension.context.length > 0) {
+                //need to get the resourceName and path from the context.
+                resourceName = extension.context[0];
+
+                var g = resourceName.indexOf('.');
+                if (g > -1) {
+                    path = resourceName.substr(g+1);
+                    resourceName = resourceName.substr(0,g);
+                }
             }
+
 
 
         console.log(resourceName,path)
+
             _.each(that.meta.resourceList,function(name){
                 var lne = "<option value='"+name + "'";
                 //note that we only support one resource
@@ -202,9 +215,13 @@ console.log(this.model.toJSON());
               //  $("#eeContextResourcePath").val(extension.context[0]);
            // }
 
-            this.selectResource(function(){
-                $("#eeContextResourcePath").val(path);
-            });
+            if (path) {
+                //this function can be called by an event handler too
+                this.selectResource(null,function(){
+                    $("#eeContextResourcePath").val(path);
+                });
+            }
+
 
             //------------set the datatype ---------------
             var dataType="";
