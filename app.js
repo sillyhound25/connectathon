@@ -71,7 +71,7 @@ app.get('/api/oneresource/:type/:id', function(req, res) {
 //perform a query against a fhir server
 app.get('/api/generalquery/:query', function(req, res){
 
-    console.log(JSON.parse(req.params.query));
+    //console.log(JSON.parse(req.params.query));
     var query = JSON.parse(req.params.query);
     var url = "";
     _.each(query.params,function(param){
@@ -80,7 +80,7 @@ app.get('/api/generalquery/:query', function(req, res){
 
 
     url = query.resource + '?'+ url.slice(1);
-    console.log(url)
+    //console.log(url)
 
 
     performQueryAgainstFHIRServer(url,null,function(resp){
@@ -387,7 +387,7 @@ function putToFHIRServer(resource,id,vid,callback) {
         uri : FHIRServerUrl + resourceType + "/" + id
     }
 
-    console.log(options);
+    //console.log(options);
 
     request(options,function(error,response,body){
         var resp = {};
@@ -397,7 +397,7 @@ function putToFHIRServer(resource,id,vid,callback) {
         resp.headers = response.headers;
         resp.error = error;
 
-        console.log(resp);
+        //console.log(resp);
 
         callback(resp);
     })
@@ -422,7 +422,7 @@ function performQueryAgainstFHIRServer(query,server,callback){
     }
 
 
-    console.log(options);
+    //console.log(options);
 
 
     request(options,function(error,response,body){
