@@ -26,10 +26,26 @@ var app = express.createServer();
 
 var FHIRCoreRegistry = 'http://spark.furore.com/fhir/';
 
+//----------- note that the config file will overwrite these values!!!!
 //var FHIRServerUrl = 'http://hisappakl/blaze/fhir/';
-var FHIRServerUrl = 'http://spark.furore.com/fhir/';
+//var FHIRServerUrl = 'http://spark.furore.com/fhir/';
 //var FHIRServerUrl = 'http://fhir.healthintersections.com.au/open/';
 // Configuration
+
+//load the config file.
+
+fs.readFile('config.json',function(err,contents){
+    if (err) {throw err;}
+    var config = JSON.parse(contents);
+    //console.log(contents.toString(),config);
+    if (config.FHIRServerUrl) {
+        FHIRServerUrl = config.FHIRServerUrl;
+        console.log('Setting server URL to '+FHIRServerUrl);
+    }
+
+
+})
+
 
 app.configure(function(){
   //app.set('views', __dirname + '/views');

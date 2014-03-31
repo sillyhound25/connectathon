@@ -1,0 +1,8 @@
+{
+ "FHIRServerUrl":"http://spark.furore.com/fhir/",
+ "serverOptions" :[
+    {"FHIRServerUrl":"http://spark.furore.com/fhir/"},
+    {"FHIRServerUrl":"http://hisappakl/blaze/fhir/"},
+    {"FHIRServerUrl":"http://fhir.healthintersections.com.au/open/"}
+ ]
+}

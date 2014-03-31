@@ -164,6 +164,10 @@ var ProfileSummaryView = Backbone.View.extend({
                     //v.profileID = that.model.toJSON().meta.id;
                     //console.log(v.profileID)
                     v.render();
+
+
+                   // v.content.reasnResource.reference,\.
+
                 })
             })
 
