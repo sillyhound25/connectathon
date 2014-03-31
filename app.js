@@ -33,10 +33,11 @@ var FHIRCoreRegistry = 'http://spark.furore.com/fhir/';
 // Configuration
 
 //load the config file.
+var config;
 
 fs.readFile('config.json',function(err,contents){
     if (err) {throw err;}
-    var config = JSON.parse(contents);
+    config = JSON.parse(contents);
     //console.log(contents.toString(),config);
     if (config.FHIRServerUrl) {
         FHIRServerUrl = config.FHIRServerUrl;
@@ -54,6 +55,12 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(express.static(__dirname + '/client'));
+});
+
+
+//return the config fil
+app.get('/admin/config', function(req, res) {
+    res.json(config);
 });
 
 

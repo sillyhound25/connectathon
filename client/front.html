@@ -87,6 +87,7 @@
 
     <div>
         <div class="myPane" id="homeTab">
+            <h4>App Description</h4>
             <!--<div class="bg-primary container text-center"> <h2>Orion Profile and ValueSet editor</h2></div>-->
             <p>This application allows you to view and edit the profiles and valueSets created to support the
             Orion FHIR interfaces. It is very much a sub-set of the full capability of these resources, and so cannot display
@@ -97,6 +98,9 @@
                 <li>The <a target="_blank" href='http://hl7.org/implement/standards/fhir/'>FHIR specification</a> is the definitive source of truth for FHIR</li>
                 <li>There's a <a target="_blank"  href='http://vimeo.com/87074652'>video</a> by Ewout Kramer (one of the FHIR core team) on the reason for profiles</li>
                 <li>David Hay has a blog on FHIR (look in the <a target="_blank" href='http://fhirblog.com/index/'>index</a> for Profile specific posts)</li>
+                <li>David also did a high level presentation on the need for profiles <a target='_blank' href='http://www.slideshare.net/slideshow/embed_code/32865413'>here</a>
+                    (There are actually a number of FHIR presentations on slideshare - just search for FHIR)
+                </li>
             </ul>
 
             <p>Click on the help icon to the upper right for more information about the tool</p>
@@ -108,6 +112,7 @@
                 <li>Assume that the reference to a valueset is to an external one - no Contained sets</li>
                 <li>Assume that the Orion ValueSets have a unique name property</li>
             </ul>
+            <div id="configDisplay"></div>
         </div>
 
         <div class="myPane" id="profileTab">
@@ -203,7 +208,6 @@
         </div>
 
 
-
         <div class="myPane" id = "helpTab">
             <iframe id="myIFrame" style="width: 1200px; height:600px"></iframe>
         </div>
@@ -229,11 +233,15 @@
         $('#homeTab').show();       //show the home tab
         //$('#profileTab').show();       //show the profile tab
 
-
         //set up the help frame,,
+        $('#myIFrame').attr('src','http://wp.me/P4qCEG-3');
 
-        //$('#myIFrame').attr('src','http://wp.me/P4qCEG-3');
 
+        //retrieve and display the config file
+        $.get('/admin/config',function(config){
+             var template = Handlebars.compile($('#configTemplate').html());
+            $('#configDisplay').html(template(config));
+        })
 
 
 
@@ -285,6 +293,13 @@
 
 </script>
 
+
+<script id="configTemplate" type="text/x-handlebars-template">
+    <h4>Current configuration</h4>
+    <strong>FHIR Server:</strong> {{FHIRServerUrl}}
+
+
+</script>
 
 <!-- Mediator must be last...-->
 <script src="js/mediator.js"></script>
