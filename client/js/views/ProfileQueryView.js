@@ -36,6 +36,13 @@ var ProfileQueryView = Backbone.View.extend({
         var that = this;
         var patient = $('#pq_select_patient').val();
         var resource = $('input[name=pq_resource]:checked').val();
+
+        var g = resource.indexOf('.');
+        if (g > -1) {
+            resource = resource.substr(0,g);
+        }
+
+
         if (!patient || ! resource){
             alert('Please select the Patient and the Resource to query');
             return;
@@ -45,9 +52,11 @@ var ProfileQueryView = Backbone.View.extend({
         var query = {resource:resource,params : []};
         //this is a problem with FHIR - some of the resources (notable the medications) use 'patient' not 'subject'
         if (['medicationadministration','medicationprescription','medicationdispense','medicationstatement'].indexOf(resource.toLowerCase()) > -1) {
-            query.params.push({name:'patient',value:logicalId});
+            query.params.push({name:'patient',value:'Patient/' + logicalId}); //old style
+            //todo query.params.push({name:'patient:Patient',value:logicalId});
         } else {
-            query.params.push({name:'subject',value:logicalId});
+            query.params.push({name:'subject',value:'Patient/' + logicalId});
+            //todo query.params.push({name:'subject:Patient',value:logicalId});
         }
 
 
@@ -55,7 +64,7 @@ var ProfileQueryView = Backbone.View.extend({
         //console.log(queryString,patient,resource);
         this.clearResults();
         console.log(queryString);
-        $.get('/api/generalquery/'+queryString,function(bundle){
+        $.get('/api/generalquery?query='+queryString,function(bundle){
             that.resultBundle = bundle;
             console.log(bundle);
             $('#pq_results').html(that.resultsTemplate(bundle));
@@ -75,7 +84,7 @@ var ProfileQueryView = Backbone.View.extend({
         console.log(queryString);
         $('#pq_select_patient').empty();
         $('#pq_warning').show();
-        $.get('/api/generalquery/'+queryString,function(bundle){
+        $.get('/api/generalquery?query='+queryString,function(bundle){
             console.log(bundle);
             $('#pq_warning').hide();
             if (bundle.entry.length === 0) {

@@ -80,7 +80,7 @@ var QueryView = Backbone.View.extend({
 
             console.log(queryString);
 
-            $.get('/api/generalquery/'+queryString,function(json){
+            $.get('/api/generalquery?query='+queryString,function(json){
 //console.log(json);
 
                 that.resultSet = json;

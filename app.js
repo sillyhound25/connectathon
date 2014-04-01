@@ -82,10 +82,15 @@ app.del('/api/:type/:id', function(req, res) {
 
 
 //perform a query against a fhir server
-app.get('/api/generalquery/:query', function(req, res){
+app.get('/api/generalquery', function(req, res){
+    //app.get('/api/generalquery/:query', function(req, res){
 
+
+   // req.query
     //console.log(JSON.parse(req.params.query));
-    var query = JSON.parse(req.params.query);
+    var query = JSON.parse(req.query['query']);
+    console.log(query);
+
     var url = "";
     _.each(query.params,function(param){
         url += "&" + param.name + '=' + param.value ;
@@ -93,7 +98,7 @@ app.get('/api/generalquery/:query', function(req, res){
 
 
     url = query.resource + '?'+ url.slice(1);
-    //console.log(url)
+    console.log('general query ' + url)
 
 
     performQueryAgainstFHIRServer(url,null,function(resp){
@@ -131,8 +136,6 @@ app.post('/api/createprofilesample', function(req, res){
 
         if (!err) {
             logBundle(bundle,'testData',function(){
-
-
                 postBundleToFHIRServer(bundle,function(resp){
                     resp.messages = messages;
                     res.json(resp);
@@ -143,10 +146,6 @@ app.post('/api/createprofilesample', function(req, res){
             resp.messages = "Error: " + err;
             res.json(resp);
         }
-
-
-
-
     })
 
 });
@@ -422,7 +421,6 @@ function putToFHIRServer(resource,id,vid,callback) {
     })
 }
 
-
 function performDeleteAgainstFHIRServer(query,server,callback){
 
     //default the server URL...
@@ -458,7 +456,6 @@ function performDeleteAgainstFHIRServer(query,server,callback){
     })
 }
 
-
 function performQueryAgainstFHIRServer(query,server,callback){
 
     //default the server URL...
@@ -486,8 +483,15 @@ function performQueryAgainstFHIRServer(query,server,callback){
        //     throw error;
       //  }
 
+        if (! response){
+            //this happens when the server times out...
+            callback({'error':'Server timed out'},504);
+            return;
+        }
+
         if (response.statusCode != 200) {
             console.log('Error: ' + body);
+
            // throw 'error';
         }
 
@@ -524,7 +528,6 @@ function performQueryAgainstFHIRServerXML(query,callback){
 
     })
 }
-
 
 function getPatientDataFromFHIRServer(patientID,callback){
     var that=this;
@@ -602,7 +605,6 @@ function getPatientDataFromFHIRServer(patientID,callback){
 
 };
 
-
 function getOptions(uri)  {
     var options = {
         method:'GET',
@@ -631,13 +633,17 @@ function postBundleToFHIRServer(bundle,callback) {
             console.log(error);
             throw error;
         }
-        var resp = {};
-        resp.bundle = bundle;
-        resp.id = response.headers.location;
-        resp.statusCode = response.statusCode;
-        resp.response = JSON.parse(body);
-        resp.headers = response.headers;
-        callback(resp);
+
+        logBundle(JSON.parse(body),"responseFromTest",function(){
+            var resp = {};
+            resp.bundle = bundle;
+            resp.id = response.headers.location;
+            resp.statusCode = response.statusCode;
+            resp.response = JSON.parse(body);
+            resp.headers = response.headers;
+            callback(resp);
+        })
+
     })
 }
 

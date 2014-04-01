@@ -267,6 +267,19 @@
             return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
         })
 
+        //get the resource name from a path - assume a dotted path notation...
+        Handlebars.registerHelper('getResource',function(path){
+            var g = path.indexOf('.');
+            if (g === -1) {
+                return path;
+            } else {
+                return path.substr(0,g);
+            }
+
+            //return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+        })
+
+
     })
 
 

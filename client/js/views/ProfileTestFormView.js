@@ -31,7 +31,7 @@ var ProfileTestFormView = Backbone.View.extend({
         //console.log(queryString);
 
         $('#td_lookup').text('Please wait...')
-        $.get('/api/generalquery/'+queryString,function(bundle){
+        $.get('/api/generalquery?query='+queryString,function(bundle){
             //console.log(bundle);
             $('#td_lookup').text('Find Patient');
             $('#submitTD').attr('disabled',false);        //allow the form to be submitted...
@@ -132,7 +132,7 @@ var ProfileTestFormView = Backbone.View.extend({
                 }
             }
             console.log(dataType);
-            //todo - need to decied what to do with boolean false - do we always send booleans???
+            //todo - need to decided what to do with boolean false - do we always send booleans???
             if (value) {
                 var code = $(el).attr('data-code');
                 if (code) {
@@ -141,6 +141,9 @@ var ProfileTestFormView = Backbone.View.extend({
                     if (code.indexOf('patient-ext') > -1) {
                         areThereExtensionsToPatient = true;
                     }
+
+                    //note that the 'code' is now a full path (for extensions that are not at the root of the resource
+
                     sampleData.items.push({code:code,value:value,dataType:dataType})
                 } else {
                     alert('value of '+value+ " didn't have a code...")
@@ -178,7 +181,7 @@ var ProfileTestFormView = Backbone.View.extend({
             //the return from the proxy server will always be 200. The repsponse form the remote (FHIR) server
             //will be in the statusCode property
             success: function(data,status,xhr) {
-                console.log(data);
+                console.log('response',data);
                 //alert('The resources have been successfully saved.')
 
                 if (data.statusCode === 200) {      //note that success for a single resource is 201 but for a bundle is 200
@@ -192,6 +195,9 @@ var ProfileTestFormView = Backbone.View.extend({
                             var resource = ar[ar.length-2].toLowerCase();
                             var logicalId = ar[ar.length-1];        //not currently used...
                             var elID = resource+'createdID';
+
+                            console.log(elID);
+
                             $('#'+elID).html(ent.id);
 
                         })
@@ -240,6 +246,8 @@ var ProfileTestFormView = Backbone.View.extend({
         console.log(rows)
         if (rows) {
             this.$el.html(template(rows));
+
+
         } else {
             this.$el.html(template({}));
         }

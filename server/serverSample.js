@@ -102,16 +102,25 @@ var generateSampleBundle = function(vo,callback) {
     //finally, we can add the other resources
     _.each(objResources,function(res){
         console.log('resource name ' + res.name);
-        if (['patient','practitioner'].indexOf(res.name) === -1) {
+
+        //todo - teh resource name is actually a path. Right now, we don't handle that...
+        var resourceName = res.name;
+        var g = resourceName.indexOf('.');
+        if ( g > -1){
+            resourceName = resourceName.substr(0,g)
+        }
+//console.log(resourceName)
+
+        if (['patient','practitioner'].indexOf(resourceName) === -1) {
             var options = res;
             options.params.patientID = patientID;
             options.params.practitionerID = practitionerID;
-            if (builder[res.name]) {
-                var entry = builder[res.name].getSample(options.params); //pass the params directly into the builder function
+            if (builder[resourceName]) {
+                var entry = builder[resourceName].getSample(options.params); //pass the params directly into the builder function
                 addExtensions(entry, options.extensions);
                 bundle.entry.push(entry);
             } else {
-                messages.push('There is no builder object for ' +res.name + ' - ignored' );
+                messages.push('There is no builder object for ' +resourceName + ' - ignored' );
             }
 
         }
