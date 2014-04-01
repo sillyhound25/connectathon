@@ -376,6 +376,8 @@ Mediator.clearProfileWorkareas = function() {
 
     profileContentView.clearView();
 
+    profileExtensionView.clearView();
+
     //$('#workAreaContentProfile').html();
 
 }

@@ -109,7 +109,7 @@ app.get('/api/coreResourceTestParams', function(req, res){
     params.patient = [];
     params.patient.push({code:'fname',display:'First Name',default:'John'})
     params.patient.push({code:'lname',display:'Last Name',default:'Cardinal'})
-    params.patient.push({code:'identifier',display:'Identifier',default:'ABC1235',lookupPatient:true})
+    params.patient.push({code:'identifier',display:'Identifier',default:'300001498',lookupPatient:true})
     params.practitioner = [];
     params.practitioner.push({code:'name',display:'Full Name',default:'Marcus Welby'})
     res.json(params);
@@ -124,6 +124,11 @@ app.post('/api/createprofilesample', function(req, res){
 
     mSample.generateSampleBundle(sample,function(err,bundle,messages){
         //now send the bundle to the server for saving...
+
+        if (!messages) {
+            console.log(messages);
+        }
+
         if (!err) {
             logBundle(bundle,'testData',function(){
 
@@ -372,6 +377,11 @@ function postToFHIRServer(resource,callback) {
     request(options,function(error,response,body){
         //console.log(response.statusCode);
         //console.log(body)
+
+        if (response.statusCode !== 201) {
+            console.log(error,body);
+        }
+
         var resp = {};
         resp.id = response.headers.location;
         resp.statusCode = response.statusCode;
@@ -413,10 +423,6 @@ function putToFHIRServer(resource,id,vid,callback) {
 }
 
 
-
-
-
-
 function performDeleteAgainstFHIRServer(query,server,callback){
 
     //default the server URL...
@@ -435,7 +441,7 @@ function performDeleteAgainstFHIRServer(query,server,callback){
     }
     request(options,function(error,response,body){
 
-        if (response.statusCode != 200) {
+        if (response.statusCode != 204) {
             console.log('Error: ' + body);
 
         }

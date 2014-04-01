@@ -6,9 +6,16 @@
 var ProfileExtensionView =  Backbone.View.extend({
     events : {
         "click #eeSave" : "saveExtension",
-        "change #eeContextResource" : "selectResource"
+        "change #eeContextResource" : "selectResource",
+             "change #eeValueSet" : "valueSetChanged"
     },
-
+    valueSetChanged : function() {
+        //the value set has been changed - set the datatype to CodeableConcept
+        $("#eeDataType").val("CodeableConcept");
+    },
+    clearView : function() {
+        this.$el.html("");
+    },
     selectResource : function(ev,callback) {
         //when a resource is selected, we want to load the path options...
         //need to have the event and callback parameters as sometimes this function is called by an event and sometimes not...
@@ -94,7 +101,8 @@ var ProfileExtensionView =  Backbone.View.extend({
             this.model.updateExtension(extension);
         }
 
-console.log(this.model.toJSON());
+
+       // console.log(this.model.toJSON());
 
 
         $('#editExtensionDlg').modal('hide');

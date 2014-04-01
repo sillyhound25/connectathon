@@ -8,7 +8,7 @@ var ProfileContentView =  Backbone.View.extend({
         this.render();
     },
     clearView : function() {
-        this.$el.html();
+        this.$el.html("");
     },
     render : function(){
         var that=this;

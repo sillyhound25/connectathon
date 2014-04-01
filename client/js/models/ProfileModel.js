@@ -58,10 +58,37 @@ ProfileModel = Backbone.Model.extend({
         resource.meta = {id :this.get('id')};
         return resource;
     },
+    myValidate : function(model,clean,callback) {
+        //validate the resource. If clean is true, then remove all the metadata items in the resource...
+        var fhirProfile = model.get('content');
+        var err = "";
+        if (clean) {
+            delete fhirProfile.meta;
+        }
+
+        _.each(fhirProfile.extensionDefn,function(ext){
+            if (ext.meta) {
+                if (clean) {
+                    delete ext.meta;
+                }
+
+                if (! ext.context[0]) {
+                    err += 'There is an empty context field in an extension';
+                }
+            }
+        })
+        callback(err,fhirProfile);
+    },
     validateAndClean : function(model,callback) {
         //validate the profile and remote any meta nodes...
         //todo this could be tidied...
-        var fhirProfile = model.get('content');
+        console.log(model)
+        this.myValidate(model,true,function(err,fhirProfile){
+            callback(err,fhirProfile);
+        })
+        //var fhirProfile = model.get('content');
+
+        /*
         var err = "";
         delete fhirProfile.meta;
 
@@ -73,8 +100,9 @@ ProfileModel = Backbone.Model.extend({
                 }
             }
         })
-        console.log(fhirProfile);
-        callback(err,fhirProfile);
+        */
+        //console.log(fhirProfile);
+       // callback(err,fhirProfile);
 
     },
     sync : function(method,model,options) {
@@ -142,6 +170,7 @@ ProfileModel = Backbone.Model.extend({
 
                     },
                     error : function(xhr,status,err){
+                        console.log(err);
                         options.error(xhr,status,err)
 
                     }

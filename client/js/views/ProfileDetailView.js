@@ -32,8 +32,10 @@ var ProfileDetailView =  Backbone.View.extend({
                 $('#profile_id').val("");
             })
             .fail(function() {
+                //there is no resource with that ID so it's OK to create a new one...
                 $('#profile_id').addClass('alert alert-success');
-                that.checkedId = true;
+                that.checkedId = id;
+                //that.userEnteredId = id;
             })
         }
     },
@@ -86,12 +88,18 @@ var ProfileDetailView =  Backbone.View.extend({
         model.set('content',content);
         $('#save_profile_changes').text('Updating...').attr('disabled',true)
         console.log(model.toJSON())
+
+        //now, lets see it it is valid. I want to do this before saving as I haven't quite got that working yet...
+
+
         model.save({},{
             success : function() {
                 $('#save_profile_changes').text('Update Profile').attr('disabled',false)
                 //that.model.set({'isDirty':false});
+                //this.isNew = false;         //need to re-set this after a save - if the view is not re-set...
                 alert('Profile Updated');
                 that.trigger('profile:added',{model:model});
+
             },
             error : function(xhr,status,err) {
                 console.log(xhr,status,err);
@@ -100,9 +108,12 @@ var ProfileDetailView =  Backbone.View.extend({
             }
         });
     },
+    //this is called when a new model is assigned to the view. There's some state info we need to clear...
     setModel : function(model) {
         this.model = model;
-        this.isDirty = false;
+        this.isDirty = false;       //not dirty yet
+        this.isNew = false;         //and it sure ain't new...
+        delete this.checkedId;      //and there can't be a user entered Id
         //console.log(model);
 
 
@@ -163,9 +174,17 @@ var ProfileDetailView =  Backbone.View.extend({
             //$('#op_profilename_label').html(this.template(this.model.toJSON().name));
 
 
+
             if (! this.isNew) {
                 //if this is a new profile, then allow the ID to be entered
                 $('#profile_id').attr('disabled',true)
+            } else {
+                //this is a new profile. Has the user entered and checked the ID?
+                if (this.checkedId) {
+                    //if they have, then set the value in the HTML and the background colour...
+                    $('#profile_id').val(this.checkedId);
+                    $('#profile_id').addClass('alert alert-success');
+                }
             }
 
 

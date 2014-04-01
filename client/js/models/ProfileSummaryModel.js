@@ -24,14 +24,10 @@ ProfileSummaryItemCollection = Backbone.Collection.extend({
 
 
 ProfileSummaryModel = Backbone.Model.extend({
-
-
     //generate the summary...
     getSummary : function(profileModel,callback) {
         //set the profile to generate a summary of
         var profile = profileModel.get('content');    //the FHIR profile
-
-
 
         //todo - this check may not be needed as eventually we'll be slicing not just extending...
         if (! profile.extensionDefn) {
@@ -64,8 +60,6 @@ ProfileSummaryModel = Backbone.Model.extend({
         })
         //console.log(summary);
 
-
-
         //create the array of tasks for async...
         //each task is to retrieve the base definition for resources in this profile.
         //todo this will require re-factoring as at the moment there must be an extension forst...
@@ -77,6 +71,10 @@ ProfileSummaryModel = Backbone.Model.extend({
                 resourceName = resourceName.substr(0,g);
             }
 console.log(resourceName);
+
+            if (!resourceName) {
+                alert('Error: Null resource name');
+            }
 
             arTasks.push(function(cb){
                 if (Backbone.fhirResourceCache[resourceName]) {

@@ -60,7 +60,7 @@ var generateSampleBundle = function(vo,callback) {
     })
 
 
-    console.log(JSON.stringify(objResources));
+    console.log("resources" + JSON.stringify(objResources));
 
     //create the bundle
     var bundle = {resourceType:"Bundle"};

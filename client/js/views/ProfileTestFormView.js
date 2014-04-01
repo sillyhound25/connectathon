@@ -14,7 +14,7 @@ var ProfileTestFormView = Backbone.View.extend({
         "click #td_lookup" : "lookupPatient"
     },
     clearView : function() {
-        this.$el.html();
+        this.$el.html("");
     },
     lookupPatient : function(ev) {
         var that = this;
