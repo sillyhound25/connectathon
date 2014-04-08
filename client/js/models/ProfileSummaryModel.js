@@ -319,7 +319,7 @@ console.log(resourceName);
 
         }
 
-        //extract all the paths into a string array...
+        //extract all the paths into a string array excluding the Resource name, text and contained elements...
         function processResourceProfile(resource) {
             var ar = [];
 
@@ -331,14 +331,22 @@ console.log(resourceName);
                     var type = el.definition.type[0].code;
                     //don't include extensions on the standard profile - they all have them and it's clutter at the moment...
 
-                    if (type.toLowerCase() !== 'extension') {
+                    if (type.toLowerCase() !== 'extension') {//don't want extensions
+
+//console.log(el)
 
                         var pathName = el.path;//.toLowerCase();
                         //strip off the resource name;
                         //console.log(resource.name);
-                        pathName = pathName.replace(resourceName+'.',"");
+                        pathName = pathName.replace(resourceName + '.', "");
+                        //and there's some elements we don't want either...
+                        if (['text', 'contained'].indexOf(pathName.toLowerCase()) === -1) {
 
-                        ar.push(pathName);
+
+                            ar.push(pathName);
+                        }
+
+
                     }
                 }
             });

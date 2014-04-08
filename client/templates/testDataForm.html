@@ -31,6 +31,9 @@
                     <h4 class="well well-sm col-sm-12 col-md-12 " ><span  data-toggle="td_grp_{{name}}" class='myToggle' style="cursor: pointer">{{name}}</span>
                         <div class="pull-right">
                             <span id='{{getResource name}}createdID'></span>
+                            {{#unless builder}}
+                            <span>Cannot create sample</span>
+                            {{/unless}}
                         </div>
                     </h4>
                 </div>

@@ -143,3 +143,13 @@ var generateSampleBundle = function(vo,callback) {
 
 
 exports.generateSampleBundle = generateSampleBundle;
+
+//a list of the builders for resources that are available
+exports.builderList = function() {
+    var ar = [];
+    _.each(builder,function(key,value){
+        //console.log(key,value)
+        ar.push(value.toLowerCase());
+    })
+    return ar;
+}

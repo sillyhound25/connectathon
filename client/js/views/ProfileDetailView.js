@@ -90,6 +90,17 @@ var ProfileDetailView =  Backbone.View.extend({
         console.log(model.toJSON())
 
         //now, lets see it it is valid. I want to do this before saving as I haven't quite got that working yet...
+        var vo = model.myValidate(model,false);
+        console.log(vo);
+        if (vo.err) {
+            alert(vo.err);
+            return;
+        }
+
+        //return;
+
+        //see if there are any extensions. todo - this validation
+
 
 
         model.save({},{

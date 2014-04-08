@@ -279,6 +279,38 @@
             //return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
         })
 
+        Handlebars.registerHelper('myAgeMins',function(daString) {
+            var s = "";
+            var formatStr = "YYYY-MM-DD:HH:mm z";
+            if (daString) {
+
+
+                //should be timezone aware...cd
+                //var da = moment(daString,formatStr);
+                var da = moment(daString);
+                //console.log(da.format(),daString);
+
+                var age = moment().diff(moment(da),'minutes');
+               // console.log(age);
+                if (age > 119) {
+                    //s = Math.floor(age/60) + " hours";
+                    s = singular(Math.floor(age/60),"hour");
+                } else {
+                    s = age + " minutes";
+                }
+            }
+            return s;
+        });
+
+        function singular(v,u) {
+            if (v===1) {
+                return v + " " + u;
+            } else {
+                return v + " " + u + "s";
+            }
+        }
+
+
 
     })
 

@@ -7,7 +7,9 @@ var ProfileQueryView = Backbone.View.extend({
         var t = "{{#each resources}}<div><input type='radio' name='pq_resource' value='{{this}}'/> {{this}}</div>{{/each}}";
         this.resourceTemplate = Handlebars.compile(t);
 
-        var t1 = "<ul>{{#each entry}}<li><a href='#' data-inx = '{{@index}}' class='pq_oneResult'>Item {{@index}}</a></li>{{/each}}</ul>";
+        //var t1 = "<ul>{{#each entry}}<li><a href='#' data-inx = '{{@index}}' class='pq_oneResult'>Item {{@index}} {{myAgeMins updated}}   </a></li>{{/each}}</ul>";
+        var t1 = "<ul>{{#each entry}}<li><a href='#' data-inx = '{{@index}}' class='pq_oneResult'>{{myAgeMins updated}}   </a></li>{{/each}}</ul>";
+
         this.resultsTemplate = Handlebars.compile(t1);
 
         //console.log(this.resourceTemplate)
@@ -19,11 +21,10 @@ var ProfileQueryView = Backbone.View.extend({
         "click .pq_oneResult" : "showOneResult"
     },
     showOneResult : function(ev){
-
         var inx = $(ev.currentTarget).attr('data-inx');
         var entry = this.resultBundle.entry[inx];
         $('#pq_one_result').text(JSON.stringify(entry.content,undefined,2));
-        $('#pq_resourceid').html(entry.id);
+        $('#pq_resourceid').html(entry.id + "<br />" + entry.updated);
 
     },
     clearResults : function() {
@@ -52,11 +53,11 @@ var ProfileQueryView = Backbone.View.extend({
         var query = {resource:resource,params : []};
         //this is a problem with FHIR - some of the resources (notable the medications) use 'patient' not 'subject'
         if (['medicationadministration','medicationprescription','medicationdispense','medicationstatement'].indexOf(resource.toLowerCase()) > -1) {
-            query.params.push({name:'patient',value:'Patient/' + logicalId}); //old style
-            //todo query.params.push({name:'patient:Patient',value:logicalId});
+            //query.params.push({name:'patient',value:'Patient/' + logicalId}); //old style
+            query.params.push({name:'patient:Patient',value:logicalId});
         } else {
-            query.params.push({name:'subject',value:'Patient/' + logicalId});
-            //todo query.params.push({name:'subject:Patient',value:logicalId});
+            //query.params.push({name:'subject',value:'Patient/' + logicalId});
+            query.params.push({name:'subject:Patient',value:logicalId});
         }
 
 
@@ -65,9 +66,27 @@ var ProfileQueryView = Backbone.View.extend({
         this.clearResults();
         console.log(queryString);
         $.get('/api/generalquery?query='+queryString,function(bundle){
-            that.resultBundle = bundle;
-            console.log(bundle);
-            $('#pq_results').html(that.resultsTemplate(bundle));
+            //if there was an error, then we'll get back an operation outcome...
+            if (bundle.resourceType.toLowerCase()==='operationoutcome') {
+                var err = "There was an error:\n ";
+                if (bundle.issue && bundle.issue.length > 0) {
+                    bundle.issue.forEach(function(issue){
+                        err += issue.details + "\n";
+                    })
+
+                }
+
+
+                alert(err)
+
+            } else {
+                that.resultBundle = bundle;
+
+                console.log(bundle);
+                $('#pq_results').html(that.resultsTemplate(bundle));
+            }
+
+
         });
 
     },
@@ -118,7 +137,8 @@ var ProfileQueryView = Backbone.View.extend({
             if (profile.name === profileName){
                 //at the moment, the resources are in the extensions. Will want to support slicing later on...
                 _.each(profile.extensionDefn,function(ext){
-                    var resource = ext.context[0];
+                    //'resource' is actually a path...
+                    var resource = ext.context[0].getResourceNameFromPath();
                     if (arResources.indexOf(resource) === -1) {
                         arResources.push(resource);
                     }
@@ -127,6 +147,9 @@ var ProfileQueryView = Backbone.View.extend({
         })
         //console.log(arResources)
         this.resources = arResources;
+
+
+
         $('#pq_resources').html(this.resourceTemplate({resources:arResources}));
         $("input:radio[name=pq_resource]:first").attr('checked', true);
         //this.render()

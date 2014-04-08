@@ -137,8 +137,6 @@ ProfileTestFormModel = Backbone.Model.extend({
                 }
             })
 
-
-
             //finally, move the patient to the top of the list...
             var pos = -1;
             $.each(vo.resource,function(inx,res){
@@ -151,6 +149,17 @@ ProfileTestFormModel = Backbone.Model.extend({
                 vo.resource.splice(pos,1);
                 vo.resource.splice(0,0,patientEntry);
             }
+
+
+            //and also indicate whether or not there is a test data builder for this resource...
+            $.each(vo.resource,function(inx,res){
+                console.log(res)
+                if (Backbone.fhirTestBuilders.indexOf(res.name.toLowerCase()) > -1) {
+                    res.builder=true;
+                }
+            });
+
+
 
             //console.log(vo);
             callback(vo);

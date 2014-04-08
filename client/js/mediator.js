@@ -5,8 +5,31 @@
  * todo: all the views/models should be scoped to another object - ?the Mediator???
  */
 
+
+
+//add a function to the string prototype to get the resource name from a path...
+
+String.prototype.getResourceNameFromPath = function (){
+    g = this.indexOf('.');
+    if (g > -1) {
+        return this.substr(0,g)
+    } else {
+        return this
+    }
+
+}
+
+
+//alert("test.test".getResourceNameFromPath())
+
 //a cache of resource profiles. used by profileSummaryModel. keyed on resource name.
 Backbone.fhirResourceCache = {};
+
+//a list of test data builders. These are the ones that the test form can use...
+Backbone.fhirTestBuilders = [];
+$.get('admin/builders',function(builders){
+    Backbone.fhirTestBuilders = builders;
+})
 
 
 var Mediator={};
@@ -47,11 +70,21 @@ profileQueryView.render();
         vsDetailView.render();
     })
 
+    //when a new valueset is added...
+    Backbone.listenTo(vsDetailView,'vsList:added',function(vo){
+        Mediator.loadValueSets();
+        vsDetailView.render();
+    })
+
 
 //}
 
 //load the ValueSet. At the moment this is only Orion sourced resources... - Later we'll allow a select of some sort
 //display the list when finished...
+
+
+
+/*
 colVS.fetch({
     success : function() {
 
@@ -62,7 +95,7 @@ colVS.fetch({
         alert('There was an error loading the ValueSets')
     }
 });
-
+*/
 
 //============================= Profile objects and handlers
 
@@ -143,9 +176,6 @@ Backbone.listenTo(listProfiles,'profileList:delete',function(vo){
         Mediator.showWorking();
         selectedModel.destroy({
             success : function() {
-               // $('#save_profile_changes').text('Update Profile').attr('disabled',false)
-                //that.model.set({'isDirty':false});
-//                that.trigger('profile:added',{model:model});
                 Mediator.clearProfileWorkareas();   //clear all the work areas associated with profile editing
                 Mediator.loadProfiles();
             },
@@ -214,6 +244,7 @@ Backbone.listenTo(profileDetailView,'profile:added',function(vo){
 Backbone.listenTo(profileExtensionView,'profileExtension:updated',function(vo){
     //re-render the profile - the model should already be set...
     profileDetailView.render();
+    profileContentView.render();
 });
 
 //the user has selected a resource. Need to get the paths for that resource...
@@ -362,8 +393,22 @@ Mediator.loadProfiles = function(){
 }
 
 
-//load the profiles...
+Mediator.loadValueSets = function() {
+    colVS.fetch({
+        success : function() {
+
+            $('#loading').hide();
+            listVS.render();      //render the list of valuesets...
+        },
+        error : function() {
+            alert('There was an error loading the ValueSets')
+        }
+    });
+}
+
+//load the profiles & valuesets...
 Mediator.loadProfiles();
+Mediator.loadValueSets();
 
 //====================== mediator utilities ========================
 

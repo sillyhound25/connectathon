@@ -77,15 +77,26 @@ ProfileModel = Backbone.Model.extend({
                 }
             }
         })
-        callback(err,fhirProfile);
+        if (! fhirProfile.extensionDefn || fhirProfile.extensionDefn.length < 1 ) {
+            err += 'There must be at least one Extension in a profile (at the moment)';
+        }
+
+
+        return {err:err,fhirProfile:fhirProfile};
+
+        //callback(err,fhirProfile);
     },
     validateAndClean : function(model,callback) {
         //validate the profile and remote any meta nodes...
         //todo this could be tidied...
         console.log(model)
-        this.myValidate(model,true,function(err,fhirProfile){
-            callback(err,fhirProfile);
-        })
+
+        var vo = this.myValidate(model,true);
+        callback(vo.err,vo.fhirProfile);
+
+      //  this.myValidate(model,true,function(err,fhirProfile){
+          //  callback(err,fhirProfile);
+       // })
         //var fhirProfile = model.get('content');
 
         /*
@@ -170,7 +181,8 @@ ProfileModel = Backbone.Model.extend({
 
                     },
                     error : function(xhr,status,err){
-                        console.log(err);
+                        //console.log(err);
+                        console.log('error: ' + xhr.responseText)
                         options.error(xhr,status,err)
 
                     }

@@ -38,7 +38,8 @@ var ValueSetDetailView =  Backbone.View.extend({
         this.model.save({},{
             success : function() {
                 that.model.set({'isDirty':false});
-                alert('ValueSet saved')
+                alert('ValueSet saved');
+                that.trigger('vsList:added');
             }
         });
 

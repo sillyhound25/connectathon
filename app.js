@@ -26,6 +26,9 @@ var app = express.createServer();
 
 var FHIRCoreRegistry = 'http://spark.furore.com/fhir/';
 
+//test data for pandas
+var pandasService = require('./server/pandasService.js');
+
 //----------- note that the config file will overwrite these values!!!!
 //var FHIRServerUrl = 'http://hisappakl/blaze/fhir/';
 //var FHIRServerUrl = 'http://spark.furore.com/fhir/';
@@ -56,11 +59,27 @@ app.configure(function(){
 });
 
 
+
+
+//test for pandas
+app.get('/pandas', function(req, res) {
+    pandasService.getPandasSample(function(data){
+        res.json(data);
+    })
+
+});
+
+
 //return the config fil
 app.get('/admin/config', function(req, res) {
     res.json(config);
 });
 
+//get the list of resource builders...
+app.get('/admin/builders', function(req, res) {
+
+    res.json(mSample.builderList());
+});
 
 //get a single resource
 app.get('/api/oneresource/:type/:id', function(req, res) {
@@ -266,7 +285,12 @@ app.get('/api/valueset/:publisher', function(req, res){
        // console.log(response);
         resp1.id = response.headers.location;
         resp1.statusCode = response.statusCode;
-        resp1.response = JSON.parse(body);
+        try {
+            resp1.response = JSON.parse(body);
+        } catch (ex) {
+            resp1.response = {'err':'non-json body'}
+        }
+
         resp1.headers = response.headers;
         var resp = {};
         resp.content = resp1;

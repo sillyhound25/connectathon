@@ -83,6 +83,7 @@ var ProfileTestFormView = Backbone.View.extend({
         $("#"+panel).toggle();
     },
     generateForm : function() {
+        //generate the test for data
         var that = this;
         if (! this.model) {
             alert('Please select a profile first');
@@ -96,8 +97,16 @@ var ProfileTestFormView = Backbone.View.extend({
         var profileTestFormModel = new ProfileTestFormModel();
         profileTestFormModel.getExtensions(profile,colVS,function(data){
             //data.resource is the array of resources to render. (also duplictaed as first level members)...
-            //daat.profile is the profile
+            //data.profile is the profile
             //data.warnings are warnings
+
+            //need to determine which of the resources have test builders available. These are the ones that test data can be generated for...
+           // _.each(data.resource,function(res){
+
+           // })
+
+            //console.log(data);
+
             console.log(data)
             that.render(data);
             //now disable the submit button until the patient ID is checked...

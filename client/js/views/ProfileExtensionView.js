@@ -7,7 +7,7 @@ var ProfileExtensionView =  Backbone.View.extend({
     events : {
         "click #eeSave" : "saveExtension",
         "change #eeContextResource" : "selectResource",
-             "change #eeValueSet" : "valueSetChanged"
+        "change #eeValueSet" : "valueSetChanged"
     },
     valueSetChanged : function() {
         //the value set has been changed - set the datatype to CodeableConcept
@@ -30,6 +30,7 @@ var ProfileExtensionView =  Backbone.View.extend({
         this.trigger('profileExtension:selectedResource',{resourceName: resourceName,callback : function(arPaths){
             //OK got all the paths - update the path list combo
             $el.empty();
+            $el.append("<option value=''></option>");
             _.each(arPaths,function(path){
                 var lne = "<option value='"+path + "'";
                 //note that we only support one resource
@@ -55,6 +56,7 @@ var ProfileExtensionView =  Backbone.View.extend({
             return;
         }
 
+
         var extension = this.meta.extension;    //for right now, assume update
         if (!extension) {
             isNew = true;
@@ -69,12 +71,26 @@ var ProfileExtensionView =  Backbone.View.extend({
         extension.definition.max=$('#eeMax').val();
         extension.definition.type = [{code:$('#eeDataType').val()}];
 
-        var fullContextPath = $('#eeContextResource').val() + '.' + $('#eeContextResourcePath').val();
+        //the context path is the full path to the element that is being extended.
+        var fullContextPath = $('#eeContextResource').val();        //the resource name
 
+        if (!fullContextPath) {
+            alert('You must select the resource to extend');
+            return;
+        }
+
+
+        //if there is a path defined, then append it to the resource...
+        if ($('#eeContextResourcePath').val()) {
+            fullContextPath += '.' + $('#eeContextResourcePath').val();
+        }
+
+        //var fullContextPath = $('#eeContextResource').val();        //the resource name
+
+
+        //at the moment, we're only allowing 1 path per extension...
         extension.context= [fullContextPath];
         //extension.context= [$('#eeContextResource').val()];
-
-
 
 
         if ($('#eeIsModifier').is(':checked')) {
@@ -119,6 +135,10 @@ var ProfileExtensionView =  Backbone.View.extend({
         //called when the extension is being edited. We locate the existing extension and set it as a property
         //of the view - a more elegant solution might be to create another BB model...
         if (code) {
+            if (!this.model) {
+                alert('The model for profileExtensionView is null');
+                return;
+            }
             var model = this.model.toJSON();
             _.each(model.extensionDefn,function(ext){
                 if (ext.code === code) {
@@ -180,8 +200,8 @@ var ProfileExtensionView =  Backbone.View.extend({
 
 
             if (extension.context && extension.context.length > 0) {
-                //need to get the resourceName and path from the context.
-                resourceName = extension.context[0];
+                //if there's a context, then need to get the resourceName and path from the context.
+                resourceName = extension.context[0];        //actually a full path...
 
                 var g = resourceName.indexOf('.');
                 if (g > -1) {
@@ -206,22 +226,6 @@ var ProfileExtensionView =  Backbone.View.extend({
 
 
 
-/*
-            //------------- set the list of resources --------------
-            _.each(that.meta.resourceList,function(name){
-                var lne = "<option value='"+name + "'";
-                //note that we only support one resource
-                if (extension.context && name === extension.context[0]) {
-                    lne += " selected='selected' ";
-                }
-                lne += ">"+name+"</option>";
-                $("#eeContextResource").append(lne);
-            })
-        */
-
-            //if (extension.context && name === extension.context[0]) {
-              //  $("#eeContextResourcePath").val(extension.context[0]);
-           // }
 
             if (path) {
                 //this function can be called by an event handler too

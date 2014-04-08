@@ -93,7 +93,7 @@ var QueryView = Backbone.View.extend({
 
 
                 //show the results list
-                $('#qry_params_tabview a[href="#qry_tab_results"]').tab('show') // Select tab by name
+                $('#qry_params_tabview a[href="#qry_tab_results"]').tab('show'); // Select tab by name
 
                 that.showResult(0);
             })
@@ -120,7 +120,9 @@ var QueryView = Backbone.View.extend({
         var that=this;
         $.get('api/conformance',function(conf){
             that.model = conf;
-            //console.log(conf)
+            console.log(conf)
+
+            if (conf && conf.rest && conf.rest.length > 0) {
 
             $.get('../templates/conformanceList.html',function(html){
                 var template = Handlebars.compile(html);
@@ -136,6 +138,10 @@ var QueryView = Backbone.View.extend({
                 that.$el.html(template(conf));
                 return that;
             })
+            } else {
+                alert('The conformance statement from the server was either missing, or described no REST end-points')
+            }
+
 
 
         })
