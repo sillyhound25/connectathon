@@ -61,13 +61,42 @@ app.configure(function(){
 
 
 
-//test for pandas
-app.get('/pandas', function(req, res) {
+//----------- pandas routines ----------------------
+app.get('/pandas/makeMedsJson', function(req, res) {
     pandasService.getPandasSample(function(data){
         res.json(data);
     })
 
 });
+
+app.get('/pandas/makeMemberJson', function(req, res) {
+    pandasService.makeMemberJson(function(data){
+        res.json(data);
+    })
+
+});
+
+app.get('/pandas/patientFlags/patient/:patid?', function(req, res) {
+    var patid = req.params['patid']
+    console.log(patid)
+    pandasService.getPandasPatientRiskFlags(patid,function(data){
+        res.json(data);
+    })
+
+});
+
+app.get('/pandas/patientFlags/time/:time?', function(req, res) {
+
+    pandasService.getPandasPatientRiskFlagsTime('x',function(data){
+        res.json(data);
+    })
+
+});
+
+
+
+
+//----------------------------------
 
 
 //return the config fil
