@@ -37,27 +37,32 @@ ProfileSummaryModel = Backbone.Model.extend({
 
         //find all the resources that this profile refrences...
 
-        //var models = new ProfileSummaryItemCollection();
-
-
         //todo the resoruces collection is the original - will replace with models..
-        var summary = {resources : {}}
+        //find all the resources that are referenced by extensions...
+
+
+        var summary = {resources : {}};     //<<<<<<<<< this will be the object passed back...
         $.each(profile.extensionDefn,function(inx,ext){
             //console.log(ext)
-            var resource = ext.context[0].toLowerCase();
+            var resource = ext.context[0].getResourceNameFromPath();//  ext.context[0].toLowerCase();
             if ( ! summary.resources[resource]) {
 
+
+   /*
 
                 g = resource.indexOf('.');
                 if (g > -1) {
                     resource = resource.substr(0,g);
                 }
                 console.log(resource);
+*/
 
-
-                summary.resources[resource] = {properties : [],name:resource}
+                //summary.resources[resource] = {properties : [],name:resource}
+                summary.resources[resource] = {name:resource}
             }
         })
+
+
         //console.log(summary);
 
         //create the array of tasks for async...
@@ -66,16 +71,19 @@ ProfileSummaryModel = Backbone.Model.extend({
         var arTasks = [];
         $.each(summary.resources,function(resourceName) {
             //if there is a '.' then the resource has a path associated with it. We only want the resource name
+           /*
             g = resourceName.indexOf('.');
             if (g > -1) {
                 resourceName = resourceName.substr(0,g);
             }
 console.log(resourceName);
 
+            */
             if (!resourceName) {
                 alert('Error: Null resource name');
             }
 
+            //now add the task...
             arTasks.push(function(cb){
                 if (Backbone.fhirResourceCache[resourceName]) {
                     console.log('load ' + resourceName + ' from cache')
@@ -89,17 +97,19 @@ console.log(resourceName);
                     //get the profile. Note that this will be a 'contains' string search, so can return multiple matches...
                     $.get( "/api/profile/"+resourceName+"/FHIR Project", function( data ) {
                         //Backbone.fhirResourceCache
-                        summary.resources[resourceName].raw = data;
-
+                       // summary.resources[resourceName].raw = data;
+//console.log(data)
                         var resourceProfile;       //the entry object holding the profile resource...
                         $.each(data.entry,function(inx,entry){
                             //>>>>>  assume that the name of the profile is the same as the resourceName
                             if (entry.content.name.toLowerCase() === resourceName.toLowerCase()){
                                 resourceProfile = entry.content;
+                                summary.resources[resourceName].raw = data;
                                 //save resource profile in cache...
                                 Backbone.fhirResourceCache[resourceName] = resourceProfile;     //the fhir representation of the profile
                             }
                         })
+
 
                         if (! resourceProfile) {
                             alert('The profile for the ' + resourceName + ' resource was not found');
@@ -133,8 +143,11 @@ console.log(resourceName);
         function getStructures(resourceName,resource,cb){
 
             //possible 'structures' is a better name than 'properties'
-            var arStructures = summary.resources[resourceName].properties;
+         //   var arStructures = summary.resources[resourceName].properties;
+
+            //the models holds details about each structure or extension...
             summary.resources[resourceName].models =  new ProfileSummaryItemCollection();
+
             var models = summary.resources[resourceName].models;        //just a convenience variable...
             //var models = new ProfileSummaryItemCollection();
             //because there may be multiple returns we need to search the bundle...
@@ -144,15 +157,15 @@ console.log(resourceName);
 
             //go through all the structures defined in the core definition for this resource. We are using the path
             //as the discriminator - if a particluar path is defined in the profile then we use that, otherwise we use
-            //the one form core. We assume that there cannot be a path in the profile that is not in the core
+            //the one from core. We assume that there cannot be a path in the profile that is not in the core
             //todo is this assumption correct?
             $.each(resource.structure[0].element, function(inx,el){
                 //console.log(el);
                 if (el.definition.type) {
                     //only include elements with a type (ie a datatype). 'header' properties (like medicationAdministration.dosage) aren't neeed (I think)
                     var type = el.definition.type[0].code;
-                    //don't include extensions on the standard profile - they all have them and it's clutter at the moment...
 
+                    //don't include extensions on the standard profile - they all have them and it's clutter at the moment...
                     if (type.toLowerCase() !== 'extension') {
 
                         //now see if there is a structure defined in the profile that matches the resource name
@@ -163,6 +176,7 @@ console.log(resourceName);
 
                         var pathFromProfile = false;               //will be true if we get the definition for this path from the profile
 
+                        //if the profile contains a structure collection, then it has altered one of the core paths...
                         if (profile.structure) {
 
                             //console.log('profile has structure')
@@ -208,10 +222,12 @@ console.log(resourceName);
                         }
 
 
+                        //console.log(pathFromProfile);
 
                         if (! pathFromProfile) {
-                            arStructures.push({path : el.path, description: el.definition.short,type:type,
-                                min:el.definition.min,max:el.definition.max,resource:resourceName,type:'core'})
+                            //if here, then the profile does *not* override the path...
+                          ///  arStructures.push({path : el.path, description: el.definition.short,type:type,
+                           //     min:el.definition.min,max:el.definition.max,resource:resourceName,type:'core'})
 
                             //create the model - this will be the way forward...
                             models.push(new ProfileSummaryItemModel({
@@ -234,14 +250,15 @@ console.log(resourceName);
 
                 } else {
                     //just add the name...
-                    arStructures.push({path : el.path, description: el.definition.short,type:"----------",resource:resourceName})
+
+                  //  arStructures.push({path : el.path, description: el.definition.short,type:"----------",resource:resourceName})
                 }
 
             })
 
 
             //now add the extensions that this profile defines for this resource...
-            arStructures.push({path : '-------', description: '-------',type:"----------",resource:resourceName})
+          //  arStructures.push({path : '-------', description: '-------',type:"----------",resource:resourceName})
             //console.log(Z.currentProfile);
             $.each(profile.extensionDefn,function(inx,ext){
                 //console.log(ext)
@@ -254,8 +271,8 @@ console.log(resourceName);
                         type = ext.definition.type[0].code;
                     }
 
-                    arStructures.push({path : ext.code, description: ext.definition.short,type:type,
-                        min:ext.definition.min,max:ext.definition.max,resource:resourceName,type:'ext'})
+                 //   arStructures.push({path : ext.code, description: ext.definition.short,type:type,
+                  ///      min:ext.definition.min,max:ext.definition.max,resource:resourceName,type:'ext'})
 
                     models.push(new ProfileSummaryItemModel({
                         profileid : profileModel.get('id'),

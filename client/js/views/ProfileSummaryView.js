@@ -63,9 +63,9 @@ var ProfileSummaryView = Backbone.View.extend({
 
                 //console.log(path, m.toJSON().path)
                 if (m.toJSON().path.toLowerCase() === path.toLowerCase()) {
-                    console.log(m.toJSON())
+                    //console.log(m.toJSON())
                     var view = that.childViews[resourceName+"_"+path];
-                    console.log(view);
+                    //console.log(view);
                     view.content = m.toJSON();
                     view.model = m;
                     view.render();
@@ -100,7 +100,7 @@ var ProfileSummaryView = Backbone.View.extend({
         //profileSummaryModel.setProfile(this.model);
         this.$el.html("Generating summary, please wait...");
         this.profileSummaryModel.getSummary(model,function(err, arSummary){
-            //console.log(err,arSummary);
+           // console.log(err,arSummary);
           //  _.each(arSummary.resources,function(r){
            //     console.log(r.models.toJSON());
            // })
@@ -139,28 +139,31 @@ var ProfileSummaryView = Backbone.View.extend({
         if (this.arSummary) {
             //create a view for each item and render
             var html = "";
-            _.each(this.arSummary.resources,function(res,resourceName){
-                console.log(resourceName)
+            _.each(this.arSummary.resources,function(res,path){
+                //console.log(path)
                 var colModels = res.models;     //this is a BB Collection
                 _.each(colModels.models,function(model,inx){
                     var jsonModel = model.toJSON();          //this is a BB model - not a fhir model!!!
+
+
                     //add a row with an ID. This will be the container for the child view...
-                    var elID = 'tst'+inx;
-                   // var klass = "";
-                   // if (jsonModel.max === '0' || jsonModel.max === 0) {
-                    //    klass = " class='notUsed' ";
-                  //  }
+                    var elID = path+inx;
+
+                    //console.log(jsonModel.path,elID);
 
 
                     //$('#ps_table tr:last').after("<tr "+klass+"id='"+ elID +"'></tr>");
                     $('#ps_table tr:last').after("<tr id='"+ elID +"'></tr>");
                     //now create the child view responsible for this row...
-                    var key =resourceName + "_"+jsonModel.path;
+                    var key =path + "_"+jsonModel.path;
+
+                    //each line in the table (representing a path) will have its own view...
+
                     var v = new ProfileSummaryItemView({model:model,el:$('#'+elID)});
                     that.childViews[key] = v;        //save a reference to the view. We'll need it to release the view to avoid zombies...
                     v.template = that.itemTemplate;
                     v.content = model.get('content');       //this is the json representation of the structure.element
-                    v.resourceName = resourceName;
+                    v.resourceName = path;
                     //v.profileID = that.model.toJSON().meta.id;
                     //console.log(v.profileID)
                     v.render();
