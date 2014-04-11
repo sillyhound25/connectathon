@@ -59,6 +59,7 @@ ProfileSummaryModel = Backbone.Model.extend({
 
                 //summary.resources[resource] = {properties : [],name:resource}
                 summary.resources[resource] = {name:resource}
+                summary.resources[resource].models =  new ProfileSummaryItemCollection();
             }
         })
 
@@ -102,7 +103,10 @@ console.log(resourceName);
                         var resourceProfile;       //the entry object holding the profile resource...
                         $.each(data.entry,function(inx,entry){
                             //>>>>>  assume that the name of the profile is the same as the resourceName
-                            if (entry.content.name.toLowerCase() === resourceName.toLowerCase()){
+                            console.log(entry.content.name , resourceName);
+                            //if (entry.content.name === resourceName) {
+                            //needs to remain a case insensitive search, as this the name of a profile...
+                                if (entry.content.name.toLowerCase() === resourceName.toLowerCase()){
                                 resourceProfile = entry.content;
                                 summary.resources[resourceName].raw = data;
                                 //save resource profile in cache...
@@ -146,7 +150,7 @@ console.log(resourceName);
          //   var arStructures = summary.resources[resourceName].properties;
 
             //the models holds details about each structure or extension...
-            summary.resources[resourceName].models =  new ProfileSummaryItemCollection();
+            //summary.resources[resourceName].models =  new ProfileSummaryItemCollection();
 
             var models = summary.resources[resourceName].models;        //just a convenience variable...
             //var models = new ProfileSummaryItemCollection();
@@ -172,7 +176,8 @@ console.log(resourceName);
                         //and path. If there is, then that is what we'll include in the list of 'properties' (where a
                         //'property' could be core, profiled or an extension). Otherwise we'll use the core
 
-                        var pathName = el.path.toLowerCase();       //the path name from the core...
+                        //var pathName = el.path.toLowerCase();       //the path name from the core...
+                        var pathName = el.path;       //the path name from the core...
 
                         var pathFromProfile = false;               //will be true if we get the definition for this path from the profile
 
@@ -187,13 +192,15 @@ console.log(resourceName);
 
                                 //console.log(struc)
 
-                                if (struc.name.toLowerCase() === resourceName.toLowerCase()) {
+                                if (struc.name === resourceName) {
+                                    //if (struc.name.toLowerCase() === resourceName.toLowerCase()) {
                                     //yep, we've got at least one modification for this resource
                                     if (struc.element) {
                                         _.each(struc.element,function(profileEl){
                                             //if the path's match then we'll add the definition from the profile
                                             //rather than the defintiopn in the core...
-                                            if (profileEl.path.toLowerCase() ===  pathName) {
+                                            if (profileEl.path ===  pathName) {
+                                                //if (profileEl.path.toLowerCase() ===  pathName) {
                                                 //yes! This path is defined in the profile
                                                 pathFromProfile = true;
 
@@ -263,7 +270,12 @@ console.log(resourceName);
             $.each(profile.extensionDefn,function(inx,ext){
                 //console.log(ext)
 
-                if (ext.context[0].toLowerCase() === resourceName) {
+                //if (ext.context[0].toLowerCase() === resourceName) {
+
+                //the context is a path...
+                //if (ext.context[0].getResourceNameFromPath() === resourceName) {
+                //we only want extensions defined against the top level of the resource
+                    if (ext.context[0] === resourceName) {
                     //only the extensions that apply to this profile
                     cnt++;
                     var type = '?????';
@@ -273,7 +285,7 @@ console.log(resourceName);
 
                  //   arStructures.push({path : ext.code, description: ext.definition.short,type:type,
                   ///      min:ext.definition.min,max:ext.definition.max,resource:resourceName,type:'ext'})
-
+//console.log(ext.code);
                     models.push(new ProfileSummaryItemModel({
                         profileid : profileModel.get('id'),
                         path : ext.code,

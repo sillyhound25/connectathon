@@ -11,6 +11,7 @@ var ProfileStructureView =  Backbone.View.extend({
     saveStructure : function() {
         //save any changes made to a structure. This is where we'd check to ensure they were valid changes...
 
+       // console.log(this.model);
         var element = this.model;       //the JSON representation of a structure.element
 
         element.definition.min = $('#esMin').val();
@@ -45,7 +46,7 @@ var ProfileStructureView =  Backbone.View.extend({
         var that = this;
 
         var json = this.model;
-        console.log(json);
+        //console.log(json);
 
 
 

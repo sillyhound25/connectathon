@@ -291,9 +291,9 @@ Backbone.listenTo(profileDetailView,'profile:updated',function(vo){
     profileDetailView.render();
 });
 
-
+//a user is modifying a resource path...  (not just slicing)
 Backbone.on('profileSummary:slice',function(vo){
-    console.log(vo);
+    //console.log(vo);
 
 
         var selectedProfileModel = colProfile.findModelByID(vo.profileid);       //the vs selected in the list view
@@ -343,7 +343,7 @@ Backbone.listenTo(profileStructureView,'element:updated',function(vo){
 
         var profileJson = profileModel.get('content');
 
-        //find the structure (resource)
+        //find the structure element in the resource - or create it
         profileJson.structure = profileJson.structure || [];
 
         //add a new resource (structure)

@@ -17,7 +17,7 @@ var ProfileCollection = Backbone.Collection.extend({
         var m = _.findWhere(this.models,{'cid':cID});
         return m;
 
-
+/*
 
         console.log(resourceID);
         _.each(this.models,function(m){
@@ -36,8 +36,9 @@ var ProfileCollection = Backbone.Collection.extend({
             //if (m) {return m;}
 
             //couldn't find a macthing model. Is this a new one?
-            console.log(this.toJSON())
+           // console.log(this.toJSON())
         }
+        */
     },
     findModelByResourceIDDEP : function(resourceID) {
         //return a model with the given resourceID. If not found, will look for one with a cid: of 'new'

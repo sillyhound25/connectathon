@@ -62,10 +62,12 @@ var ProfileSummaryView = Backbone.View.extend({
                 //console.log(path,resourceName,m)
 
                 //console.log(path, m.toJSON().path)
-                if (m.toJSON().path.toLowerCase() === path.toLowerCase()) {
+                if (m.toJSON().path === path) {
+                //    if (m.toJSON().path.toLowerCase() === path.toLowerCase()) {
                     //console.log(m.toJSON())
+                       // alert('match')
                     var view = that.childViews[resourceName+"_"+path];
-                    //console.log(view);
+                    console.log(view);
                     view.content = m.toJSON();
                     view.model = m;
                     view.render();
@@ -139,37 +141,46 @@ var ProfileSummaryView = Backbone.View.extend({
         if (this.arSummary) {
             //create a view for each item and render
             var html = "";
-            _.each(this.arSummary.resources,function(res,path){
+            _.each(this.arSummary.resources,function(res,resourceName){
                 //console.log(path)
                 var colModels = res.models;     //this is a BB Collection
                 _.each(colModels.models,function(model,inx){
                     var jsonModel = model.toJSON();          //this is a BB model - not a fhir model!!!
 
 
-                    //add a row with an ID. This will be the container for the child view...
-                    var elID = path+inx;
+                    //ignore the 'standard' paths...
+                    //console.log(jsonModel.path)
+                    var toShow = true;
+                    _.each(['.extension','.text','.contained'],function(exclude){
+                        if (jsonModel.path.indexOf(exclude) !== -1) {
+                            toShow = false;
+                        }
+                    })
 
-                    //console.log(jsonModel.path,elID);
-
-
-                    //$('#ps_table tr:last').after("<tr "+klass+"id='"+ elID +"'></tr>");
-                    $('#ps_table tr:last').after("<tr id='"+ elID +"'></tr>");
-                    //now create the child view responsible for this row...
-                    var key =path + "_"+jsonModel.path;
-
-                    //each line in the table (representing a path) will have its own view...
-
-                    var v = new ProfileSummaryItemView({model:model,el:$('#'+elID)});
-                    that.childViews[key] = v;        //save a reference to the view. We'll need it to release the view to avoid zombies...
-                    v.template = that.itemTemplate;
-                    v.content = model.get('content');       //this is the json representation of the structure.element
-                    v.resourceName = path;
-                    //v.profileID = that.model.toJSON().meta.id;
-                    //console.log(v.profileID)
-                    v.render();
+                    if (toShow) {
 
 
-                   // v.content.reasnResource.reference,\.
+
+                        //add a row with an ID. This will be the container for the child view...
+                        var elID = resourceName+inx;
+
+                        //console.log(jsonModel);
+
+
+                        //$('#ps_table tr:last').after("<tr "+klass+"id='"+ elID +"'></tr>");
+                        $('#ps_table tr:last').after("<tr id='"+ elID +"'></tr>");
+                        //now create the child view responsible for this row...
+                        var key =resourceName + "_"+jsonModel.path;
+
+                        //each line in the table (representing a path) will have its own view...
+
+                        var v = new ProfileSummaryItemView({model:model,el:$('#'+elID)});
+                        that.childViews[key] = v;        //save a reference to the view. We'll need it to release the view to avoid zombies...
+                        v.template = that.itemTemplate;
+                        v.content = model.get('content');       //this is the json representation of the structure.element
+                        v.resourceName = resourceName;
+                        v.render();
+                    }
 
                 })
             })
@@ -191,28 +202,23 @@ ProfileSummaryItemView = Backbone.View.extend({
     slice : function(ev){
         ev.preventDefault();
         ev.stopPropagation();
-        var path = $(ev.currentTarget).attr('data-path');
+        //var path = $(ev.currentTarget).attr('data-path');
         var type = $(ev.currentTarget).attr('data-type');
         var profileID = $(ev.currentTarget).attr('data-profileid');
-        console.log(this.content);
+        //console.log(this.content);
         //console.log('x')
         Backbone.trigger('profileSummary:slice',
-            {profileid : profileID,type:type,path:path,element:this.content,resourceName:this.resourceName});
-    },
-    selectXXX : function(ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
-        var path = $(ev.currentTarget).attr('data-path');
-        alert(path);
+            {profileid : profileID,type:type,element:this.content,resourceName:this.resourceName});
+        //{profileid : profileID,type:type,path:path,element:this.content,resourceName:this.resourceName});
     },
 
-
-    initialize : function() {
-
-    },
     render : function(){
         var json = this.model.toJSON();
         //console.log(json);
+
+
+        this.$el.addClass('summaryRow'+json.type);
+
         this.$el.html(this.template({item:json}));
         //this.$el.html(this.template({item:json}));
 
