@@ -120,7 +120,7 @@ var QueryView = Backbone.View.extend({
         var that=this;
         $.get('api/conformance',function(conf){
             that.model = conf;
-            console.log(conf)
+            //console.log(conf)
 
             if (conf && conf.rest && conf.rest.length > 0) {
 

@@ -20,6 +20,7 @@ String.prototype.getResourceNameFromPath = function (){
 }
 
 
+
 //alert("test.test".getResourceNameFromPath())
 
 //a cache of resource profiles. used by profileSummaryModel. keyed on resource name.
@@ -32,7 +33,15 @@ $.get('admin/builders',function(builders){
 })
 
 
+
 var Mediator={};
+
+//a simple assertion checker (based on John Resigs one) that shows a message if the outcome is false
+Mediator.assert = function( outcome, description ) {
+    if (!outcome) {
+        alert("Assert Error: " + description);
+    }
+}
 
 //the list of permissable datatypes in a profile...
 var dataTypeList = ['boolean','code','date','string','integer','Coding','CodeableConcept','Period']
@@ -159,13 +168,23 @@ Backbone.listenTo(listProfiles,'profileList:select',function(vo){
 //creating a new profile
 Backbone.listenTo(listProfiles,'profileList:new',function(vo){
     $('.nav-tabs a[href="#profileDetailSubTab"]').tab('show');
-    var m = new ProfileModel();
-    m.set('cid','new');
-    colProfile.add(m);
-    profileSummaryView.clearView();
-    profileDetailView.model =  m;
-    profileDetailView.setNewProfile();      //so the view knows that this is a new profile - will allow the
-    profileDetailView.render();
+
+    //the setNewProfile will check is there are unsaved changes, and only return true if there are none,
+    //or if the user allows it
+    if ( profileDetailView.setNewProfile()) {      //so the view knows that this is a new profile - will allow the)
+
+        var m = new ProfileModel();     //will set defaults on creation...
+        m.cid='new';
+        //m.set('cid','new');
+        colProfile.add(m);
+        profileSummaryView.clearView();
+        profileDetailView.setModel(m);
+
+        console.log(m.toJSON())
+        //profileDetailView.model =  m;
+
+        profileDetailView.render();
+    }
 })
 
 //delete a profile
@@ -207,7 +226,13 @@ Backbone.listenTo(profileDetailView,'profileDetail:editExtension',function(vo){
 //handler for when a new extension is to be added to a profile
 Backbone.listenTo(profileDetailView,'profileDetail:addExtension',function(vo){
     console.log(vo);
+    //find a model that matches the id. If none, then find one with a cid: of 'new' (ie a new, unsaved profile)
     var selectedModel = colProfile.findModelByResourceID(vo.id);       //the profile selected in the list view
+
+    Mediator.assert(selectedModel,"No model with an id of '" + vo.id + "' or a cid:new was found");
+
+    console.log(selectedModel)
+
     profileExtensionView.model = selectedModel;
     profileExtensionView.setCode("");   //an empty code will mean a new extension...
     profileExtensionView.render();
@@ -243,6 +268,8 @@ Backbone.listenTo(profileDetailView,'profile:added',function(vo){
 //an extension in a profile has been updated.
 Backbone.listenTo(profileExtensionView,'profileExtension:updated',function(vo){
     //re-render the profile - the model should already be set...
+
+
     profileDetailView.render();
     profileContentView.render();
 });
@@ -351,27 +378,8 @@ Backbone.listenTo(colProfile,'profile:extensiondefs',function(vo) {
 var viewQuery = new QueryView({el:$('#workAreaQuery')});
 viewQuery.render();
 
-/*
-colProfile.fetch({
-    success : function() {
-        $('#loading').hide();
-        _.each(colProfile.models,function(m){
-            //console.log(m.get('vid'));
-         })
-        //console.log(colProfile.models);
-        listProfiles.render();      //render the list of valuesets...
-        profileQueryView.setProfiles(colProfile);
-    },
-    error : function(collection,response,options) {
-        console.log(response);
-        alert('There was an error loading the Profiles')
-    }
-});
-*/
-
-
 Mediator.loadProfiles = function(){
-    console.log(colProfile.length)
+    //console.log(colProfile.length)
     colProfile.fetch({
         success : function() {
             $('#loading').hide();

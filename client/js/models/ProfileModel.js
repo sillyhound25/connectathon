@@ -16,15 +16,12 @@ ProfileModel = Backbone.Model.extend({
             content.publisher='Orion Health'
             this.set('content',content)
         }
-
-
-
-
     },
     addExtension : function(extensionDefn) {
         var content = this.get('content');
         content.extensionDefn = content.extensionDefn || [];
         content.extensionDefn.push(extensionDefn);
+        console.log(content)
     },
     updateExtension : function(extensionDefn) {
         //update the given extension in the content of the model
@@ -182,7 +179,11 @@ ProfileModel = Backbone.Model.extend({
                     },
                     error : function(xhr,status,err){
                         //console.log(err);
-                        console.log('error: ' + xhr.responseText)
+                       // console.log('error: ' + xhr.responseText)
+                        //responseText will ave properties statusCode & body - from the proxy...
+
+                        console.log(xhr.responseText)
+
                         options.error(xhr,status,err)
 
                     }

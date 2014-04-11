@@ -7,35 +7,64 @@ var ProfileCollection = Backbone.Collection.extend({
     url : "/api/profile/Orion Health",
 
     findModelByResourceID : function(resourceID) {
-        //return a model with the given resourceID
-        //console.log(resourceID);
-        var m = _.findWhere(this.models,{'id':resourceID});
-        if (m) {return m;}
+        //return a model with the given resourceID. If not found, will look for one with a cid: of 'new'
+        console.log(resourceID);
+        _.each(this.models,function(m){
+            console.log(m.cid)
+        })
 
-        //couldn't find a macthing model. Is this a new one?
-        console.log(this.toJSON())
+        if (! resourceID) {
+            //the id is null, look for a new one...
+            var m1 = _.findWhere(this.models,{'cid':"new"});        //note we're looking for a client ID...
+            console.log(m1);
+            return m1;
+        } else {
+
+            var m = _.findWhere(this.models,{'id':resourceID});
+            return m;
+            //if (m) {return m;}
+
+            //couldn't find a macthing model. Is this a new one?
+            console.log(this.toJSON())
+        }
 
 
-        var m1 = _.findWhere(this.models,{'cid':"new"});        //note we're looking for a client ID...
-        console.log(m1);
-        return m1;
+
+
+
+
     },
     toJSON : function(){
         //return an array containing the contents
         var ar = [];
+        //console.log(this.models);
         _.each(this.models,function(model){
-            ar.push(model.toJSON());
+            var fModel = model.toJSON()
+
+            if (fModel.resourceType ==='Profile') {
+                ar.push(fModel);
+            } else {
+                console.log('Unexpected resource in profile list: ',model)
+            }
+
         })
 
+        //console.log(ar);
 
-        //sort the list by name
-        ar.sort(function(a,b){
-            //console.log(a,b)
-            //todo - optimize this...
-            if (a.name.toLowerCase() < b.name.toLowerCase()) {
-                return -1
-            }  else return 1;
-        })
+
+        if (ar.length > 0) {
+            //sort the list by name
+            ar.sort(function(a,b){
+                //console.log(a,b)
+                //todo - optimize this...
+                if (a.name.toLowerCase() < b.name.toLowerCase()) {
+                    return -1
+                }  else return 1;
+            })
+        }
+
+
+
         //console.log(ar)
 
         return ar;
@@ -58,7 +87,7 @@ var ProfileCollection = Backbone.Collection.extend({
             //console.log(entry.id);
             //if there are extensions in this profile, then fire an event so they can be parsed out...
             if (entry.content.extensionDefn) {
-//console.log(entry.content.name);
+
                 that.trigger("profile:extensiondefs",{ext:entry.content.extensionDefn,profile:entry.content})
             }
         })

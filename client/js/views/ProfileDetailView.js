@@ -16,7 +16,8 @@ var ProfileDetailView =  Backbone.View.extend({
         "click #save_profile_changes" : "save",
         "click #checkNewId" : "checkUniqueId",
          "blur .profile_header": function(){
-             this.isDirty = true;
+             console.log('blur')
+             this._isDirty = true;
              $('#save_profile_changes').show();
          }
     },
@@ -31,11 +32,22 @@ var ProfileDetailView =  Backbone.View.extend({
                 alert( "There is already a Profile with the ID: " );
                 $('#profile_id').val("");
             })
-            .fail(function() {
-                //there is no resource with that ID so it's OK to create a new one...
-                $('#profile_id').addClass('alert alert-success');
-                that.checkedId = id;
-                //that.userEnteredId = id;
+            .fail(function(jqXHR) {
+                    console.log(jqXHR);
+
+                    if (jqXHR.status === 404) {
+                        //there is no resource with that ID so it's OK to create a new one...
+                        //todo should really check for a 404
+
+                        $('#profile_id').addClass('alert alert-success');
+                        $('#profile_id').attr('disabled',true)
+                        that.checkedId = id;
+                        //that.userEnteredId = id;
+                    } else {
+                        alert('There was an error code ' + jqXHR.status + ', so something unexpected went wrong');
+                        //console.log();
+                    }
+
             })
         }
     },
@@ -48,10 +60,40 @@ var ProfileDetailView =  Backbone.View.extend({
     },
     setNewProfile : function() {
         //set by the caller to indicate a new profile...
-         this.isNew = true;
+        //todo - should this recognize a profile in the process of being edited???
+
+        //console.log(this._isDirty);
+
+        if (this._isDirty) {
+            if (! confirm('There are unsaved changes. Are you sure you wish to create a new Profile')) {
+                return false;       //indicate that a new profile should not be created
+            }
+        }
+
+        console.log('clear')
+
+        delete this.checkedId;
+        //clear the ID field
+        $('#profile_id').attr('disabled',false)
+        $('#profile_id').val("");
+
+        $('#profile_id').removeClass('alert-success');
+
+        //clear all the data fields...
+        $('#profileName').val("");
+        $('#profileDescription').val("");
+        $('#profileRequirements').val("");
+
+        $('#oneProfile_extensionList').html("");
+
+
+        //alert('wait')
+        this.isNew = true;
+        this._isDirty=false;
+        return true;    //so the mediator knows that a new profile can be created
     },
     isDirty : function() {
-        return this.isDirty;
+        return this._isDirty;
     },
     save : function() {
         var that=this;
@@ -94,6 +136,7 @@ var ProfileDetailView =  Backbone.View.extend({
         console.log(vo);
         if (vo.err) {
             alert(vo.err);
+            $('#save_profile_changes').text('Update').attr('disabled',false)
             return;
         }
 
@@ -115,14 +158,15 @@ var ProfileDetailView =  Backbone.View.extend({
             error : function(xhr,status,err) {
                 console.log(xhr,status,err);
                 $('#save_profile_changes').text('Update Profile').attr('disabled',false)
-                alert('sorry, there was an error saving the profile ')
+                alert('sorry, there was an error saving the profile - check the console log')
+                $('#save_profile_changes').text('Update').attr('disabled',false)
             }
         });
     },
     //this is called when a new model is assigned to the view. There's some state info we need to clear...
     setModel : function(model) {
         this.model = model;
-        this.isDirty = false;       //not dirty yet
+        this._isDirty = false;       //not dirty yet
         this.isNew = false;         //and it sure ain't new...
         delete this.checkedId;      //and there can't be a user entered Id
         //console.log(model);
@@ -134,6 +178,8 @@ var ProfileDetailView =  Backbone.View.extend({
       //  if (! this.model) {
           //  this.model = new ProfileModel();
       //  }
+
+       // Mediator.assert(jsonModel.meta.id,'The model ID in ProfileDetailView is null');
         content = this.model.get('content');
 
         //set the value for the profile 'header' contents...
@@ -142,21 +188,31 @@ var ProfileDetailView =  Backbone.View.extend({
         content.requirements = $('#profileRequirements').val();
 
         var jsonModel = this.model.toJSON();
-        this.isDirty = true;    //will be dirty even if the addition is cancelled...
+        this._isDirty = true;    //will be dirty even if the addition is cancelled...
+
+
+
+
         this.trigger('profileDetail:addExtension',{id:jsonModel.meta.id});
     },
     removeExtension : function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
         //remove an extension
-        this.isDirty = true;
+        this._isDirty = true;
         var model = this.model;
         var code = ev.currentTarget.getAttribute('data-code');      //the code of the extension
         console.log(code);
         model.deleteExtension(code);
-        this.trigger('profile:updated');
+
+        var rowId = "oneprofilerow_" + code;        //the id of the displayed row...
+        $('#'+rowId).remove();
+
+        //temt this.trigger('profile:updated');
     },
     editExtension : function(ev){
         //edit a single extension
-        this.isDirty = true;
+        this._isDirty = true;
         var jsonModel = this.model.toJSON();
         var code = ev.currentTarget.getAttribute('data-code');      //the code of the extension
         this.trigger('profileDetail:editExtension',{id:jsonModel.meta.id,code:code});
@@ -181,7 +237,7 @@ var ProfileDetailView =  Backbone.View.extend({
 
         if (this.model) {
             this.$el.html(this.template(this.model.toJSON()));
-//console.log(this.model.toJSON());
+console.log(this.model.toJSON());
             //$('#op_profilename_label').html(this.template(this.model.toJSON().name));
 
 
@@ -205,7 +261,7 @@ var ProfileDetailView =  Backbone.View.extend({
             this.$el.html(this.template());
         }
 
-        if (! this.isDirty) {
+        if (! this._isDirty) {
             //if tehre are no changes yet, then don't show the save changes button
             $('#save_profile_changes').hide();
         }

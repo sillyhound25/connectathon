@@ -89,10 +89,13 @@
         {{/each}}
         {{#if extensionDefn}}
         <h5>Extensions</h5>
+        <div id='oneProfile_extensionList'>
+
+
         <table class="table table-bordered">
             <tr><th>Code</th><th colspan="2">Context</th><th>isMod</th><th>Min..Max</th><th>Type</th><th>ValueSet</th><th>Brief Description</th><th></th></tr>
             {{#each extensionDefn}}
-            <tr>
+            <tr  id='oneprofilerow_{{code}}'>
                 <td><a href='#' class='profile-extension' data-code='{{code}}'>{{code}}</a></td>
                 <td>{{contextType}}</td>
                 <td>
@@ -121,7 +124,7 @@
 
         </table>
 
-
+        </div>
         {{/if}}
         <table class="table table-bordered">
             {{#each query}}

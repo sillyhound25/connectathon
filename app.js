@@ -59,6 +59,7 @@ app.configure(function(){
 });
 
 
+var GlobalOptions = {showRequestURI:true};
 
 
 //----------- pandas routines ----------------------
@@ -468,6 +469,11 @@ function putToFHIRServer(resource,id,vid,callback) {
         resp.headers = response.headers;
         resp.error = error;
 
+        console.log(resp)
+        if (error){
+            console.log(body);
+        }
+
         //console.log(resp);
 
         callback(resp);
@@ -528,6 +534,9 @@ function performQueryAgainstFHIRServer(query,server,callback){
 
 
     //console.log(options);
+    if (GlobalOptions.showRequestURI) {
+        console.log(options.uri);
+    }
 
 
     request(options,function(error,response,body){
@@ -569,7 +578,7 @@ function performQueryAgainstFHIRServerXML(query,callback){
         uri : FHIRServerUrl + query
     }
 
-    //console.log(options);
+
 
     request(options,function(error,response,body){
 
