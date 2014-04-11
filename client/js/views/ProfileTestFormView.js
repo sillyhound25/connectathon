@@ -35,8 +35,19 @@ var ProfileTestFormView = Backbone.View.extend({
             //console.log(bundle);
             $('#td_lookup').text('Find Patient');
             $('#submitTD').attr('disabled',false);        //allow the form to be submitted...
-            var numPatients = bundle.entry.length;
 
+            //make sure we only include patients!
+            var numPatients = 0;
+            var patientEntry;
+            _.each(bundle.entry,function(entry){
+                if (entry.content.resourceType.toLowerCase() === 'patient') {
+                    numPatients++;
+                    patientEntry = entry;
+                }
+                console.log(entry);
+            })
+
+            //var numPatients = bundle.entry.length;
             switch (numPatients) {
                 case 0 : {
                     alert('No patient with this identifier found, a new Patient resource will be generated, and the other resources attached to it')
@@ -44,7 +55,7 @@ var ProfileTestFormView = Backbone.View.extend({
                 }
                 case 1 : {
                     alert('Patient found. The new resources will be attached to that patient');
-                    var ar = bundle.entry[0].id.split('/');
+                    var ar = patientEntry.id.split('/');
                     $('input:text[data-code=patient-identifier]').addClass('alert alert-success')
 
                     //console.log(bundle.entry[0].id,ar);
@@ -70,7 +81,7 @@ var ProfileTestFormView = Backbone.View.extend({
                     break;
                 }
                 default : {
-                    alert('Multiple Patients ('+numPatients+') found with this identifier. A new one will be created. You might want to try a new Identifier')
+                    alert('Multiple Patients ('+numPatients+') found with this identifier. A new one will be created when you save the form. You might want to try a new Identifier')
                     break;
                 }
             }

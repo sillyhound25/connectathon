@@ -191,9 +191,9 @@ var ProfileDetailView =  Backbone.View.extend({
         this._isDirty = true;    //will be dirty even if the addition is cancelled...
 
 
+        this.trigger('profileDetail:addExtension',{cid:this.model.cid});
 
-
-        this.trigger('profileDetail:addExtension',{id:jsonModel.meta.id});
+        //this.trigger('profileDetail:addExtension',{id:jsonModel.meta.id});
     },
     removeExtension : function(ev){
         ev.preventDefault();
@@ -207,7 +207,7 @@ var ProfileDetailView =  Backbone.View.extend({
 
         var rowId = "oneprofilerow_" + code;        //the id of the displayed row...
         $('#'+rowId).remove();
-
+        $('#save_profile_changes').show()
         //temt this.trigger('profile:updated');
     },
     editExtension : function(ev){
@@ -215,7 +215,8 @@ var ProfileDetailView =  Backbone.View.extend({
         this._isDirty = true;
         var jsonModel = this.model.toJSON();
         var code = ev.currentTarget.getAttribute('data-code');      //the code of the extension
-        this.trigger('profileDetail:editExtension',{id:jsonModel.meta.id,code:code});
+        //this.trigger('profileDetail:editExtension',{id:jsonModel.meta.id,code:code});
+        this.trigger('profileDetail:editExtension',{cid:this.model.cid,code:code});
     },
     render : function(){
         //this.undelegateEvents();
@@ -237,7 +238,7 @@ var ProfileDetailView =  Backbone.View.extend({
 
         if (this.model) {
             this.$el.html(this.template(this.model.toJSON()));
-console.log(this.model.toJSON());
+            //console.log(this.model.toJSON());
             //$('#op_profilename_label').html(this.template(this.model.toJSON().name));
 
 

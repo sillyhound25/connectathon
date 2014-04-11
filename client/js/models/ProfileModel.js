@@ -17,6 +17,20 @@ ProfileModel = Backbone.Model.extend({
             this.set('content',content)
         }
     },
+    //return a single extension based on code. Return null if not found...
+
+    getExtension : function(code){
+        var content = this.get('content');
+        var ext;
+        _.each(content.extensionDefn,function(ex){
+            console.log(code,ex)
+            if (ex.code === code) {
+                ext = ex;
+            }
+        })
+
+        return ext;
+    },
     addExtension : function(extensionDefn) {
         var content = this.get('content');
         content.extensionDefn = content.extensionDefn || [];

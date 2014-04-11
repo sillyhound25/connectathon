@@ -105,6 +105,7 @@ var ProfileQueryView = Backbone.View.extend({
         $('#pq_warning').show();
         $.get('/api/generalquery?query='+queryString,function(bundle){
             console.log(bundle);
+            var numPatients = 0;
             $('#pq_warning').hide();
             if (bundle.entry.length === 0) {
                 alert('No patient found with that identifier')
@@ -112,14 +113,17 @@ var ProfileQueryView = Backbone.View.extend({
                 _.each(bundle.entry,function(ent){
                     var id = ent.id;
                     var name = 'Unknown';
-                    try {
-                        name = ent.content.name[0].text;
-                    } catch (ex){}
+//console.log(ent);
+                    if (ent.content.resourceType.toLowerCase()==='patient') {
+                        try {
+                            name = ent.content.name[0].text;
+                        } catch (ex){}
 
-                    $('#pq_select_patient').append("<option value='"+id+"'>"+ name + " (" + id+")</option>");
+                        $('#pq_select_patient').append("<option value='"+id+"'>"+ name + " (" + id+")</option>");
+                    }
                 })
 
-                if (bundle.entry.length > 1) {
+                if (numPatients > 1) {
                     alert('Be warned: there are multiple patients with this identifier...');
                 }
 
@@ -139,6 +143,9 @@ var ProfileQueryView = Backbone.View.extend({
                 _.each(profile.extensionDefn,function(ext){
                     //'resource' is actually a path...
                     var resource = ext.context[0].getResourceNameFromPath();
+
+                    console.log(resource);
+
                     if (arResources.indexOf(resource) === -1) {
                         arResources.push(resource);
                     }

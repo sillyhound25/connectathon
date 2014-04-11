@@ -14,9 +14,8 @@ String.prototype.getResourceNameFromPath = function (){
     if (g > -1) {
         return this.substr(0,g)
     } else {
-        return this
+        return this.toString();
     }
-
 }
 
 
@@ -144,7 +143,7 @@ Backbone.listenTo(listProfiles,'profileList:select',function(vo){
 
     //check for unsaved changes...
    // if (Mediator.canSelectNewProfile() ) {
-        var selectedModel = colProfile.findModelByResourceID(vo.id);       //the vs selected in the list view
+        var selectedModel = colProfile.findModelByID(vo.id);       //the vs selected in the list view
         profileDetailView.setModel(selectedModel);
         profileSummaryView.clearView();         //clears the models and views...
         profileSummaryView.model = selectedModel;
@@ -174,7 +173,8 @@ Backbone.listenTo(listProfiles,'profileList:new',function(vo){
     if ( profileDetailView.setNewProfile()) {      //so the view knows that this is a new profile - will allow the)
 
         var m = new ProfileModel();     //will set defaults on creation...
-        m.cid='new';
+       // m.cid='new';
+        console.log(m.cid);
         //m.set('cid','new');
         colProfile.add(m);
         profileSummaryView.clearView();
@@ -187,10 +187,10 @@ Backbone.listenTo(listProfiles,'profileList:new',function(vo){
     }
 })
 
-//delete a profile
+//delete a profile - for this we use the ID rather than the cid
 Backbone.listenTo(listProfiles,'profileList:delete',function(vo){
 
-    var selectedModel = colProfile.findModelByResourceID(vo.id);
+    var selectedModel = colProfile.findModelByID(vo.id);
     if (selectedModel) {
         Mediator.showWorking();
         selectedModel.destroy({
@@ -215,7 +215,7 @@ Backbone.listenTo(listProfiles,'profileList:delete',function(vo){
 //handler for when a user clicks on an existing extension definition in a profile
 Backbone.listenTo(profileDetailView,'profileDetail:editExtension',function(vo){
     console.log(vo);
-    var selectedModel = colProfile.findModelByResourceID(vo.id);       //the vs selected in the list view
+    var selectedModel = colProfile.findModelByCID(vo.cid);       //the vs selected in the list view
 
     profileExtensionView.model = selectedModel;
     profileExtensionView.setCode(vo.code);
@@ -227,9 +227,9 @@ Backbone.listenTo(profileDetailView,'profileDetail:editExtension',function(vo){
 Backbone.listenTo(profileDetailView,'profileDetail:addExtension',function(vo){
     console.log(vo);
     //find a model that matches the id. If none, then find one with a cid: of 'new' (ie a new, unsaved profile)
-    var selectedModel = colProfile.findModelByResourceID(vo.id);       //the profile selected in the list view
+    var selectedModel = colProfile.findModelByCID(vo.cid); ;       //the profile selected in the list view
 
-    Mediator.assert(selectedModel,"No model with an id of '" + vo.id + "' or a cid:new was found");
+    Mediator.assert(selectedModel,"No model with an id of '" + vo.id + "' was found");
 
     console.log(selectedModel)
 
@@ -296,9 +296,9 @@ Backbone.on('profileSummary:slice',function(vo){
     console.log(vo);
 
 
-        var selectedProfileModel = colProfile.findModelByResourceID(vo.profileid);       //the vs selected in the list view
+        var selectedProfileModel = colProfile.findModelByID(vo.profileid);       //the vs selected in the list view
 
-    console.log(selectedProfileModel)
+    //console.log(selectedProfileModel)
         if (selectedProfileModel) {
 
             if (vo.type==='ext') {

@@ -51,8 +51,14 @@ var ProfileExtensionView =  Backbone.View.extend({
     saveExtension : function() {
         //update the extension
         var isNew = false;
-        if (!$('#eeCode').val()) {
+        var code = $('#eeCode').val();
+        if (!code) {
             alert('An extension must have a code. No changes saved.');
+            return;
+        }
+
+        if (this.model.getExtension(code)){
+            alert("Sorry, there's already an extension with the code '"+code+"' in the Profile.");
             return;
         }
 
@@ -78,6 +84,8 @@ var ProfileExtensionView =  Backbone.View.extend({
             alert('You must select the resource to extend');
             return;
         }
+
+
 
 
         //if there is a path defined, then append it to the resource...
