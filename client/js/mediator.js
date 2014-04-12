@@ -123,6 +123,7 @@ var profileStructureView = new ProfileStructureView({el:$('#editStructureDiv')})
 var profileSummaryView = new ProfileSummaryView({el:$('#workAreaSummaryProfile')});       //generate a profile summary
 profileSummaryView.render();
 
+
 var profileContentView = new ProfileContentView({el:$('#workAreaContentProfile')});       //generate a profile summary
 //profileContentView.render();
 
@@ -177,7 +178,11 @@ Backbone.listenTo(listProfiles,'profileList:new',function(vo){
         //m.set('cid','new');
         colProfile.add(m);
         profileSummaryView.clearView();
+
         profileDetailView.setModel(m);
+        profileContentView.setModel(m);
+
+        profileSummaryView.model = m;
 
         console.log(m.toJSON())
         //profileDetailView.model =  m;
@@ -276,7 +281,7 @@ Backbone.listenTo(profileExtensionView,'profileExtension:updated',function(vo){
 
 });
 
-//the user has selected a resource. Need to get the paths for that resource...
+//the user has selected a resource. Need to get the defined paths for that resource...
 Backbone.listenTo(profileExtensionView,'profileExtension:selectedResource',function(vo){
     var resourceName = vo.resourceName;
     var sum = new ProfileSummaryModel();
