@@ -1,16 +1,26 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <ul class="list-unstyled">
-                {{#each item}}
-                <li><a class="vsDetail" data-inx="{{inx}}" data-id = {{meta.id}} href='#'>{{name}}</a></li>
-                {{/each}}
-            </ul>
-            <div><a href="#" id="new_vs">New ValueSet</a></div>
-        </div>
-        <!--<div class="col-md-8">
-            <h4>Details of Value Set</h4>
-            <div  id="vsDetail"></div>
-        </div>-->
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>ValueSets</h4>
     </div>
+    <div class="col-md-6">
+        <a href="#" id="new_vs" class="btn btn-info pull-right">New ValueSet</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+
+        <ul class="list-group">
+            {{#each item}}
+            <a class=" list-group-item vsDetail" data-inx="{{inx}}" data-id = {{meta.id}} href='#'>{{name}}
+            <span style="cursor: hand"  data-id="{{meta.id}}" class="delete-vset pull-right">
+                    <i class="glyphicon glyphicon-remove"></i>
+                </span>
+            </a>
+            {{/each}}
+        </ul>
+        <!--<div><a href="#" id="new_vsDEP">New ValueSet</a></div>-->
+    </div>
+
 </div>

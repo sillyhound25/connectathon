@@ -20,7 +20,7 @@ var ExtensionView = Backbone.View.extend({
     draw : function(){
         //actually render out the collection...
         var template = this.template;
-        console.log(this.collection.toJSON())
+        //console.log(this.collection.toJSON())
         var json = this.collection.toJSON();
 
         json.sort(function(a,b){

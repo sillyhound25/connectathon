@@ -55,6 +55,8 @@ var profileQueryView = new ProfileQueryView({el:$('#workAreaProfileQuery')});
 profileQueryView.render();
 //Mediator.start = function() {
 
+var colProfile = new ProfileCollection();
+
     //============================== ValueSet objects and handlers ==========================
 
 
@@ -77,6 +79,53 @@ profileQueryView.render();
         vsDetailView.setNewValueSet();
         vsDetailView.render();
     })
+
+//when a valueset is to be deleted
+//todo - the overall logic flow requires review...
+
+Backbone.listenTo(listVS,'valueSet:delete',function(vo){
+
+
+    var selectedVS = colVS.findModelByResourceID(vo.id);
+    if (selectedVS) {
+
+        //find any profiles that are using this valueset. (Note that a direct string comparison is used)
+        var profiles = colProfile.findProfilesUsingValueSet(vo.id);
+        if (profiles.length > 0) {
+            //OK there were matching profiles...
+            var msg = "Sorry, there are profiles using this ValueSet, so it cannot be deleted. There are: \n";
+            _.each(profiles,function(prof){
+                msg += prof.toJSON().name + " (" + prof.id + ")\n";
+
+            })
+            alert(msg);
+            return;
+        }
+
+
+        //console.log(profiles)
+        if (confirm('Please confirm you wish to delete the valueset with the ID: ' + vo.id)) {
+
+            selectedVS.destroy({
+                success : function() {
+                    Mediator.clearValueSetWorkareas();   //clear all the work areas associated with profile editing
+                    Mediator.loadValueSets();
+                },
+                error : function(xhr,status,err) {
+                    console.log(xhr,status,err);
+                    //$('#save_profile_changes').text('Update Profile').attr('disabled',false)
+                    alert('sorry, there was an error deleting the profile ')
+                }
+            });
+
+            //selectedVS.deleteVS();
+        }
+
+    }
+})
+
+
+
 
     //when a new valueset is added...
     Backbone.listenTo(vsDetailView,'vsList:added',function(vo){
@@ -107,7 +156,7 @@ colVS.fetch({
 
 //============================= Profile objects and handlers
 
-var colProfile = new ProfileCollection();
+
 var listProfiles = new ProfileListView({collection:colProfile,el:$('#orionProfilesDiv')}); //List View for the Profiles
 var profileDetailView = new ProfileDetailView({el:$('#workAreaProfile')});       //Detail/edit view for a single VS
 var profileExtensionView = new ProfileExtensionView({el:$('#editExtensionDiv')});
@@ -337,10 +386,11 @@ Backbone.on('profileSummary:slice',function(vo){
 });
 
 
+//triggered when the 'all extensions' page is shown - re-render the page...
 Backbone.on("extensions:render",function(ev){
-    //triggered when the 'all extensions' page is shown - re-render the page...
+
     extensionView.render();
-    console.log('x')
+
 })
 
 //when a structure.element is altered in the UI but not yet saved......
@@ -456,7 +506,14 @@ Mediator.clearProfileWorkareas = function() {
 }
 
 
-//show/hide the 'working' display...
+//clear workareas associated with valuesets...
+Mediator.clearValueSetWorkareas = function(){
+    vsDetailView.clearView();
+}
+
+
+
+//show/hide the 'working/loading' display...
 Mediator.showWorking = function() {
     $('#loading').show();
 }

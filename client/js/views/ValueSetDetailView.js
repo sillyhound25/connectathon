@@ -13,6 +13,11 @@ var ValueSetDetailView =  Backbone.View.extend({
         "click #save_change_vs" : "saveModel",
         "blur .data" : "fieldChanged"
     },
+    clearView : function(){
+        //clear the view associated with this valueset...
+        this.$el.html("");
+        delete this.model;
+    },
     hasChanged : function() {
         //has the underlying model changed?
         if (this.model) {
@@ -102,8 +107,10 @@ var ValueSetDetailView =  Backbone.View.extend({
     },
     draw : function(){
         //actually render out the valueset...
+        if (this.model) {
+            this.$el.html(this.template(this.model.toJSON()));
+        }
 
-        this.$el.html(this.template(this.model.toJSON()));
         //this.delegateEvents();
     }
 });

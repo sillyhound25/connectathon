@@ -129,11 +129,33 @@
 
         <div class="myPane" id="profileTab">
             <div class="row">
-                <div class="col-md-3 wellXXX">
+                <div class="col-md-3">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#selectedProfilesSubTab" data-toggle="tab">Selected Profiles</a></li>
+                        <li><a href="#queryProfilesSubTab" data-toggle="tab">Query</a></li>
+                    </ul>
+
+
+                    <br />
+
+                    <div class="tab-content" >
+                        <div class="active tab-pane" id="selectedProfilesSubTab">
+                            <div id="orionProfilesDiv"></div>
+                        </div>
+                        <div class=" tab-pane" id="queryProfilesSubTab">
+                            <div id="queryProfilesDiv">
+                                <p>This will be a query tab</p>
+                                <p>At the moment, all profiles authored by Orion Health on the configured
+                                server will be selected and displayed on the 'selected' tab</p>
+                            </div>
+                        </div>
+                    </div>
 
 
 
-                    <div id="orionProfilesDiv"></div>
+
+
+
                 </div>
 
                 <div class="col-md-9">
@@ -179,14 +201,41 @@
             </div>
         </div>
 
+        <!-- The Valueset tab-->
         <div class="myPane" id="vsTab">
             <div class="row">
-                <div class="col-md-2 well">
-                    <h4>ValueSets</h4>
-                    <div id="display"></div>
+                <div class="col-md-3">
+
+
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#selectedVSetsSubTab" data-toggle="tab">Selected ValueSets</a></li>
+                        <li><a href="#queryVSetSubTab" data-toggle="tab">Query</a></li>
+                    </ul>
+
+
+                    <br />
+
+                    <div class="tab-content" >
+                        <div class="active tab-pane" id="selectedVSetsSubTab">
+                            <div id="display"></div>
+                        </div>
+                        <div class=" tab-pane" id="queryVSetSubTab">
+                            <div id="queryVSetSubTabDiv">
+                                <p>This will be a query tab for ValueSets</p>
+                                <p>At the moment, all ValueSets on the configured
+                                    server will be selected and displayed on the 'selected' tab</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+
+
+
                 </div>
-                <div class="col-md-10">
-                    <h4>ValueSet Detail</h4>
+                <div class="col-md-9">
                     <div id="workAreaVS"></div>
                 </div>
             </div>
@@ -235,13 +284,6 @@
 <script>
 
     $(document).ready(function(){
-
-
-
-
-
-
-
 
         //see the 'mediator.js' file for the main commands that initiate the workbench
         //at some point I'll make this a real mediator.

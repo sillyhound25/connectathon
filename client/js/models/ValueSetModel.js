@@ -36,6 +36,14 @@ ValueSetModel = Backbone.Model.extend({
                 uri = uri +id;
                 break;
             }
+            case 'delete' : {
+                rest_method = 'DELETE';
+                var ar = model.get('id').split('/');
+                var id = ar[ar.length-1]
+                //the PUT and POST have the actual resource in the body...
+                uri = uri + 'ValueSet/'+id;
+                break;
+            }
         }
 
 

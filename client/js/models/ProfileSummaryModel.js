@@ -32,33 +32,23 @@ ProfileSummaryModel = Backbone.Model.extend({
 
         //todo - this check may not be needed as eventually we'll be slicing not just extending...
         if (! profile.extensionDefn) {
-            callback('No extensions have been defined yet');
+            callback('No extension definitions have been defined for this profile yet');
             return;
         }
 
-        //find all the resources that this profile refrences...
-
-        //todo the resoruces collection is the original - will replace with models..
-        //find all the resources that are referenced by extensions...
-
+        //find all the resources that this profile references in extensions...
 
         var summary = {resources : {}};     //<<<<<<<<< this will be the object passed back...
         $.each(profile.extensionDefn,function(inx,ext){
             //console.log(ext)
             var resource = ext.context[0].getResourceNameFromPath();//  ext.context[0].toLowerCase();
+
+            if (!resource) {
+                alert("Error: This profile contains an unrecognized resource in a context (" + ext.context[0] + ") and cannot be safely processed");
+                return;
+            }
+
             if ( ! summary.resources[resource]) {
-
-
-   /*
-
-                g = resource.indexOf('.');
-                if (g > -1) {
-                    resource = resource.substr(0,g);
-                }
-                console.log(resource);
-*/
-
-                //summary.resources[resource] = {properties : [],name:resource}
                 summary.resources[resource] = {name:resource}
                 summary.resources[resource].models =  new ProfileSummaryItemCollection();
             }
@@ -72,15 +62,7 @@ ProfileSummaryModel = Backbone.Model.extend({
         //todo this will require re-factoring as at the moment there must be an extension forst...
         var arTasks = [];
         $.each(summary.resources,function(resourceName) {
-            //if there is a '.' then the resource has a path associated with it. We only want the resource name
-           /*
-            g = resourceName.indexOf('.');
-            if (g > -1) {
-                resourceName = resourceName.substr(0,g);
-            }
-console.log(resourceName);
 
-            */
             if (!resourceName) {
                 alert('Error: Null resource name');
             }
@@ -101,31 +83,37 @@ console.log(resourceName);
                         //Backbone.fhirResourceCache
                        // summary.resources[resourceName].raw = data;
 //console.log(data)
-                        var resourceProfile;       //the entry object holding the profile resource...
-                        $.each(data.entry,function(inx,entry){
-                            //>>>>>  assume that the name of the profile is the same as the resourceName
-                            //console.log(entry.content.name , resourceName);
-                            //if (entry.content.name === resourceName) {
-                            //needs to remain a case insensitive search, as this the name of a profile...
-                                if (entry.content.name.toLowerCase() === resourceName.toLowerCase()){
-                                resourceProfile = entry.content;
-                                summary.resources[resourceName].raw = data;
-                                //save resource profile in cache...
-                                 Backbone.fhirResourceCache[resourceName] = resourceProfile;     //the fhir representation of the profile
-                            }
-                        })
-
-
-                        if (! resourceProfile) {
-                            alert('The profile for the ' + resourceName + ' resource was not found');
-                            cb();
-                        } else {
-                            //console.log('back')
-                            //pulls the properties from the resource and from the profile into the summary
-                            getStructures(resourceName,resourceProfile,function(){
-                                cb();       //and tell async we're done...
+                        if (data.entry && data.entry.length > 0) {  //make sure there's at least 1...
+                            var resourceProfile;       //the entry object holding the profile resource...
+                            $.each(data.entry,function(inx,entry){
+                                //>>>>>  assume that the name of the profile is the same as the resourceName
+                                //console.log(entry.content.name , resourceName);
+                                //if (entry.content.name === resourceName) {
+                                //needs to remain a case insensitive search, as this the name of a profile...
+                                    if (entry.content.name.toLowerCase() === resourceName.toLowerCase()){
+                                    resourceProfile = entry.content;
+                                    summary.resources[resourceName].raw = data;
+                                    //save resource profile in cache...
+                                     Backbone.fhirResourceCache[resourceName] = resourceProfile;     //the fhir representation of the profile
+                                }
                             })
+
+
+                            if (! resourceProfile) {
+                                alert('The profile for the ' + resourceName + ' resource was not found');
+                                cb();
+                            } else {
+                                //console.log('back')
+                                //pulls the properties from the resource and from the profile into the summary
+                                getStructures(resourceName,resourceProfile,function(){
+                                    cb();       //and tell async we're done...
+                                })
+                            }
+
                         }
+
+
+
                     });
 
                 }
@@ -361,16 +349,19 @@ console.log(resourceName);
 
     //get all the possible paths for a resource. Used to associate an extension with a specific path in a resource
     getPathsForResource : function(resourceName,callback) {
+        //see if it's already in the cache...
         if (Backbone.fhirResourceCache[resourceName.toLowerCase()]){
             console.log('from cache');
             var ar = processResourceProfile(Backbone.fhirResourceCache[resourceName.toLowerCase()])
             callback (ar);
         } else {
+            //if not, then download it and save in the cache...
             $.get( "/api/profile/"+resourceName+"/FHIR Project", function( data ) {
+
 
                 var resourceProfile;
                 $.each(data.entry,function(inx,entry){
-                    //>>>>>  assume that the name of the profile is the same as the resourceName
+                    //>>>>>  assume that the name property of the profile is the same as the resourceName
                     if (entry.content.name.toLowerCase() === resourceName.toLowerCase()){
                         resourceProfile = entry.content;
                         //save resource profile in cache...
@@ -378,15 +369,12 @@ console.log(resourceName);
                     }
                 })
 
-
-
-
-                //console.log(data)
-                //Backbone.fhirResourceCache[resourceName.toLowerCase()] = data;
                 var ar = [];
                 if (resourceProfile) {
                     ar = processResourceProfile(resourceProfile)
                 }
+
+
 
                 callback (ar);
             })

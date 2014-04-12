@@ -12,6 +12,39 @@ var ProfileCollection = Backbone.Collection.extend({
         return m;
     },
 
+    findProfilesUsingValueSet : function(id){
+        //locate all the profiles in the collection that have a reference to the indicated valueset.
+        //note that there is also a defined query that does something similar - though not for extensions..
+        var arProfiles = [];
+        id = id.toLowerCase();
+        _.each(this.models,function(prof){
+            //check the extensions
+            var json = prof.toJSON();
+
+            if (json.extensionDefn) {
+                _.each(json.extensionDefn,function(ext){
+                    //for each extenxionDefn, see if it is bound to a valueset...
+                    if (ext.definition && ext.definition.binding) {
+                        if (ext.definition.binding.referenceResource) {
+                            //this is a reference to a resource - which must be a valueSet...
+                            var reference = ext.definition.binding.referenceResource.reference;
+                            //todo - this is a frgile comparison and could be made more robust...
+                            if (reference.toLowerCase() === id) {
+                                arProfiles.push( prof);
+                            }
+                            console.log(id, reference);
+                        }
+
+                    }
+
+                })
+            }
+
+
+        })
+        return arProfiles;
+    },
+
     findModelByCID : function(cID) {
         //return a model with the given client ID.
         var m = _.findWhere(this.models,{'cid':cID});
