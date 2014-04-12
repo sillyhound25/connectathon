@@ -55,20 +55,18 @@
                 </div>
             </div>
         </div>
+        <hr />
+        {{#if structure}}
+            <h5>Structure</h5>
 
 
-        {{#each structure}}
-        <h5>Structure</h5>
-        <div class="row">
-            <div class="col-md-2">Type</div>
-            <div class="col-md-10">{{type}}</div>
-        </div>
-        <div class="row">
-            <div class="col-md-2">Elements</div>
-            <div class="col-md-10">
-                <table class="table table-bordered table-condensed">
-                    <tr><th>Path</th><th>isMod</th><th>min..max</th><th>Type</th></tr>
-                    {{#each element}}
+            <div class="row">
+
+                <div class="col-md-12">
+                    <table class="table table-bordered table-condensed">
+                        <tr><th>Path</th><th>isMod</th><th>min..max</th><th>Type</th></tr>
+                        {{#each structure}}
+                        {{#each element}}
                         {{#unless hide}}
                         <tr>
                             <td><div title='{{definition.formal}}'>{{path}}</div></td>
@@ -81,12 +79,17 @@
                             </td>
                         </tr>
                         {{/unless}}
-                    {{/each}}
-                </table>
+                        {{/each}}
+                        {{/each}}
+                    </table>
+                </div>
             </div>
-        </div>
 
-        {{/each}}
+
+
+        {{/if}}
+
+
         {{#if extensionDefn}}
         <h5>Extensions</h5>
         <div id='oneProfile_extensionList'>
