@@ -57,11 +57,12 @@ var ProfileExtensionView =  Backbone.View.extend({
             return;
         }
 
+        /*
         if (this.model.getExtension(code)){
             alert("Sorry, there's already an extension with the code '"+code+"' in the Profile.");
             return;
         }
-
+*/
 
         var extension = this.meta.extension;    //for right now, assume update
         if (!extension) {

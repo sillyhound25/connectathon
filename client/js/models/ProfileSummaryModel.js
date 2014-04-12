@@ -3,7 +3,7 @@
  */
 
 
-//represents a structure.element in the profile...
+//represents a structure.element in the profile (which is the same as a path)...
 ProfileSummaryItemModel = Backbone.Model.extend({
     defaults : {
         path : "",
@@ -14,7 +14,8 @@ ProfileSummaryItemModel = Backbone.Model.extend({
         type : "",
         resource : "",
         profileid : "",
-        content : {}     //the actual JSON represnetation of the profile structure element
+        content : {},     //the actual JSON represnetation of the profile structure element
+        extensions : []     //extensions against this path...
     }
 })
 
@@ -103,14 +104,14 @@ console.log(resourceName);
                         var resourceProfile;       //the entry object holding the profile resource...
                         $.each(data.entry,function(inx,entry){
                             //>>>>>  assume that the name of the profile is the same as the resourceName
-                            console.log(entry.content.name , resourceName);
+                            //console.log(entry.content.name , resourceName);
                             //if (entry.content.name === resourceName) {
                             //needs to remain a case insensitive search, as this the name of a profile...
                                 if (entry.content.name.toLowerCase() === resourceName.toLowerCase()){
                                 resourceProfile = entry.content;
                                 summary.resources[resourceName].raw = data;
                                 //save resource profile in cache...
-                                Backbone.fhirResourceCache[resourceName] = resourceProfile;     //the fhir representation of the profile
+                                 Backbone.fhirResourceCache[resourceName] = resourceProfile;     //the fhir representation of the profile
                             }
                         })
 
@@ -181,6 +182,8 @@ console.log(resourceName);
 
                         var pathFromProfile = false;               //will be true if we get the definition for this path from the profile
 
+                        var itemModel;  //will be the ProfileSummaryItemModel
+
                         //if the profile contains a structure collection, then it has altered one of the core paths...
                         if (profile.structure) {
 
@@ -206,7 +209,7 @@ console.log(resourceName);
 
 
                                                 //create the model - this will be the way forward...
-                                                models.push(new ProfileSummaryItemModel({
+                                                itemModel = new ProfileSummaryItemModel({
                                                     content : profileEl,
                                                     profileid : profileModel.get('id'),
                                                     path : pathName,
@@ -215,10 +218,11 @@ console.log(resourceName);
                                                     min:profileEl.definition.min,
                                                     max:profileEl.definition.max,
                                                     resource:resourceName,
+                                                    extensions:[],
                                                     type:'prof'     //indicates that this model represents the core definition. It may be overridden by a profile of course...
-                                                }));
+                                                });
 
-
+                                                models.push(itemModel);
                                             }
                                         })
                                     }
@@ -237,7 +241,7 @@ console.log(resourceName);
                            //     min:el.definition.min,max:el.definition.max,resource:resourceName,type:'core'})
 
                             //create the model - this will be the way forward...
-                            models.push(new ProfileSummaryItemModel({
+                            itemModel = new ProfileSummaryItemModel({
                                 content : el,
                                 profileid : profileModel.get('id'),
                                 path : el.path,
@@ -245,10 +249,48 @@ console.log(resourceName);
                                 datatype:type,
                                 min:el.definition.min,
                                 max:el.definition.max,
+                                extensions:[],
                                 resource:resourceName,
+                                //extensions: [{name:'test'}],
                                 type:'core'     //indicates that this model represents the core definition. It may be overridden by a profile of course...
-                            }));
+                            });
 
+                            models.push(itemModel);
+                        }
+
+                        //now we should have a model that represents either an unaltered structure, or one changed by the profile
+                        //need to see if there are any extensions that were made against the path...
+                        //console.log(itemModel)
+                        if (itemModel) {
+                            var path = itemModel.get('path');
+
+                            $.each(profile.extensionDefn,function(inx,ext){
+                                //ext is a the fhie extensionDefn
+                                if (ext.context[0] === path) {
+                                    //console.log('froun')
+                                    var ar = itemModel.get('extensions') || []
+
+                                    //console.log(ext.code);
+
+                                    ar.push(new ProfileSummaryItemModel({
+                                        content : ext,
+                                        profileid : profileModel.get('id'),
+                                        path : " -> " + ext.code,
+                                        code : ext.code,
+                                        description: ext.definition.short,
+                                        datatype:type,
+                                        min:ext.definition.min,
+                                        max:ext.definition.max,
+                                        resource:resourceName,
+                                        extensions:[],      //this will be where nested etenions go...
+                                        type:'ext'      //indicates that this is an extension from the profile
+                                    }));
+                                    itemModel.set('extensions',ar);
+                                }
+                            });
+
+                        } else {
+                            alert('There was a structure in the profile that could not be mapped for display')
                         }
 
                         cnt++;
@@ -263,7 +305,7 @@ console.log(resourceName);
 
             })
 
-
+/*
             //now add the extensions that this profile defines for this resource...
           //  arStructures.push({path : '-------', description: '-------',type:"----------",resource:resourceName})
             //console.log(Z.currentProfile);
@@ -283,6 +325,8 @@ console.log(resourceName);
                         type = ext.definition.type[0].code;
                     }
 
+                        console.log(ext.code);
+
                  //   arStructures.push({path : ext.code, description: ext.definition.short,type:type,
                   ///      min:ext.definition.min,max:ext.definition.max,resource:resourceName,type:'ext'})
 //console.log(ext.code);
@@ -300,6 +344,8 @@ console.log(resourceName);
 
 
             })
+
+            */
 
             //todo ========= here is where we'll get the structural profile elements...
 

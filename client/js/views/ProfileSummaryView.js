@@ -157,29 +157,42 @@ var ProfileSummaryView = Backbone.View.extend({
                         }
                     })
 
-                    if (toShow) {
 
-
-
+                    if (toShow) {       //ie it's not one of the standards...
                         //add a row with an ID. This will be the container for the child view...
                         var elID = resourceName+inx;
-
-                        //console.log(jsonModel);
-
-
-                        //$('#ps_table tr:last').after("<tr "+klass+"id='"+ elID +"'></tr>");
                         $('#ps_table tr:last').after("<tr id='"+ elID +"'></tr>");
                         //now create the child view responsible for this row...
                         var key =resourceName + "_"+jsonModel.path;
-
                         //each line in the table (representing a path) will have its own view...
-
                         var v = new ProfileSummaryItemView({model:model,el:$('#'+elID)});
                         that.childViews[key] = v;        //save a reference to the view. We'll need it to release the view to avoid zombies...
                         v.template = that.itemTemplate;
-                        v.content = model.get('content');       //this is the json representation of the structure.element
+                        v.content = model.get('content');       //this is the json representation of the structure.element fom the profile
                         v.resourceName = resourceName;
                         v.render();
+
+                        //now see if there are extensions against this path.
+                        //todo - need to handle nested extensions...
+                        if (jsonModel.extensions.length > 0) {
+                            //console.log('s')
+                            //need to create a view model for each extension...
+                            _.each(jsonModel.extensions,function(ext,inx1){
+                                //ext is a bbModel...
+                                var elID = resourceName+inx + '-' + inx1;
+                                $('#ps_table tr:last').after("<tr id='"+ elID +"'></tr>");
+
+                                var v1 = new ProfileSummaryItemView({model:ext,el:$('#'+elID)});
+                                that.childViews[key] = v;        //save a reference to the view. We'll need it to release the view to avoid zombies...
+                                v1.template = that.itemTemplate;
+                                v1.content = model.get('content');       //this is the json representation of the structure.element
+                                //console.log(v.content)
+                                v1.resourceName = resourceName;
+                                v1.render();
+                            })
+
+                        }
+
                     }
 
                 })
@@ -202,14 +215,14 @@ ProfileSummaryItemView = Backbone.View.extend({
     slice : function(ev){
         ev.preventDefault();
         ev.stopPropagation();
-        //var path = $(ev.currentTarget).attr('data-path');
+        var path = $(ev.currentTarget).attr('data-path');
         var type = $(ev.currentTarget).attr('data-type');
         var profileID = $(ev.currentTarget).attr('data-profileid');
         //console.log(this.content);
         //console.log('x')
         Backbone.trigger('profileSummary:slice',
-            {profileid : profileID,type:type,element:this.content,resourceName:this.resourceName});
-        //{profileid : profileID,type:type,path:path,element:this.content,resourceName:this.resourceName});
+           // {profileid : profileID,type:type,element:this.content,resourceName:this.resourceName});
+        {profileid : profileID,type:type,path:path,element:this.content,resourceName:this.resourceName});
     },
 
     render : function(){
@@ -217,15 +230,17 @@ ProfileSummaryItemView = Backbone.View.extend({
         //console.log(json);
 
 
+        //this.$el.html("");
+
+
         this.$el.addClass('summaryRow'+json.type);
 
         this.$el.html(this.template({item:json}));
-        //this.$el.html(this.template({item:json}));
 
         //if teh max is 0, then this is not used...
         if (json.max === '0' || json.max === 0) {
             this.$el.addClass('notUsed')
-            //klass = " class='notUsed' ";
+
         }
 
 

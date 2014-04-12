@@ -34,8 +34,8 @@ var ProfileDetailView =  Backbone.View.extend({
             })
             .fail(function(jqXHR) {
                     console.log(jqXHR);
-
-                    if (jqXHR.status === 404) {
+                    //404 missing, 410 - deleted
+                    if (jqXHR.status === 404 || jqXHR.status === 410) {
                         //there is no resource with that ID so it's OK to create a new one...
                         //todo should really check for a 404
 
@@ -49,7 +49,10 @@ var ProfileDetailView =  Backbone.View.extend({
                     }
 
             })
+        } else {
+            alert('Enter the ID you want for the profile first...')
         }
+
     },
     showValueSet : function(ev) {
         //todo thi should be a separate view...
@@ -70,7 +73,7 @@ var ProfileDetailView =  Backbone.View.extend({
             }
         }
 
-        console.log('clear')
+        //console.log('clear')
 
         delete this.checkedId;
         //clear the ID field
@@ -166,11 +169,15 @@ var ProfileDetailView =  Backbone.View.extend({
     //this is called when a new model is assigned to the view. There's some state info we need to clear...
     setModel : function(model) {
         this.model = model;
+        console.log(model.id);
         this._isDirty = false;       //not dirty yet
-        this.isNew = false;         //and it sure ain't new...
+        //this.isNew = false;         //and it sure ain't new...
         delete this.checkedId;      //and there can't be a user entered Id
         //console.log(model);
-
+        if (model.id) {
+            //if there is an id on the model, then don't allow it to be changed...
+            this.isNew = false;
+        }
 
     },
     addExtension : function(ev){
@@ -208,7 +215,7 @@ var ProfileDetailView =  Backbone.View.extend({
         var rowId = "oneprofilerow_" + code;        //the id of the displayed row...
         $('#'+rowId).remove();
         $('#save_profile_changes').show()
-        //temt this.trigger('profile:updated');
+        this.trigger('profile:updated');
     },
     editExtension : function(ev){
         //edit a single extension
@@ -245,7 +252,9 @@ var ProfileDetailView =  Backbone.View.extend({
 
             if (! this.isNew) {
                 //if this is a new profile, then allow the ID to be entered
-                $('#profile_id').attr('disabled',true)
+                $('#profile_id').attr('disabled',true);
+                $('#checkNewId').hide()
+                //console.log('dis')
             } else {
                 //this is a new profile. Has the user entered and checked the ID?
                 if (this.checkedId) {

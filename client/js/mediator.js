@@ -145,6 +145,7 @@ Backbone.listenTo(listProfiles,'profileList:select',function(vo){
    // if (Mediator.canSelectNewProfile() ) {
         var selectedModel = colProfile.findModelByID(vo.id);       //the vs selected in the list view
         profileDetailView.setModel(selectedModel);
+
         profileSummaryView.clearView();         //clears the models and views...
         profileSummaryView.model = selectedModel;
         profileSummaryView.createSummary(function(){
@@ -159,9 +160,7 @@ Backbone.listenTo(listProfiles,'profileList:select',function(vo){
 
         //and render the details of the profile
         profileDetailView.render();
-  //  } else {
 
-  //  }
 });
 
 //creating a new profile
@@ -268,10 +267,13 @@ Backbone.listenTo(profileDetailView,'profile:added',function(vo){
 //an extension in a profile has been updated.
 Backbone.listenTo(profileExtensionView,'profileExtension:updated',function(vo){
     //re-render the profile - the model should already be set...
-
-
     profileDetailView.render();
     profileContentView.render();
+    profileSummaryView.createSummary(function(){
+        console.log('redn')
+        profileSummaryView.render();
+    })
+
 });
 
 //the user has selected a resource. Need to get the paths for that resource...
@@ -289,6 +291,11 @@ Backbone.listenTo(profileExtensionView,'profileExtension:selectedResource',funct
 Backbone.listenTo(profileDetailView,'profile:updated',function(vo){
     //re-render the profile - the model should already be set...
     profileDetailView.render();
+    profileContentView.render();
+    profileSummaryView.createSummary(function(){
+        console.log('redn')
+        profileSummaryView.render();
+    })
 });
 
 //a user is modifying a resource path...  (not just slicing)
@@ -300,10 +307,11 @@ Backbone.on('profileSummary:slice',function(vo){
 
     //console.log(selectedProfileModel)
         if (selectedProfileModel) {
-
+            console.log(vo)
             if (vo.type==='ext') {
                 //this is an extensio
                 //todo - changes are not being saved here...
+
                 profileExtensionView.model = selectedProfileModel;
                 profileExtensionView.setCode(vo.path);  //the code of the extension is in the path in the summary view...
                 profileExtensionView.render();
@@ -348,6 +356,13 @@ Backbone.listenTo(profileStructureView,'element:updated',function(vo){
 
         //add a new resource (structure)
         var structure = {name:vo.resourceName,element:[]}
+
+        //clone the element - we don't want to refer back to the 'master' profiele for this resourc ein the cache
+        //or all profiles will look like this element...
+        //var clone = jQuery.extend(true, {}, vo.element);
+
+        //var clone = $.clone(vo.element);
+
         structure.element.push(vo.element);
         profileJson.structure.push(structure);
 
