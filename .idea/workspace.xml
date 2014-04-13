@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3a9b3cc9-926c-402b-bbe7-016794926cb7" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/question.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ProfileDetailView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileDetailView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/ProfileSummaryView.js" afterPath="$PROJECT_DIR$/client/js/views/ProfileSummaryView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/front.html" afterPath="$PROJECT_DIR$/client/front.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/mediator.js" afterPath="$PROJECT_DIR$/client/js/mediator.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/oneProfile.html" afterPath="$PROJECT_DIR$/client/templates/oneProfile.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config.json" afterPath="$PROJECT_DIR$/config.json" />
     </list>
     <ignored path="AlexUpdate.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -89,10 +83,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="mediator.js" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="mediator.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/js/mediator.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="313" column="0" selection-start="11266" selection-end="11266" vertical-scroll-proportion="0.69304556">
+            <state line="313" column="0" selection-start="11266" selection-end="11266" vertical-scroll-proportion="-11.115385">
               <folding>
                 <element signature="e#0#258#0" expanded="false" />
                 <element signature="e#398#529#0" expanded="false" />
@@ -147,6 +141,24 @@
                 <element signature="e#17890#18158#0" expanded="false" />
                 <element signature="e#17977#18139#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="runForever.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/runForever.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="config.json" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/config.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="1" column="46" selection-start="48" selection-end="48" vertical-scroll-proportion="0.034722224">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -235,11 +247,11 @@
         <option value="$PROJECT_DIR$/client/js/views/ValueSetDetailView.js" />
         <option value="$PROJECT_DIR$/client/front.html" />
         <option value="$PROJECT_DIR$/client/question.html" />
-        <option value="$PROJECT_DIR$/config.json" />
         <option value="$PROJECT_DIR$/client/templates/oneProfile.html" />
         <option value="$PROJECT_DIR$/client/js/views/ProfileDetailView.js" />
         <option value="$PROJECT_DIR$/client/js/views/ProfileSummaryView.js" />
         <option value="$PROJECT_DIR$/client/js/mediator.js" />
+        <option value="$PROJECT_DIR$/config.json" />
       </list>
     </option>
   </component>
@@ -527,7 +539,7 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.46022728" sideWeight="0.8174603" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3173484" sideWeight="0.13275613" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3173484" sideWeight="0.8672439" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3173484" sideWeight="0.8672439" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -607,13 +619,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/client/js/collections/ValueSetCollection.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="25" selection-start="353" selection-end="374" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/js/collections/ProfileCollection.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="31" column="55" selection-start="1416" selection-end="1416" vertical-scroll-proportion="0.0">
@@ -808,13 +813,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="1" selection-start="254" selection-end="254" vertical-scroll-proportion="-4.375">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/templates/oneProfile.html">
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="36" selection-start="381" selection-end="381" vertical-scroll-proportion="-2.62">
@@ -891,7 +889,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/js/mediator.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="313" column="0" selection-start="11266" selection-end="11266" vertical-scroll-proportion="0.69304556">
+        <state line="313" column="0" selection-start="11266" selection-end="11266" vertical-scroll-proportion="-11.115385">
           <folding>
             <element signature="e#0#258#0" expanded="false" />
             <element signature="e#398#529#0" expanded="false" />
@@ -946,6 +944,20 @@
             <element signature="e#17890#18158#0" expanded="false" />
             <element signature="e#17977#18139#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/runForever.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1" column="46" selection-start="48" selection-end="48" vertical-scroll-proportion="0.034722224">
+          <folding />
         </state>
       </provider>
     </entry>
