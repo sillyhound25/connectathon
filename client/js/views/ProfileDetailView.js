@@ -273,7 +273,10 @@ var ProfileDetailView =  Backbone.View.extend({
 
         if (! this._isDirty) {
             //if tehre are no changes yet, then don't show the save changes button
-            $('#save_profile_changes').hide();
+
+            //temp - todo show the button all the time until I figure out t
+
+            //$('#save_profile_changes').hide();
         }
 
 

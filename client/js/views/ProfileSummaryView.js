@@ -54,6 +54,8 @@ var ProfileSummaryView = Backbone.View.extend({
         this.profileSummaryModel.getSummary(this.model,function(err, arSummary){
             //now locate the model and the view based on this path
             that.arSummary = arSummary;
+
+            console.log(arSummary)
             var resourceElements = that.arSummary.resources[resourceName];
 
             _.each(resourceElements.models.models,function(m){

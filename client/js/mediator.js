@@ -301,6 +301,7 @@ Backbone.listenTo(profileDetailView,'profileDetail:showVS',function(vo){
 //a new profile was added
 Backbone.listenTo(profileDetailView,'profile:added',function(vo){
     console.log(vo);
+    profileSummaryView.clearView();
     //re-read all the models. May be able to add it to the collection directly...
     colProfile.fetch({
         success : function() {
@@ -308,6 +309,11 @@ Backbone.listenTo(profileDetailView,'profile:added',function(vo){
             listProfiles.render();      //render the profile list
             profileQueryView.setProfiles(colProfile);
             profileQueryView.render();  //render the query view (has a list of profiles)
+            //todo - might want to find the new profile and render a summary...
+
+
+
+
         },
         error : function() {
             alert('There was an error loading the Profiles')
