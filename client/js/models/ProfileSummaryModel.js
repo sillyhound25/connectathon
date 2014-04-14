@@ -4,6 +4,7 @@
 
 
 //represents a structure.element in the profile (which is the same as a path)...
+//has the same structure as element in the profile...
 ProfileSummaryItemModel = Backbone.Model.extend({
     defaults : {
         path : "",

@@ -71,7 +71,7 @@ var ProfileSummaryView = Backbone.View.extend({
                     var view = that.childViews[resourceName+"_"+path];
                     console.log(view);
                     view.content = m.toJSON();
-                    view.model = m;
+                    view.model = m;//.toJSON();
                     view.render();
                     //if a re-render is being called, then the profile is likely to have been changed...
                     that.changesMade = true;
@@ -145,12 +145,13 @@ var ProfileSummaryView = Backbone.View.extend({
             var html = "";
             _.each(this.arSummary.resources,function(res,resourceName){
                 //console.log(path)
-                var colModels = res.models;     //this is a BB Collection
-                _.each(colModels.models,function(model,inx){
-                    var jsonModel = model.toJSON();          //this is a BB model - not a fhir model!!!
+                var colModels = res.models;     //this is a BB Collection where each model represents a strcutire or an extension...
+                _.each(colModels.models,function(psiModel,inx){
+                    var jsonModel = psiModel.toJSON();          //this is a BB model - not a fhir model!!!
 
 
                     //ignore the 'standard' paths...
+
                     //console.log(jsonModel.path)
                     var toShow = true;
                     _.each(['.extension','.text','.contained'],function(exclude){
@@ -160,17 +161,19 @@ var ProfileSummaryView = Backbone.View.extend({
                     })
 
 
-                    if (toShow) {       //ie it's not one of the standards...
+                    if (toShow) {       //ie it's not one of the standard ones...
                         //add a row with an ID. This will be the container for the child view...
                         var elID = resourceName+inx;
                         $('#ps_table tr:last').after("<tr id='"+ elID +"'></tr>");
                         //now create the child view responsible for this row...
                         var key =resourceName + "_"+jsonModel.path;
+
                         //each line in the table (representing a path) will have its own view...
-                        var v = new ProfileSummaryItemView({model:model,el:$('#'+elID)});
+                        var v = new ProfileSummaryItemView({model:psiModel,el:$('#'+elID)});
                         that.childViews[key] = v;        //save a reference to the view. We'll need it to release the view to avoid zombies...
                         v.template = that.itemTemplate;
-                        v.content = model.get('content');       //this is the json representation of the structure.element fom the profile
+                        //console.log(model.get('content'));
+                        //v.content = psiModel.get('content');       //this is the json representation of the structure.element fom the profile
                         v.resourceName = resourceName;
                         v.render();
 
@@ -187,7 +190,14 @@ var ProfileSummaryView = Backbone.View.extend({
                                 var v1 = new ProfileSummaryItemView({model:ext,el:$('#'+elID)});
                                 that.childViews[key] = v;        //save a reference to the view. We'll need it to release the view to avoid zombies...
                                 v1.template = that.itemTemplate;
-                                v1.content = model.get('content');       //this is the json representation of the structure.element
+
+                                //if (! model.get('content')) {
+                                    //alert('content is empty for path ' + )
+                                //}
+
+
+
+                                v1.content = psiModel.get('content');       //this is the json representation of the structure.element
                                 //console.log(v.content)
                                 v1.resourceName = resourceName;
                                 v1.render();
@@ -224,16 +234,13 @@ ProfileSummaryItemView = Backbone.View.extend({
         //console.log('x')
         Backbone.trigger('profileSummary:slice',
            // {profileid : profileID,type:type,element:this.content,resourceName:this.resourceName});
-        {profileid : profileID,type:type,path:path,element:this.content,resourceName:this.resourceName});
+        //{profileid : profileID,type:type,path:path,element:this.content,resourceName:this.resourceName});
+        {profileid : profileID,type:type,path:path,psiModel:this.model,resourceName:this.resourceName});
     },
 
     render : function(){
         var json = this.model.toJSON();
         //console.log(json);
-
-
-        //this.$el.html("");
-
 
         this.$el.addClass('summaryRow'+json.type);
 
@@ -244,8 +251,6 @@ ProfileSummaryItemView = Backbone.View.extend({
             this.$el.addClass('notUsed')
 
         }
-
-
     }
 
 });

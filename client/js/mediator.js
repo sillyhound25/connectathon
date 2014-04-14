@@ -360,10 +360,8 @@ Backbone.listenTo(profileDetailView,'profile:updated',function(vo){
 
 //a user is modifying a resource path...  (not just slicing)
 Backbone.on('profileSummary:slice',function(vo){
-    //console.log(vo);
 
-
-        var selectedProfileModel = colProfile.findModelByID(vo.profileid);       //the vs selected in the list view
+    var selectedProfileModel = colProfile.findModelByID(vo.profileid);       //the profile model
 
     //console.log(selectedProfileModel)
         if (selectedProfileModel) {
@@ -379,8 +377,8 @@ Backbone.on('profileSummary:slice',function(vo){
                 //this is a structure
                 profileStructureView.resourceName = vo.resourceName;
                 profileStructureView.profileModel = selectedProfileModel
-                profileStructureView.model = vo.element;     //this is json structure.element
-
+                profileStructureView.model = vo.psiModel;     //this is json structure.element
+                console.log(vo.psiModel)
                 profileStructureView.setType(vo.type);  //the code of the extension is in the path in the summary view...
                 profileStructureView.render();
             }
@@ -399,44 +397,61 @@ Backbone.on("extensions:render",function(ev){
 
 })
 
-//when a structure.element is altered in the UI but not yet saved......
+//when a structure.element is altered in the UI but not yet saved......  NOT extensions...
 Backbone.listenTo(profileStructureView,'element:updated',function(vo){
 
-    //console.log(vo);
+    console.log(vo);
     //console.log( profileStructureView.profileModel);
     //todo move this business logic to a model
-    if (vo.type === 'core') {
-        //this element comes from the core, so we simply add it to the profile...
-        var profileModel = profileStructureView.profileModel;       //the profile model was set as an attribute when the profileStructureView was displayed...
-//console.log(profileModel)
 
+   // if (vo.type === 'core') {
+        //this element comes from the core, so we need to add it to the profile...
+
+        //first get the profile we're editing...
+        var profileModel = profileStructureView.profileModel;       //the profile model was set as an attribute when the profileStructureView was displayed...
+
+        //now the JSON rendition of the profile...
         var profileJson = profileModel.get('content');
 
         //find the structure element in the resource - or create it
         profileJson.structure = profileJson.structure || [];
 
+        //remove any existing structure with this path...
+        var lst = [];   //this will be the new list of elements...
+
+      //  var pos = -1;
+        _.each(profileJson.structure,function(struc,inx){
+            //console.log(struc.element[0].path,vo.element.path)
+            if (struc.element[0].path !== vo.element.path) {
+                lst.push(struc);
+                //pos=inx;
+            }
+        })
+
+       // if (pos >-1) {
+            //console.log('del')
+           // profileJson.structure = profileJson.structure.splice(pos,1);
+        //}
+
+
         //add a new resource (structure)
         var structure = {name:vo.resourceName,element:[]}
-
-        //clone the element - we don't want to refer back to the 'master' profiele for this resourc ein the cache
-        //or all profiles will look like this element...
-        //var clone = jQuery.extend(true, {}, vo.element);
-
-        //var clone = $.clone(vo.element);
-
         structure.element.push(vo.element);
-        profileJson.structure.push(structure);
+
+        lst.push(structure);
+    profileJson.structure = lst;
+        //profileJson.structure.push(structure);
+
+
+        console.log(profileJson);
 
 
         profileSummaryView.updatePath(vo.resourceName,vo.element.path);
+  //  } else if (vo.type === 'prof') {
+        //came from the profile...
 
-        //profileSummaryView.createSummary();
-
-
-        //profileDetailView.render();
-        //profileStructureView.render();
-    }
-
+        //profileSummaryView.updatePath(vo.resourceName,vo.element.path);
+  //  }
 
 })
 
