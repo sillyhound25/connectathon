@@ -166,6 +166,7 @@ var ProfileDetailView =  Backbone.View.extend({
             }
         });
     },
+
     //this is called when a new model is assigned to the view. There's some state info we need to clear...
     setModel : function(model) {
         this.model = model;

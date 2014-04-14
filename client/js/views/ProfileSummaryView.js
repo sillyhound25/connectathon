@@ -16,11 +16,23 @@ var ProfileSummaryView = Backbone.View.extend({
     events : {
         "click #btnCreateSummary" : "createAndShowSummary",
         "click .ps_resource" : "toggleResource",
-             "click .btnSaveChanges" : "saveChanges"
+        "click #btnSaveChanges" : "saveChanges"
     },
+    saveChanges : function() {
+        $('#btnSaveChanges').text('Updating').attr('disabled',true)
+        this.model.save({},{
+            success : function() {
+                $('#btnSaveChanges').hide();
 
+            },
+            error : function(xhr,status,err) {
+                console.log(xhr,status,err);
 
-
+                alert('sorry, there was an error saving the profile - check the console log')
+                $('#btnSaveChanges').text('Update').attr('disabled',false);
+            }
+        });
+    },
     isDirty : function() {
         //return true if there have been any modifications to the profile...
         return this.changesMade;
@@ -37,6 +49,7 @@ var ProfileSummaryView = Backbone.View.extend({
             })
         }
         this.$el.html("");
+        $('#btnSaveChanges').hide();
 
     },
     createAndShowSummary : function() {
@@ -75,6 +88,7 @@ var ProfileSummaryView = Backbone.View.extend({
                     view.render();
                     //if a re-render is being called, then the profile is likely to have been changed...
                     that.changesMade = true;
+                    $('#btnSaveChanges').show();
                 }
             })
 
