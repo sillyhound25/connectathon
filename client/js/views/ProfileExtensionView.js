@@ -221,8 +221,9 @@ var ProfileExtensionView =  Backbone.View.extend({
 
 
 
-        console.log(resourceName,path)
+        //console.log(resourceName,path)
 
+        console.log(that.meta.resourceList);
 
             _.each(that.meta.resourceList,function(name){
                 var lne = "<option value='"+name + "'";
@@ -231,7 +232,7 @@ var ProfileExtensionView =  Backbone.View.extend({
                     lne += " selected='selected' ";
                 }
                 lne += ">"+name+"</option>";
-                $("#esContextResource").append(lne);
+                $("#eeContextResource").append(lne);
             })
 
 
