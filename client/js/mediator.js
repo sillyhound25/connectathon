@@ -166,8 +166,9 @@ profileExtensionView.meta.colVS = colVS;    //the collection of known valuesets 
 profileExtensionView.meta.resourceList = resourceList;
 
 var profileStructureView = new ProfileStructureView({el:$('#editStructureDiv')});
-
-
+profileStructureView.meta.dataTypeList = dataTypeList;      //the permissable datatypes
+profileStructureView.meta.colVS = colVS;    //the collection of known valuesets (or at least, those we can choose from)
+//profileStructureView.meta.resourceList = resourceList;
 
 var profileSummaryView = new ProfileSummaryView({el:$('#workAreaSummaryProfile')});       //generate a profile summary
 profileSummaryView.render();

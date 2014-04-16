@@ -1,5 +1,8 @@
 
 var ProfileStructureView =  Backbone.View.extend({
+    initialize : function() {
+        this.meta = {};     //keep my properties - eg the extension  - in a separate property...
+    },
     events : {
         "click #esSave" : "saveStructure"
     },
@@ -53,6 +56,25 @@ var ProfileStructureView =  Backbone.View.extend({
         //now render the template, setting the current values
         //console.log(this.$el);
         this.$el.html(this.template(json));      //render the dialog
+
+
+
+        //------------set the datatype ---------------
+        var dataType="";
+        if (json.definition.type) {
+            dataType = json.definition.type[0].code;     //current datatype (1 only)
+        }
+        _.each(that.meta.dataTypeList,function(name){
+            var lne = "<option value='"+name + "'";
+            //note that we only support one resource at the moment
+            if (name === dataType) {
+                lne += " selected='selected' ";
+            }
+            lne += ">"+name+"</option>";
+            $("#esDataType").append(lne);
+        })
+
+
 
         $('#editStructureDlg').modal();
 

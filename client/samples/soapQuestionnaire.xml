@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Questionnaire xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://hl7.org/fhir /Users/davidha/Dropbox/Blogs/fhir-all-xsd/questionnaire.xsd"
+ xmlns="http://hl7.org/fhir">
+    <!--  A questionnaire resource for the May 2014 connectathon. 
+        The use case being met is that of a simple SOAP form as might be used to record a progress note
+        Most of the sections are simple text boxes for comments to be directly entered.
+        We haven't used the 'answerFormat' to specify a string, as this is likely to be the default
+        
+        Note:
+        some way of finding specific questionnaire templates would be nice (like a profile)
+    -->
+    
+    <text>
+        <status value="generated"/>
+        <div xmlns="http://www.w3.org/1999/xhtml">      
+            SOAP Questionnaire
+        </div>
+    </text>
+    
+
+    <!-- A status of 'in progress' indicates that this is a form that is in the proces of being completed -->
+    <status value="in progress"/>
+    <authored value="2014-04-03T14:43:00"/>
+    <!-- The server will have filled in the subject and author, so these fields will be replaced by the real ones... -->
+    <subject>
+        <reference value="http://spark.furore.com/fhir/Patient/3216379"/>
+    </subject>
+ 
+    <!-- presumably the server will know who has logged in... -->
+    <author>
+        <reference value="http://spark.furore.com/fhir/Practitioner/3212631"/>
+    </author>
+    
+    <name>
+        <coding>
+            <system value="http://loinc.org"/>
+            <code value="11488-4"/>
+            <display value="Consultation Note"/>          
+        </coding>
+        <text value="Simple SOAP Note"/>
+    </name>
+    <!-- The top level group -->
+    <group>
+        
+        <!-- subjective -->
+        <group>                      
+            <header value="Subjective"/>
+            <text value="what the patient reported"/>
+            <!-- The group for a single medication. You'd repeat this for all medications -->
+            
+            <group>
+                <header value="Presenting complaint"/>      
+                <question>
+                    <text value="Presenting complaint"/>
+                                                          
+                </question>
+            </group>
+            
+        </group>
+        
+        <!-- objective -->
+        <group>                      
+            <header value="Objective"/>
+            <text value="What the clinician observed"/>
+            <!-- The group for a single medication. You'd repeat this for all medications -->
+            <group>
+                <header value="Vitals"/>
+                <text value="Vital signs"/>
+                <question>
+                    <text value="Systolic BP"/>                   
+                </question>
+                <question>
+                    <text value="Diastolic BP"/>                   
+                </question>
+                <question>
+                    <text value="Pulse Rate"/>                   
+                </question>
+                <question>
+                    <text value="Temperature"/>                   
+                </question>
+                <question>
+                    <text value="weight"/>                   
+                </question>
+            </group>
+            <group>
+                <header value="General Observations"/>
+                <text value="Other"/>
+                <question>
+                    <text value="Other Findings"/>                   
+                </question>
+            </group>           
+        </group>
+        
+        <!-- assessment -->
+        <group>                      
+            <header value="Assessment"/>
+            <text value="The clincians assessment"/>
+            <question>
+                <text value="Assessment"/>
+                
+            </question>            
+        </group>
+        
+        <!-- plan -->
+        <group>                      
+            <header value="Plan Of Care"/>
+            <text value="What the clincian intends to do"/>
+            <question>
+                <text value="Plan"/>
+            </question>            
+        </group>
+    </group>
+</Questionnaire>

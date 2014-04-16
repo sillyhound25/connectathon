@@ -106,11 +106,88 @@ exports.getPandasPatientRiskFlags = function(time,callback){
 }
 
 
+//note used a tab separated file to avoid embedded commas...
+exports.makeClaimsJson = function(callback){
+
+    arCols = []; //list of cols to include
+    arCols.push('DGNS1');
+    arCols.push('DGNS10');
+    arCols.push('DGNS11');
+    arCols.push('DGNS12');
+    arCols.push('DGNS2');
+    arCols.push('DGNS3');
+    arCols.push('DGNS4');
+    arCols.push('DGNS5');
+    arCols.push('DGNS6');
+    arCols.push('DGNS7');
+    arCols.push('DGNS8');
+    arCols.push('DGNS9');
+    arCols.push('HCPC_CD');
+    arCols.push('SBSCBR_ZIP_CD');
+    arCols.push('cpt');
+    arCols.push('member_id_raw');
+    arCols.push('srvc_dt');
 
 
+
+    var arJson = [];
+    fs.readFile('/Users/davidha/projects/AlexUpdate/client/claims.tab.txt', {encoding:'utf8'},function (err, data) {
+        if (err) throw err;
+        var ar = data.match(/[^\r\n]+/g);   //split into lines
+
+        var arFieldPos = [];    //this links the numerical field index to the field name
+        _.each(ar,function(line,inx){
+            if (inx===0){
+                //the first line is the header...
+                var hdr = line.split('\t');  //get all the headers
+                console.log(hdr)
+                hdr.forEach(function(name){
+                    arFieldPos.push(name);              //this will now have all the field names
+                })
+            } else {
+                //these are data lines
+
+                var fields = line.split('\t');
+                //var fields = line.split(pattern);
+                var item = {};
+                var xml = "<claim>"
+                _.each(fields,function(value,inx){
+                    var n = arFieldPos[inx];    //field name at this position
+
+                    //only include the fields in the list
+                    if (arCols.indexOf(n) > -1) {
+                        item[n] = value;
+                        xml += "<"+n+">"+value+"</"+n+">";
+                    }
+
+
+
+                });
+                xml += "</claim>";
+                //write out a separate xml file for each record
+                var fileName ="/Users/davidha/projects/AlexUpdate/client/xmlfiles/claim"+inx+".xml";
+                fs.writeFile(fileName, xml, function(err) {
+
+                });
+
+                arJson.push(item);
+
+                //console.log(item)
+            }
+        })
+
+
+
+        fs.writeFile("/Users/davidha/projects/AlexUpdate/client/claims.json", JSON.stringify(arJson), function(err) {
+            callback( {});//arJson);
+        });
+    })
+}
+
+
+//members
 exports.makeMemberJson = function(callback){
     var arJson = [];
-
     fs.readFile('/Users/davidha/projects/AlexUpdate/client/members.csv', {encoding:'utf8'},function (err, data) {
         if (err) throw err;
         var ar = data.match(/[^\r\n]+/g);   //split into lines
@@ -141,14 +218,12 @@ exports.makeMemberJson = function(callback){
         fs.writeFile("/Users/davidha/projects/AlexUpdate/client/members.json", JSON.stringify(arJson), function(err) {
             callback( {});//arJson);
         });
-
-
-
-
     })
 }
 
 
+
+//meds
 exports.getPandasSample = function(callback){
     var arJson = [];
 
@@ -166,7 +241,8 @@ exports.getPandasSample = function(callback){
                 })
             } else {
                 //these are data lines
-                var fields = line.split(',');
+                var fields =   CSVToArray(line);//line.split(',');
+                console.log(fields)
                 var item = {};
                 _.each(fields,function(value,inx){
                     var n = arFieldPos[inx];    //field name at this position

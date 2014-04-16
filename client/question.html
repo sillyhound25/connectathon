@@ -9,39 +9,7 @@
     <script src="js/libs/backbone-min.js"></script>
     <script src="js/libs/moment.min.js"></script>
 
-    <!--
-    <script src="js/libs/async.js"></script>
-    <script src="js/libs/typeahead.bundle.js"></script>
-    <script src="js/libs/sorttable.js"></script> <!-- http://www.kryogenix.org/code/browser/sorttable
-
-    <script src="js/views/queryView.js"></script>
-    <script src="js/views/ValueSetListView.js"></script>
-    <script src="js/views/ValueSetSummaryView.js"></script>
-    <script src="js/views/ValueSetDetailView.js"></script>
-    <script src="js/views/ExtensionView.js"></script>
-    <script src="js/models/ValueSetModel.js"></script>
-
-
-    <script src="js/views/ProfileListView.js"></script>
-    <script src="js/views/ProfileDetailView.js"></script>
-    <script src="js/views/ProfileExtensionView.js"></script>
-    <script src="js/views/ProfileSummaryView.js"></script>
-    <script src="js/views/ProfileTestFormView.js"></script>
-    <script src="js/views/ProfileQueryView.js"></script>
-    <script src="js/views/ProfileContentView.js"></script>
-    <script src="js/views/ProfileStructureView.js"></script>
-    <script src="js/models/ProfileModel.js"></script>
-    <script src="js/models/ProfileSummaryModel.js"></script>
-    <script src="js/models/ProfileTestFormModel.js"></script>
-    <script src="js/models/ExtensionModel.js"></script>
-    <script src="js/collections/ProfileCollection.js"></script>
-    <script src="js/collections/ValueSetCollection.js"></script>
-    <script src="js/collections/ExtensionCollection.js"></script>
-
-    <script src="js/libs/json2xml.js"></script>
-
-        <script src="http://chaijs.com/chai.js" type="text/javascript"></script>
-    -->
+    <script src="js/views/QuestionnaireNavView.js"></script>
 
     <!-- Latest compiled and minified CSS-->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -52,77 +20,281 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
-</head>
-<body>
-<h1>Questionnaire</h1>
+    <!--layout styles. These would be well suited for a CSS pre-processor like LESS--->
+    <style>
+        .header1 {
+            background-color: lightsteelblue;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        .header2 {
+            font-weight: bold;
+            /*border-top: solid #808080 1px;*/
+        }
+        .formNav1 {
+            margin-left: 5px;
+        }
+        .formNav2 {
+            margin-left: 10px;
+        }
 
-<div id="form"></div>
+    </style>
+
+</head>
+<body style="padding: 8px">
+
+
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">
+                <img src="images/icon-fhir-32.png"/>
+            </a>
+            <a class="navbar-brand" href="#">  Questionnaire</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active  navMainOption" data-page='homeTab'><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a> </li>
+        </ul>
+        <ul class="nav navbar-nav pull-right">
+            <li class="navMainOption" data-page='helpTab'><a href="#" ><i class="glyphicon glyphicon-question-sign"></i> </a></li>
+        </ul>
+    </div>
+</nav>
+
+
+<div class="row">
+
+    <div class="col-sm-10 col-md-10" style="border-right: solid grey 1px">
+        <div id="form"></div>
+    </div>
+    <div class="col-sm-2 col-md-2">
+        <div id="formNav"></div>
+    </div>
+</div>
+
+
 <script>
 
-    var html;
-    var config = {questLayout:'table'}
     $(document).ready(function(){
-        var uri = '/api/oneresource/Questionnaire/ct-6';
+        var html="";    //todo -should these be in Z...
+        var htmlNav = "";       //The form navigation bar...
+        var navView = new QuestionNavView({el:'#formNav'})
+        //this will be a cross reference between the class of a control and
+        var xRef = {};
+        var Z = {'templates':{}}    //a global object to avoid polluting the global namespace...
 
+
+        //todo - there will be a better way as these templates are almost identical...
+        Z.templates.questionTemplate1col = Handlebars.compile($('#questionTemplate1col').html())
+        Z.templates.questionTemplate2col = Handlebars.compile($('#questionTemplate2col').html())
+        Z.templates.questionTemplate3col = Handlebars.compile($('#questionTemplate3col').html())
+
+        Z.templates.groupTemplate = Handlebars.compile($('#groupTemplate').html())
+        Z.templates.saveButtonTemplate = Handlebars.compile($('#saveButtonTemplate').html())
+
+        var uri = '/api/oneresource/Questionnaire/ct6-soap1';
+        //var uri = './samples/soapQuestionnaire.xml';
         $.get(uri,function(Q){
             console.log(Q)
             var form = Q.group;     //the root element of the form
-            var html1 = showGroup(form);
-            console.log(html1);
+
+            //navView.html
+            navView.model = Q;      //the navView has the questionnaire as a model
+            navView.html = "";      //todo - should have a proper thing
+            //navView.html += Z.templates.saveButtonTemplate();   //render the save button
+
+            navView.html += "<h5>Document Navigation</h5>";
+            var vo = showGroup(form,0);  //create the questionnaire form
+            var html1 = vo.form;
+            navView.html += vo.nav;
+            //html1 += Z.templates.saveButtonTemplate();   //render the save button
+
             $('#form').html(html1);
+            navView.render();
+
+            //$('#formNav').html(vo.nav);
         })
-    });
+
 
 
     //show a group
-    function showGroup(grp) {
-        console.log(grp.header);
+    function showGroup(grp,lvl) {
+        //console.log(lvl, grp.header);
+        if (grp.header) {
+            var klass = 'formNav'+lvl;
 
-        html += "<h3>" +grp.header+ "</h3>";
-        if (grp.question) {
-            if (config.questLayout === 'table') {
-                html += "<table class='table '>";
-            }
-            _.each(grp.question,function(quest){
-                if (config.questLayout === 'table') {
-                    html += "<tr>";
-                }
-
-                html += showQuestion(quest);
-
-                if (config.questLayout === 'table') {
-                    html += "</tr>";
-                }
-
-            })
-            if (config.questLayout === 'table') {
-                html += "</table>";
-            }
+            //todo - move this into the view...
+            var templateStr = "<div class=' <%= klass%>'><a class='mynav'><%= text%></a></div>"
+            htmlNav += _.template(templateStr,{text:grp.header,klass:klass});//  "<div >"+grp.header+"</div>"
         }
+
+        var displayLevel = lvl;
+        if (displayLevel > 2) {
+            displayLevel = 2;
+        }
+
+
+        //display all the questions in this group -
+        var numCol = 1;         //the number of columns to display (like a flow layout) - come fron an extension
+        var mayRepeat = false;  //if the group can repeat...
+        if (grp.extension){     //there are extensions to this group...
+            _.each(grp.extension,function(ext){
+                switch (ext.url) {
+                    case 'fhir.orionhealth.com/questionnaire#numcol' : {
+                        numCol = ext.valueInteger;
+                        break;
+                    }
+                    case 'http://hl7.org/fhir/questionnaire-extensions#mayRepeat' : {
+                        mayRepeat = ext.valueBoolean;
+                        break;
+                    }
+                }
+            })
+        }
+
+
+        html += Z.templates.groupTemplate({group: grp,level:displayLevel});
+
+
+
+        if (grp.question) {
+            html += "<row>"
+            _.each(grp.question,function(quest,inx){
+                var id='q-'+lvl+'-'+inx;
+                html += showQuestion(quest,id,numCol);
+                //console.log(inx % numCol);
+                if(inx % numCol === 1 ) {
+                    //if at the col count then close the row and create a now one
+                    html += "</row><row>"
+                }
+            })
+            html += "</row>";
+        }
+
 
         if (grp.group) {
+            lvl++;
             _.each(grp.group,function(grp1){
-                console.log('it')
-                showGroup(grp1);
+                showGroup(grp1,lvl);
             })
         }
-        return html;
+        return {form: html,nav : htmlNav};
     }
 
-    //show a question (and possibly an answer)
-    function showQuestion(quest) {
-        //var lne =
-        if (config.questLayout === 'table') {
-            return "<td>" + quest.text + "</td>";
-        } else {
-            return "<p>" + quest.text + "</p>";
+    //show a single question (and possibly an answer)
+    //numCol is the number of columns...
+    function showQuestion(quest,id,numCol) {
+
+        //If there is a code with a name then it can be edited...
+        var code;
+        if (quest.name && quest.name.coding && quest.name.coding.length > 0 && quest.name.coding[0].code) {
+            code = quest.name.coding[0].code;
         }
 
+        //choose the correct template based on the number of columns...
+        var templateName = "questionTemplate" + numCol + "col";
+        return Z.templates[templateName]({question: quest,id:id,code:code});
     }
+
+
+
+    function getEnteredData() {
+
+    }
+
+    });
+
+
+
+
+
 
 
 </script>
 
+
+<script type="handlebars/template" id='questionTemplate1col'>
+
+    <div class="col-sm-12 col-md-12">
+        <form role="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 col-md-2">{{question.text}}</label>
+                <div class="col-sm-10 col-md-10">
+                    {{#if code}}
+                    <input type='text' class="form-control data-{{code}}" value = '{{meta.id}}'
+                           placeholder="Enter the {{question.text}}"/>
+                    {{else}}
+                    <input type='text' class="form-control" disabled="disabled"
+                           placeholder="There is no question.name so data cannot be entered"/>
+                    {{/if}}
+                </div>
+            </div>
+        </form>
+    </div>
+
+</script>
+
+
+<script type="handlebars/template" id='questionTemplate2col'>
+
+        <div class="col-sm-6 col-md-6">
+            <form role="form" class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-4 col-md-4">{{question.text}}</label>
+                    <div class="col-sm-8 col-md-8">
+                        {{#if code}}
+                        <input type='text' class="form-control data-{{code}}" value = '{{meta.id}}'
+                               placeholder="Enter the {{question.text}}"/>
+                        {{else}}
+                        <input type='text' class="form-control" disabled="disabled"
+                               placeholder="There is no question.name so data cannot be entered"/>
+                        {{/if}}
+                    </div>
+                </div>
+            </form>
+        </div>
+
+</script>
+
+<script type="handlebars/template" id='questionTemplate3col'>
+
+    <div class="col-sm-4 col-md-4">
+        <form role="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-4 col-md-4">{{question.text}}</label>
+                <div class="col-sm-8 col-md-8">
+                    {{#if code}}
+                    <input type='text' class="form-control data-{{code}}" value = '{{meta.id}}'
+                           placeholder="Enter the {{question.text}}"/>
+                    {{else}}
+                    <input type='text' class="form-control" disabled="disabled"
+                           placeholder="There is no question.name so data cannot be entered"/>
+                    {{/if}}
+                </div>
+            </div>
+        </form>
+    </div>
+
+</script>
+
+
+<script type="handlebars/template" id='groupTemplate'>
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+            <div class="header{{level}}" title="{{group.text}}">{{group.header}}</div>
+
+        </div>
+    </div>
+</script>
+
+<script type="handlebars/template" id='saveButtonTemplate'>
+    <h5>Form Control</h5>
+    <div><button class="btn btn-primary center-block" id='saveForm'>Save Form</button></div>
+
+    <div><div class="center-block"> <input type="checkbox" id='formComplete'/> Form Complete</div></div>
+    <hr />
+</script>
 
 
 </body>

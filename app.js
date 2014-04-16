@@ -50,10 +50,8 @@ fs.readFile('config.json',function(err,contents){
 
 
 app.configure(function(){
-  //app.set('views', __dirname + '/views');
-  //app.set('view engine', 'jade');
   app.use(express.bodyParser());
-  app.use(express.methodOverride());
+  //app.use(express.methodOverride());
   app.use(app.router);
   app.use(express.static(__dirname + '/client'));
 });
@@ -72,6 +70,14 @@ app.get('/pandas/makeMedsJson', function(req, res) {
 
 app.get('/pandas/makeMemberJson', function(req, res) {
     pandasService.makeMemberJson(function(data){
+        res.json(data);
+    })
+
+});
+
+
+app.get('/pandas/makeClaimsJson', function(req, res) {
+    pandasService.makeClaimsJson(function(data){
         res.json(data);
     })
 
@@ -296,7 +302,6 @@ app.put('/api/valueset/:id', function(req, res){
     var vsID = req.params.id;
     var resource = req.body;
 
-    //console.log(resource,vsID)
 
 
     putToFHIRServer(resource,vsID,function(resp){
