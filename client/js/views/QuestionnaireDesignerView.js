@@ -70,7 +70,7 @@ var QuestionnaireDesignerView = BaseView.extend({
             var questView = new QuestionnaireDesignerQuestionView();
             ctx.questRef.push(questView);
 
-            var display = "<div class='qQuestion'>"+tab +FHIRHelper.questionDisplay(quest) + "</div>"
+            var display = "<div class='qQuestion' data-id='"+questView.cid+"'>"+tab +FHIRHelper.questionDisplay(quest) + "</div>"
             $(display).appendTo(gNode);
 
         })
@@ -88,6 +88,7 @@ var QuestionnaireDesignerView = BaseView.extend({
             that.addGroup(that.model.group,$('#qdGroups'),that,0)
 
             console.log(that.groupRef)
+            console.log(that.questRef)
         })
     }
 

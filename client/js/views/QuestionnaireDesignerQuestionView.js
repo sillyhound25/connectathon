@@ -6,6 +6,6 @@
  * To change this template use File | Settings | File Templates.
  */
 
-var QuestionnaireDesignerAnswerView = BaseView.extend({
+var QuestionnaireDesignerQuestionView = BaseView.extend({
 
 })
