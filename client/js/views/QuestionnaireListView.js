@@ -6,8 +6,16 @@
 
 var QuestionnaireListView = BaseView.extend({
     events : {
-        "click .viewQ" : "view"
+        "click .viewQ" : "view",
+        "click .viewQSource" : "source"
 
+    },
+    source : function(ev) {
+        var id = ev.currentTarget.getAttribute('data-id');
+        $.get(id,function(data){
+            console.log(data)
+        })
+        //window.open(id);
     },
     view : function(ev){
       var id = ev.currentTarget.getAttribute('data-id');
@@ -27,7 +35,7 @@ var QuestionnaireListView = BaseView.extend({
                     console.log(ent.content.name);
                     ent.meta.name = FHIRHelper.ccDisplay(ent.content.name)
                 } else {
-                    ent.meta.name = ent.id;
+                    ent.meta.name = ent.id.getLogicalID();
                 }
                 console.log(ent)
             })
