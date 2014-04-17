@@ -1,0 +1,29 @@
+
+
+<div class="row">
+    <div class="col-sm-4 col-md-4">
+
+
+        <h4>Matching Questionnaires</h4>
+        <table class="table table-bordered table-condensed">
+            <thead><tr><th>Name</th><th>Status</th><th>Action</th></tr></thead>
+        {{#each entry}}
+            <!-- Only while the server doesn't support status query-->
+            {{#if include}}
+            <tr>
+
+                <td title="{{id}}"><a href='#' class='viewQ' data-id='{{id}}'>{{content.name.text}}</a></td>
+                <td>{{content.status}}</td>
+
+                <td><a href='#' class='viewQ' data-id='{{id}}'>View</a></td>
+            </tr>
+            {{/if}}
+        {{/each}}
+
+</table>
+
+    </div>
+    <div class="col-sm-8 col-md-8">
+        <div id="displayQ"></div>
+    </div>
+</div>

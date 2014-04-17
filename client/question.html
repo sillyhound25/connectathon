@@ -9,7 +9,12 @@
     <script src="js/libs/backbone-min.js"></script>
     <script src="js/libs/moment.min.js"></script>
 
+    <script src="js/views/BaseView.js"></script>
     <script src="js/views/QuestionnaireNavView.js"></script>
+    <script src="js/views/QuestionnaireListView.js"></script>
+    <script src="js/views/QuestionnaireSelectView.js"></script>
+
+
 
     <!-- Latest compiled and minified CSS-->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -45,6 +50,9 @@
 <body style="padding: 8px">
 
 
+<div id='working' class="alert alert-warning" style="display:none">Working...</div>
+
+
 <nav class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -54,7 +62,9 @@
             <a class="navbar-brand" href="#">  Questionnaire</a>
         </div>
         <ul class="nav navbar-nav">
-            <li class="active  navMainOption" data-page='homeTab'><a href="#"><i class="glyphicon glyphicon-home"></i> Home</a> </li>
+            <li class="active  navMainOption" data-page='homeTab'><a href="#"><i class="glyphicon glyphicon-home"></i> Find Questionnaire</a> </li>
+            <li class="navMainOption" data-page='newFormTab'><a href="#"><i class="glyphicon glyphicon-file"></i> New Form</a> </li>
+
         </ul>
         <ul class="nav navbar-nav pull-right">
             <li class="navMainOption" data-page='helpTab'><a href="#" ><i class="glyphicon glyphicon-question-sign"></i> </a></li>
@@ -63,25 +73,57 @@
 </nav>
 
 
-<div class="row">
+<div class="container-fluid">
+    <div class="myPane" id="homeTab">
+        <div id="qSelect"></div>
+        <div id="qList"></div>
+    </div>
 
-    <div class="col-sm-10 col-md-10" style="border-right: solid grey 1px">
-        <div id="form"></div>
+    <div class="myPane" id="newFormTab">
+        <div class="row">
+
+            <div class="col-sm-10 col-md-10" style="border-right: solid grey 1px">
+                <div id="form"></div>
+            </div>
+            <div class="col-sm-2 col-md-2">
+                <div id="formNav"></div>
+            </div>
+        </div>
     </div>
-    <div class="col-sm-2 col-md-2">
-        <div id="formNav"></div>
-    </div>
+
 </div>
+
+
 
 
 <script>
 
+
+
     $(document).ready(function(){
+
+
+        $('.myPane').hide();        //initially hide all the panes...
+        $('#homeTab').show();       //show the home tab
+
+        //activate the tabs on the navbar
+        $(".navMainOption").on('click',function(ev){
+            $(".navMainOption").removeClass('active');
+            $(ev.currentTarget).addClass('active');
+            //show the appropriate pane...
+            $('.myPane').hide();
+            var paneToShow = ev.currentTarget.getAttribute('data-page')
+            $('#'+paneToShow).show();
+        })
+
+
         var html="";    //todo -should these be in Z...
         var htmlNav = "";       //The form navigation bar...
-        var navView = new QuestionNavView({el:'#formNav'})
+
+
         //this will be a cross reference between the class of a control and
-        var xRef = {};
+        //var xRef = {};
+
         var Z = {'templates':{}}    //a global object to avoid polluting the global namespace...
 
 
@@ -92,6 +134,10 @@
 
         Z.templates.groupTemplate = Handlebars.compile($('#groupTemplate').html())
         Z.templates.saveButtonTemplate = Handlebars.compile($('#saveButtonTemplate').html())
+
+
+        questionnaireSelectView.render();
+
 
         var uri = '/api/oneresource/Questionnaire/ct6-soap1';
         //var uri = './samples/soapQuestionnaire.xml';
@@ -198,20 +244,15 @@
     }
 
 
-
-    function getEnteredData() {
-
-    }
+    Handlebars.registerHelper('logicalID',function(str){
+        var ar = str.split('/');
+        return ar[ar.length-1];
+            })
 
     });
 
-
-
-
-
-
-
 </script>
+
 
 
 <script type="handlebars/template" id='questionTemplate1col'>
@@ -296,6 +337,8 @@
     <hr />
 </script>
 
+<script src="js/mediatorQ.js"></script>
 
 </body>
+
 </html>
