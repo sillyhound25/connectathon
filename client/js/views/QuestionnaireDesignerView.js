@@ -8,8 +8,21 @@
 
 var QuestionnaireDesignerView = BaseView.extend({
     events : {
-        "click .viewQ" : "view",
-        "click .viewQSource" : "source"
+        "click .qGroup" : "group",
+        "click .qQuestion" : "question"
+    },
+    group : function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        var id = ev.currentTarget.getAttribute('data-id');
+        alert(id)
+
+    },
+    question : function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        var id = ev.currentTarget.getAttribute('data-id');
+        alert(id)
 
     },
     init : function(Q) {
@@ -21,20 +34,22 @@ var QuestionnaireDesignerView = BaseView.extend({
         }
     },
     addGroup : function(grp,node,ctx,lvl) {
-
+        //adds a group to the layout...
         var tab = "";
         for (var i=0; i<= lvl;i++) {
-            tab += "&nbsp;&nbsp;";
+            tab += "&nbsp;&nbsp;&nbsp;";
         }
 
-        var display = '<div >' + tab + FHIRHelper.groupDisplay(grp) + '</div>';
-
+        //var inx = ctx.setRef(ctx);
+        var groupView = new QuestionnaireDesignerGroupView();
+        ctx.groupRef.push(groupView);
+        //console.log(inx);
+        var display = "<div class='qGroup' data-id='"+groupView.cid+"'>" + tab + FHIRHelper.groupDisplay(grp) + '</div>';
         var newNode = $(display).appendTo(node);
 
-        console.log(grp);
         if (grp.question){
-            console.log('question');
-            ctx.addQuestion(newNode,grp.question,lvl)
+
+            ctx.addQuestions(newNode,grp.question,lvl,ctx)
         }
 
         if (grp.group) {
@@ -43,24 +58,22 @@ var QuestionnaireDesignerView = BaseView.extend({
                 ctx.addGroup(childGroup,newNode,ctx,newLevel)
             })
         }
-
     },
-    addQuestion : function(gNode,arQuest,glvl) {
-        //add questions to the group node
-        console.log(gNode,arQuest)
+    addQuestions : function(gNode,arQuest,glvl,ctx) {
+        //add questions to the group node in the layout
         var tab = "";
         for (var i=0; i<= glvl+1;i++) {
-            tab += "&nbsp;&nbsp;";
+            tab += "&nbsp;&nbsp;&nbsp;";
         }
 
         _.each(arQuest,function(quest){
+            var questView = new QuestionnaireDesignerQuestionView();
+            ctx.questRef.push(questView);
 
-            var display = '<div>'+tab +FHIRHelper.questionDisplay(quest) + "</div>"
-            //console.log(display);
+            var display = "<div class='qQuestion'>"+tab +FHIRHelper.questionDisplay(quest) + "</div>"
             $(display).appendTo(gNode);
 
         })
-
     },
     render : function() {
         var that = this;
@@ -68,8 +81,13 @@ var QuestionnaireDesignerView = BaseView.extend({
         this.getTemplate('questionnaireDesigner',function(){
             //the skeleton for the Q
             that.$el.html(that.template(that.model));
+
+            that.groupRef = [];
+            that.questRef = [];
+
             that.addGroup(that.model.group,$('#qdGroups'),that,0)
 
+            console.log(that.groupRef)
         })
     }
 
