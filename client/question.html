@@ -8,13 +8,16 @@
     <script src="js/libs/underscore-min.js"></script>
     <script src="js/libs/backbone-min.js"></script>
     <script src="js/libs/moment.min.js"></script>
+    <script src="js/libs/jquery.autosize.js"></script>
 
     <script src="js/views/BaseView.js"></script>
     <script src="js/views/QuestionnaireNavView.js"></script>
     <script src="js/views/QuestionnaireListView.js"></script>
     <script src="js/views/QuestionnaireSelectView.js"></script>
 
+    <script src="js/logic/questionnaireRender.js"></script>
 
+    <script src="js/FHIRHelpers.js"></script>
 
     <!-- Latest compiled and minified CSS-->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -117,8 +120,8 @@
         })
 
 
-        var html="";    //todo -should these be in Z...
-        var htmlNav = "";       //The form navigation bar...
+       // var html="";    //todo -should these be in Z...
+       // var htmlNav = "";       //The form navigation bar...
 
 
         //this will be a cross reference between the class of a control and
@@ -151,18 +154,26 @@
             //navView.html += Z.templates.saveButtonTemplate();   //render the save button
 
             navView.html += "<h5>Document Navigation</h5>";
-            var vo = showGroup(form,0);  //create the questionnaire form
-            var html1 = vo.form;
-            navView.html += vo.nav;
+
+            //renderQ.vo = {html:"",htmlNav:""}
+            renderQ.Z = Z;
+            //sets globals html & htmlNav - todo - there will be a  better way...
+            renderQ.showGroup(form,0);  //create the questionnaire form
+
+            console.log(htmlNav);
+
+            //var vo = showGroup(form,0);  //create the questionnaire form
+            //var html1 = renderQ.vo.form;
+            navView.html += htmlNav;
             //html1 += Z.templates.saveButtonTemplate();   //render the save button
 
-            $('#form').html(html1);
+            $('#form').html(html);
             navView.render();
 
             //$('#formNav').html(vo.nav);
         })
 
-
+/*
 
     //show a group
     function showGroup(grp,lvl) {
@@ -243,13 +254,22 @@
         return Z.templates[templateName]({question: quest,id:id,code:code});
     }
 
-
+*/
     Handlebars.registerHelper('logicalID',function(str){
         var ar = str.split('/');
         return ar[ar.length-1];
             })
 
     });
+
+    //generate a display for a codeable concept
+    Handlebars.registerHelper('ccDisplay',function(cc){
+        return FHIRHelper.ccDisplay(cc);
+
+    });
+
+
+
 
 </script>
 
@@ -258,9 +278,32 @@
 <script type="handlebars/template" id='questionTemplate1col'>
 
     <div class="col-sm-12 col-md-12">
+        <div>{{display}}</div>
+
         <form role="form" class="form-horizontal">
             <div class="form-group">
-                <label class="col-sm-2 col-md-2">{{question.text}}</label>
+
+                <div class="col-sm-12 col-md-12">
+                    {{#if code}}
+                    <textarea class="form-control data-{{code}}"></textarea>
+
+                    {{else}}
+                    <input type='text' class="form-control" disabled="disabled"
+                           placeholder="There is no question.name so data cannot be entered"/>
+                    {{/if}}
+                </div>
+            </div>
+        </form>
+    </div>
+
+</script>
+
+<script type="handlebars/template" id='questionTemplate1colDEP'>
+
+    <div class="col-sm-12 col-md-12">
+        <form role="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 col-md-2">{{display}}</label>
                 <div class="col-sm-10 col-md-10">
                     {{#if code}}
                     <input type='text' class="form-control data-{{code}}" value = '{{meta.id}}'
@@ -276,13 +319,12 @@
 
 </script>
 
-
 <script type="handlebars/template" id='questionTemplate2col'>
 
         <div class="col-sm-6 col-md-6">
             <form role="form" class="form-horizontal">
                 <div class="form-group">
-                    <label class="col-sm-4 col-md-4">{{question.text}}</label>
+                    <label class="col-sm-4 col-md-4">{{display}}</label>
                     <div class="col-sm-8 col-md-8">
                         {{#if code}}
                         <input type='text' class="form-control data-{{code}}" value = '{{meta.id}}'
@@ -303,7 +345,7 @@
     <div class="col-sm-4 col-md-4">
         <form role="form" class="form-horizontal">
             <div class="form-group">
-                <label class="col-sm-4 col-md-4">{{question.text}}</label>
+                <label class="col-sm-4 col-md-4">{{display}}</label>
                 <div class="col-sm-8 col-md-8">
                     {{#if code}}
                     <input type='text' class="form-control data-{{code}}" value = '{{meta.id}}'

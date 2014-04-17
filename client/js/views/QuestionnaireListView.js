@@ -20,6 +20,20 @@ var QuestionnaireListView = BaseView.extend({
             //will setup that.template as a handlebars template
             //that.template();
             //model is a fhir bundle...
+            //get the display title - not all Q;s have a name...
+            _.each(that.model.entry,function(ent){
+                ent.meta = {};
+                if (ent.content.name) {
+                    console.log(ent.content.name);
+                    ent.meta.name = FHIRHelper.ccDisplay(ent.content.name)
+                } else {
+                    ent.meta.name = ent.id;
+                }
+                console.log(ent)
+            })
+
+
+
             that.$el.html(that.template(that.model));
         })
     }

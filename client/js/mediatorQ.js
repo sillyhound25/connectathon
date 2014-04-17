@@ -42,9 +42,20 @@ Backbone.listenTo(questionnaireSelectView,'qSelect:select',function(vo){
     })
 
 })
+
+//user has selected a template or form to view...
 Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     var id = vo.id;     //form or template
-    alert(id);
+    //alert(id);
+
+    var entry = _.findWhere(MediatorQ.allQuests.entry,{id:id})
+    console.log(entry);
+
+    html = "";
+    renderQ.showGroup(entry.content.group,0);  //create the questionnaire form
+    $('#displayQ').html(html);
+    $('textarea').autosize();
+
 });
 
 
@@ -78,7 +89,7 @@ MediatorQ.getQuests = function(type,callback) {
     function filterBundle(bundle,callback) {
         //this is only needed until the server handles status query
         $.each(bundle.entry,function(inx,ent){
-            console.log(ent)
+
             if (arStatus.indexOf(ent.content.status) > -1) {
                 ent.include=true
             } else {
