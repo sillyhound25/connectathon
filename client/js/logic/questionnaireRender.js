@@ -73,6 +73,11 @@ renderQ.showGroup = function(grp,lvl) {
 //numCol is the number of columns...
 renderQ.showQuestion = function(quest,id,numCol) {
 
+    var code;
+    if (quest.name && quest.name.coding && quest.name.coding.length > 0 && quest.name.coding[0].code) {
+        code = quest.name.coding[0].code;
+    }
+/*
     var display = "No description";     //the text of the question
 
     //If there is a code with a name then it can be edited...
@@ -84,7 +89,8 @@ renderQ.showQuestion = function(quest,id,numCol) {
     if (quest.text) {
         display = quest.text;
     }
-
+*/
+    var display = FHIRHelper.questionDisplay(quest)
 
     //FHIRHelper.ccDisplay
     //choose the correct template based on the number of columns...

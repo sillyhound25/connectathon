@@ -23,7 +23,7 @@ var questionnaireListView = new QuestionnaireListView({el:'#qList'});
 var navView = new QuestionNavView({el:'#formNav'});
 
 var qDesignerView = new QuestionnaireDesignerView({el:'#qDesigner'});
-qDesignerView.render();
+//qDesignerView.render();
 
 //a simple assertion checker (based on John Resigs one) that shows a message if the outcome is false
 MediatorQ.assert = function( outcome, description ) {
@@ -58,6 +58,11 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     renderQ.showGroup(entry.content.group,0);  //create the questionnaire form
     $('#displayQ').html(html);
     $('textarea').autosize();
+
+
+
+    qDesignerView.init(entry.content);
+    qDesignerView.render();
 
 });
 
