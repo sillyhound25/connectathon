@@ -15,6 +15,10 @@
     <script src="js/views/QuestionnaireListView.js"></script>
     <script src="js/views/QuestionnaireSelectView.js"></script>
 
+    <script src="js/views/QuestionnaireDesignerView.js"></script>
+    <script src="js/views/QuestionnaireDesignerGroupView.js"></script>
+    <script src="js/views/QuestionnaireDesignerAnswerView.js"></script>
+
     <script src="js/logic/questionnaireRender.js"></script>
 
     <script src="js/FHIRHelpers.js"></script>
@@ -67,6 +71,7 @@
         <ul class="nav navbar-nav">
             <li class="active  navMainOption" data-page='homeTab'><a href="#"><i class="glyphicon glyphicon-home"></i> Find Questionnaire</a> </li>
             <li class="navMainOption" data-page='newFormTab'><a href="#"><i class="glyphicon glyphicon-file"></i> New Form</a> </li>
+            <li class="navMainOption" data-page='designerTab'><a href="#"><i class="glyphicon glyphicon-file"></i> Designer</a> </li>
 
         </ul>
         <ul class="nav navbar-nav pull-right">
@@ -93,6 +98,12 @@
             </div>
         </div>
     </div>
+
+    <div class="myPane" id="designerTab">
+        <div id="qDesigner"></div>
+
+    </div>
+
 
 </div>
 

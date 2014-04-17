@@ -22,6 +22,9 @@ var questionnaireSelectView = new QuestionnaireSelectView({el:'#qSelect'});
 var questionnaireListView = new QuestionnaireListView({el:'#qList'});
 var navView = new QuestionNavView({el:'#formNav'});
 
+var qDesignerView = new QuestionnaireDesignerView({el:'#qDesigner'});
+qDesignerView.render();
+
 //a simple assertion checker (based on John Resigs one) that shows a message if the outcome is false
 MediatorQ.assert = function( outcome, description ) {
     if (!outcome) {
