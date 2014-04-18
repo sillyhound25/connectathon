@@ -11,7 +11,7 @@ String.prototype.getLogicalID = function (){
     } else {
         return this.toString();
     }
-}
+};
 
 
 var MediatorQ={};
@@ -30,14 +30,18 @@ MediatorQ.assert = function( outcome, description ) {
     if (!outcome) {
         alert("Assert Error: " + description);
     }
-}
+};
 
 //the questionairre has been updated in the designer...
 Backbone.on('Q:updated',function(vo){
-    //alert('new')
-    //console.log(vo);
     qDesignerView.render();
 })
+
+
+//the user wishes to save a new Questionnaire
+Backbone.listenTo(qDesignerView,'qd:saveNewQ',function(vo){
+    console.log(vo);
+});
 
 //The user selects either forms or templates
 //extend to include patient select
@@ -51,6 +55,32 @@ Backbone.listenTo(questionnaireSelectView,'qSelect:select',function(vo){
     })
 
 })
+
+//user wishes to create a new Questionnaire
+Backbone.listenTo(questionnaireSelectView,'qlv:newQ',function(vo){
+    qDesignerView.init();
+
+    qDesignerView.render();
+    Backbone.myFunctions.showMainTab("designerTab");
+
+});
+
+//user has selected a template or form to view...
+Backbone.listenTo(questionnaireListView,'qlv:design',function(vo){
+    var id = vo.id;     //form or template
+    //alert(id);
+
+    var entry = _.findWhere(MediatorQ.allQuests.entry,{id:id})
+    console.log(entry);
+    var Q = entry.content; //the questionnaire...
+
+    //qDesignerView.init(Q);
+    qDesignerView.init(entry);
+    //qDesignerView.init({content:entry,id:id});
+    qDesignerView.render();
+    Backbone.myFunctions.showMainTab("designerTab");
+
+});
 
 //user has selected a template or form to view...
 Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
@@ -66,8 +96,8 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     $('textarea').autosize();
 
 
-
-    qDesignerView.init(entry.content);
+    qDesignerView.init(entry);
+    //qDesignerView.init({content:entry,id:id});
     qDesignerView.render();
 
 });

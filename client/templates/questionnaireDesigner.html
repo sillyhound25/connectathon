@@ -11,17 +11,38 @@
     }
 </style>
 
-<h4>Questionnaire Designer</h4>
 
+<form role="form" class="form-horizontal">
+    <div class="form-group">
+        <label for="qdId" class="col-sm-2 col-md-2 control-label">Questionnaire ID:</label>
+
+        <div class="col-sm-6 col-md-6">
+             <input class="form-control" type='text' id = "qdId" value='{{id}}'    />
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <button class="btn btn-primary pull-right" id='qdFormUpdate'>Update</button>
+        </div>
+
+    </div>
+</form>
+
+
+
+        <hr />
 <ul class="nav nav-tabs">
-    <li class="active"><a href="#qdDesign" data-toggle="tab">Designer</a></li>
-    <li class=""><a href="#qdPreview" data-toggle="tab">Preview</a></li>
+    <li class="active"><a href="#qdHeader" data-toggle="tab">Header</a></li>
+    <li><a href="#qdDesign" data-toggle="tab">Layout</a></li>
+    <li><a href="#qdPreview" data-toggle="tab">Preview</a></li>
 </ul>
 
 <br />
 <div class="tab-content" >
 
-    <div class="active tab-pane" id="qdDesign">
+    <div class="active tab-pane" id="qdHeader">
+        <div id="qdHeaderDiv"></div>
+    </div>
+
+    <div class="tab-pane" id="qdDesign">
         <div class="row">
             <div class="col-sm-4 col-md-4">
                 <h5>Layout</h5>

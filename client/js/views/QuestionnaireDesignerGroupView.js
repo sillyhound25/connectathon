@@ -37,39 +37,6 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
         console.log(group)
         Backbone.trigger('Q:updated');  //will cause the designer to re-render
     },
-    addExtensionDEP : function(url,value,type) {
-        //add a particular extension
-        var updated = false;
-        if (this.model.extension) {
-            _.each(this.model.extension,function(ext) {
-                if (ext.url === url){
-                    ext[type] = value;
-                    updated = true;
-                }
-            });
-            if (! updated) {
-                var ext = {url:url};
-                ext[type] = value;
-                this.model.extension.push(ext)
-            }
-        } else {
-            var ext = {url:url};
-            ext[type] = value;
-            this.model.extension = [(ext)];
-        }
-    },
-    getExtensionValueDEP : function(url,type) {
-        var value;
-        if (this.model.extension) {
-            _.each(this.model.extension,function(ext) {
-                if (ext.url === url){
-                    value = ext[type];
-
-                }
-            });
-        }
-        return value;
-    },
     addQuestion : function(ev){
         ev.preventDefault();
         ev.stopPropagation();
@@ -94,7 +61,7 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
 
 
             var numCols = Backbone.FHIRHelper.getExtensionValue(that.model,"fhir.orionhealth.com/questionnaire#numcol","valueInteger");
-            console.log(numCols)
+            //console.log(numCols)
             if (numCols) {
                 $('input[name="qdGroupCols"]').val([numCols]);
             }

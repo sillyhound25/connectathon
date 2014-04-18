@@ -7,8 +7,21 @@
 var QuestionnaireListView = BaseView.extend({
     events : {
         "click .viewQ" : "view",
-        "click .viewQSource" : "source"
+        "click .viewQSource" : "source",
+        "click .designQSource" : "design"
 
+
+    },
+
+    design : function(ev) {
+        var that = this;
+        var id = ev.currentTarget.getAttribute('data-id');
+        that.trigger("qlv:design",{id:id});
+/*
+        $.get(id,function(Q){
+            console.log(Q)
+
+        }) */
     },
     source : function(ev) {
         var id = ev.currentTarget.getAttribute('data-id');

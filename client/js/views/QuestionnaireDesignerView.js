@@ -10,8 +10,38 @@ var QuestionnaireDesignerView = BaseView.extend({
     events : {
         "click .qGroup" : "group",
         "click .qQuestion" : "group",
-        "shown.bs.tab a[data-toggle='tab']" : "tabSelect"
+        "shown.bs.tab a[data-toggle='tab']" : "tabSelect",
+        "click #qdFormUpdate" : "update"
     },
+    update : function() {
+        if (this.isNew) {
+            var desiredId = $('#qdId').val();
+            this.trigger('qd:saveNewQ',{id:desiredId,Q:this.model})
+        } else {
+            this.trigger('qd:updateQ',{id:this.id,Q:this.model})
+        }
+
+    },
+    init : function(entry) {
+        //create a new model. The model will be a FHIR Questionnaire resource, but the
+        //object passed in is a bundle entry (and so contains the id). If no object is passed in,
+        //then it is a new questionnaire.
+        //at the momebt there is a memory leak (viewRef is not being cleared) but I'm leaving that so I can
+        //experiment with chrome memory checking...
+
+        console.log(entry);
+        if (entry) {
+            this.model = entry.content;
+            this.id = entry.id;
+            this.isNew = false;
+
+        } else {
+            this.model = {group : []};       //model.group holds the
+            this.isNew = true;
+            delete this.id;
+        }
+    },
+
     tabSelect : function(ev) {
         if (ev.target.getAttribute('href') === '#qdPreview') {
             //moving to the preview mode - render the form...
@@ -20,7 +50,7 @@ var QuestionnaireDesignerView = BaseView.extend({
             html = "";
             renderQ.showGroup(this.model.group,0);  //create the questionnaire form
             $('#qdPreviewDiv').html(html);
-            //console.log(html);
+
         }
 
     },
@@ -40,24 +70,8 @@ var QuestionnaireDesignerView = BaseView.extend({
                 return;
             }
         })
-
-
     },
-    questionDEP : function(ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
-        var id = ev.currentTarget.getAttribute('data-id');
-        alert(id)
 
-    },
-    init : function(Q) {
-        //create a new model. This will be a FHIR Questionnaire resource
-        if (Q) {
-            this.model = Q
-        } else {
-            this.model = {group : []};       //model.group holds the
-        }
-    },
     addGroup : function(grp,node,ctx,lvl) {
         //adds a group to the layout...
         var tab = "";
@@ -98,25 +112,51 @@ var QuestionnaireDesignerView = BaseView.extend({
             var questView = new QuestionnaireDesignerQuestionView({el:el,model:quest});
             ctx.viewRef.push(questView);
 
-            var display = "<div class='qQuestion' data-id='"+questView.cid+"'>"+tab +FHIRHelper.questionDisplay(quest) + "</div>"
-            $(display).appendTo(gNode);
+            var text = FHIRHelper.questionDisplay(quest);
+            if (text.length > 50) {
+                text = text.substr(0,47) + '...';
+            }
+
+            var display = "<div class='qQuestion' data-id='"+questView.cid+"'>"+tab + text + "</div>"
+            var questNode = $(display).appendTo(gNode);
+
+            if (quest.group) {
+                //this question also has groups attached
+                _.each(quest.group,function(questGroup){
+
+                        var newQuestionLevel = glvl +1;
+                        ctx.addGroup(questGroup,questNode,ctx,newQuestionLevel)
+
+                })
+            }
 
         })
+
+
     },
     render : function() {
         var that = this;
         //console.log(this.model);
         this.getTemplate('questionnaireDesigner',function(){
-            //the skeleton for the Q
-            that.$el.html(that.template(that.model));
+            //create the skeleton for the Questionnaire...
+            that.$el.html(that.template({id:that.id}));
 
-            that.viewRef = [];
-            //that.questRef = [];
+            //now, disable the ID unless this is a new model
+            if (that.isNew) {
+                //$("#qdIdText").text("Enter ID")
+                $("#qdId").attr('placeholder','Enter an ID or leave blank for the server to assign');
+            } else {
+                $("#qdId").attr('disabled',true);
+            }
 
+
+            //that.$el.html(that.template(that.model));
+
+            that.viewRef = [];  //will hold the child views for group and question...
+
+            //create the hierarchical model of the questionnaires. This will directly populate the DOM
+            //and will create references to viewRef so the Questionnaire can be updated.
             that.addGroup(that.model.group,$('#qdGroups'),that,0)
-
-            //console.log(that.viewRef)
-           // console.log(that.questRef)
         })
     }
 

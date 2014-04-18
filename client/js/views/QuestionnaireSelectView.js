@@ -5,8 +5,13 @@
 
 var QuestionnaireSelectView = BaseView.extend({
     events : {
-        "click .qselect" : "select"
+        "click .qselect" : "select",
+        "click #lqNewQ" : "newQ"
 
+    },
+    newQ : function() {
+        //create a new Questionnaire
+        this.trigger("qlv:newQ");
     },
     select : function(ev) {
         //one of the 'type' radios was selected...

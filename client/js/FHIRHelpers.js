@@ -40,7 +40,7 @@ FHIRHelper.questionDisplay = function(quest){
 
 //return a display that identifies a questionnaire group...
 FHIRHelper.groupDisplay = function(group){
-    var display = "";
+    var display = "No title";
 
     if (group.text) {
         display = group.text;

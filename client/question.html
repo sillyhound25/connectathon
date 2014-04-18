@@ -68,12 +68,13 @@
             </a>
             <a class="navbar-brand" href="#">  Questionnaire</a>
         </div>
+
         <ul class="nav navbar-nav">
-            <li class="active  navMainOption" data-page='homeTab'><a href="#"><i class="glyphicon glyphicon-home"></i> Find Questionnaire</a> </li>
+            <li class="active navMainOption" data-page='homeTab'><a href="#"><i class="glyphicon glyphicon-home"></i> Find Questionnaire</a> </li>
             <li class="navMainOption" data-page='newFormTab'><a href="#"><i class="glyphicon glyphicon-file"></i> New Form</a> </li>
             <li class="navMainOption" data-page='designerTab'><a href="#"><i class="glyphicon glyphicon-file"></i> Designer</a> </li>
-
         </ul>
+
         <ul class="nav navbar-nav pull-right">
             <li class="navMainOption" data-page='helpTab'><a href="#" ><i class="glyphicon glyphicon-question-sign"></i> </a></li>
         </ul>
@@ -103,41 +104,31 @@
         <div id="qDesigner"></div>
 
     </div>
-
-
 </div>
 
-
-
-
 <script>
-
-    //var globalQ;
-
-
     $(document).ready(function(){
 
 
+        Backbone.myFunctions = {};
+
         $('.myPane').hide();        //initially hide all the panes...
-        $('#designerTab').show();       //show the home tab
+        $('#homeTab').show();       //show the home tab
 
         //activate the tabs on the navbar
         $(".navMainOption").on('click',function(ev){
-            $(".navMainOption").removeClass('active');
-            $(ev.currentTarget).addClass('active');
-            //show the appropriate pane...
-            $('.myPane').hide();
-            var paneToShow = ev.currentTarget.getAttribute('data-page')
-            $('#'+paneToShow).show();
+            var tabName =  ev.currentTarget.getAttribute('data-page');
+            Backbone.myFunctions.showMainTab(tabName)
         })
 
+        Backbone.myFunctions.showMainTab = function(tabName) {
+            var $menuItem = $("li[data-page='"+tabName+"']");
+            $(".navMainOption").removeClass('active');
+            $menuItem.addClass("active");
+            $('.myPane').hide();
+            $('#'+tabName).show();
 
-       // var html="";    //todo -should these be in Z...
-       // var htmlNav = "";       //The form navigation bar...
-
-
-        //this will be a cross reference between the class of a control and
-        //var xRef = {};
+        }
 
         var Z = {'templates':{}}    //a global object to avoid polluting the global namespace...
 
@@ -180,102 +171,15 @@
             //var vo = showGroup(form,0);  //create the questionnaire form
             //var html1 = renderQ.vo.form;
             navView.html += htmlNav;
-            //html1 += Z.templates.saveButtonTemplate();   //render the save button
 
             $('#form').html(html);
             navView.render();
 
-
-            //temp
-            //globalQ = Q;
-            qDesignerView.init(Q);
+            qDesignerView.init({content:Q,id:uri});
             qDesignerView.render();
-
-            //$('#formNav').html(vo.nav);
         })
 
-/*
 
-    //show a group
-    function showGroup(grp,lvl) {
-        //console.log(lvl, grp.header);
-        if (grp.header) {
-            var klass = 'formNav'+lvl;
-
-            //todo - move this into the view...
-            var templateStr = "<div class=' <%= klass%>'><a class='mynav'><%= text%></a></div>"
-            htmlNav += _.template(templateStr,{text:grp.header,klass:klass});//  "<div >"+grp.header+"</div>"
-        }
-
-        var displayLevel = lvl;
-        if (displayLevel > 2) {
-            displayLevel = 2;
-        }
-
-
-        //display all the questions in this group -
-        var numCol = 1;         //the number of columns to display (like a flow layout) - come fron an extension
-        var mayRepeat = false;  //if the group can repeat...
-        if (grp.extension){     //there are extensions to this group...
-            _.each(grp.extension,function(ext){
-                switch (ext.url) {
-                    case 'fhir.orionhealth.com/questionnaire#numcol' : {
-                        numCol = ext.valueInteger;
-                        break;
-                    }
-                    case 'http://hl7.org/fhir/questionnaire-extensions#mayRepeat' : {
-                        mayRepeat = ext.valueBoolean;
-                        break;
-                    }
-                }
-            })
-        }
-
-
-        html += Z.templates.groupTemplate({group: grp,level:displayLevel});
-
-
-
-        if (grp.question) {
-            html += "<row>"
-            _.each(grp.question,function(quest,inx){
-                var id='q-'+lvl+'-'+inx;
-                html += showQuestion(quest,id,numCol);
-                //console.log(inx % numCol);
-                if(inx % numCol === 1 ) {
-                    //if at the col count then close the row and create a now one
-                    html += "</row><row>"
-                }
-            })
-            html += "</row>";
-        }
-
-
-        if (grp.group) {
-            lvl++;
-            _.each(grp.group,function(grp1){
-                showGroup(grp1,lvl);
-            })
-        }
-        return {form: html,nav : htmlNav};
-    }
-
-    //show a single question (and possibly an answer)
-    //numCol is the number of columns...
-    function showQuestion(quest,id,numCol) {
-
-        //If there is a code with a name then it can be edited...
-        var code;
-        if (quest.name && quest.name.coding && quest.name.coding.length > 0 && quest.name.coding[0].code) {
-            code = quest.name.coding[0].code;
-        }
-
-        //choose the correct template based on the number of columns...
-        var templateName = "questionTemplate" + numCol + "col";
-        return Z.templates[templateName]({question: quest,id:id,code:code});
-    }
-
-*/
     Handlebars.registerHelper('logicalID',function(str){
         var ar = str.split('/');
         return ar[ar.length-1];
