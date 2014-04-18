@@ -112,6 +112,7 @@
 
 <script>
 
+    //var globalQ;
 
 
     $(document).ready(function(){
@@ -168,10 +169,13 @@
 
             //renderQ.vo = {html:"",htmlNav:""}
             renderQ.Z = Z;
+
+            //var htmlx = "";
+
             //sets globals html & htmlNav - todo - there will be a  better way...
             renderQ.showGroup(form,0);  //create the questionnaire form
 
-            //console.log(htmlNav);
+            //console.log(h);
 
             //var vo = showGroup(form,0);  //create the questionnaire form
             //var html1 = renderQ.vo.form;
@@ -183,6 +187,7 @@
 
 
             //temp
+            //globalQ = Q;
             qDesignerView.init(Q);
             qDesignerView.render();
 

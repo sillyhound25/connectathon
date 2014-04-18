@@ -9,7 +9,20 @@
 var QuestionnaireDesignerView = BaseView.extend({
     events : {
         "click .qGroup" : "group",
-        "click .qQuestion" : "group"
+        "click .qQuestion" : "group",
+        "shown.bs.tab a[data-toggle='tab']" : "tabSelect"
+    },
+    tabSelect : function(ev) {
+        if (ev.target.getAttribute('href') === '#qdPreview') {
+            //moving to the preview mode - render the form...
+
+            //todo - the renderer uses the global html & htmlNav. There must be a better way...
+            html = "";
+            renderQ.showGroup(this.model.group,0);  //create the questionnaire form
+            $('#qdPreviewDiv').html(html);
+            //console.log(html);
+        }
+
     },
     group : function(ev) {
         //the user has selected a group or question detail...
@@ -18,11 +31,11 @@ var QuestionnaireDesignerView = BaseView.extend({
         $('.qdgDetail').hide(); //hide all the detail views...
 
         var id = ev.currentTarget.getAttribute('data-id');
-        console.log(id)
+        //console.log(id)
 
         _.each(this.viewRef,function(view){
             if (view.cid === id) {
-                console.log('render')
+                //console.log('render')
                 view.render();
                 return;
             }

@@ -9,7 +9,66 @@
 var QuestionnaireDesignerGroupView = BaseView.extend({
 
     events : {
-        "click #qdgAddQuestion" : "addQuestion"
+        "click #qdgAddQuestion" : "addQuestion",
+        "click #qdgAddSubGroup" : "addGroup",
+        "click #qdgUpdateGroup" : "update"
+    },
+    update : function() {
+        var group = this.model;     //the model is the fhir pojo group
+        group.text = $('#qdgText').val();
+        group.header = $('#qdgHeader').val();
+
+        var numCols =$("input[name='qdGroupCols']:checked").val();
+
+        //console.log(numCols)
+
+        Backbone.FHIRHelper.addExtension(this.model,"fhir.orionhealth.com/questionnaire#numcol",numCols,"valueInteger");
+
+        Backbone.trigger('Q:updated');  //will cause the designer to re-render
+    },
+    addGroup : function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        var group = this.model;     //the model is the fhir pojo group
+
+        group.group = group.group || [];
+        group.group.push({text:'new group',header:'new group'});
+        console.log(group)
+        Backbone.trigger('Q:updated');  //will cause the designer to re-render
+    },
+    addExtensionDEP : function(url,value,type) {
+        //add a particular extension
+        var updated = false;
+        if (this.model.extension) {
+            _.each(this.model.extension,function(ext) {
+                if (ext.url === url){
+                    ext[type] = value;
+                    updated = true;
+                }
+            });
+            if (! updated) {
+                var ext = {url:url};
+                ext[type] = value;
+                this.model.extension.push(ext)
+            }
+        } else {
+            var ext = {url:url};
+            ext[type] = value;
+            this.model.extension = [(ext)];
+        }
+    },
+    getExtensionValueDEP : function(url,type) {
+        var value;
+        if (this.model.extension) {
+            _.each(this.model.extension,function(ext) {
+                if (ext.url === url){
+                    value = ext[type];
+
+                }
+            });
+        }
+        return value;
     },
     addQuestion : function(ev){
         ev.preventDefault();
@@ -18,9 +77,9 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
         var group = this.model;     //the model is the fhir pojo group
         group.question = group.question || [];
         group.question.push({text:'new question'});
-        //console.log(group)
+        console.log(group)
         //console.log('y')
-        Backbone.trigger('newquestion',{group:group});
+        Backbone.trigger('Q:updated');  //will cause the designer to re-render
     },
     render : function() {
         var that = this;
@@ -29,6 +88,16 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
 
             that.$el.html(that.template({group:that.model}));
             //that.$el.html(that.template({group:that.model,display:FHIRHelper.groupDisplay(that.model)}));
+
+            //set the column count
+
+
+
+            var numCols = Backbone.FHIRHelper.getExtensionValue(that.model,"fhir.orionhealth.com/questionnaire#numcol","valueInteger");
+            console.log(numCols)
+            if (numCols) {
+                $('input[name="qdGroupCols"]').val([numCols]);
+            }
         })
     }
 

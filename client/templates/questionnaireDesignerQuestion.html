@@ -1,14 +1,15 @@
 <!--  the  page for the designer answer-->
 
 <div class='qdgDetail'>
-        {{questionDisplay this}}
+    <h4 class='qQuestion'>Question Details:{{questionDisplay this}} </h4>
+
 
     <form role="form" class="form-horizontal">
 
         <div class="form-group">
             <label for="ccp-text" class="col-sm-2 control-label">Name</label>
             <div class="col-sm-5">
-                <input type='text' class="form-control" id="ccp-text" placeholder="Display Text" value='{{text}}'/>
+                <input type='text' class="form-control" id="qdq_text" placeholder="Display Text" value='{{text}}'/>
             </div>
             <div class="col-sm-2">
                 {{#each name.coding}}
@@ -43,4 +44,6 @@
     <button class="btn btn-default">New Question this group</button>
     <button class="btn btn-default">Remove question</button>
     <button class="btn btn-default">Add sub group</button>
+    <button class="btn btn-default" id='qdqUpdateQuestion'>Update</button>
+
 </div>

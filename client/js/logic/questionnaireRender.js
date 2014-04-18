@@ -77,19 +77,7 @@ renderQ.showQuestion = function(quest,id,numCol) {
     if (quest.name && quest.name.coding && quest.name.coding.length > 0 && quest.name.coding[0].code) {
         code = quest.name.coding[0].code;
     }
-/*
-    var display = "No description";     //the text of the question
 
-    //If there is a code with a name then it can be edited...
-    var code;
-    if (quest.name && quest.name.coding && quest.name.coding.length > 0 && quest.name.coding[0].code) {
-        code = quest.name.coding[0].code;
-        display = code;
-    }
-    if (quest.text) {
-        display = quest.text;
-    }
-*/
     var display = FHIRHelper.questionDisplay(quest)
 
     //FHIRHelper.ccDisplay

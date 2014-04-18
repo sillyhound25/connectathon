@@ -4,6 +4,8 @@
 
 var FHIRHelper = {};
 
+Backbone.FHIRHelper = FHIRHelper;       //so helpers can be accessed anywhere..
+
 //generate a display for a codeableconcept
 FHIRHelper.ccDisplay = function(cc){
     var display = "";
@@ -39,8 +41,52 @@ FHIRHelper.questionDisplay = function(quest){
 //return a display that identifies a questionnaire group...
 FHIRHelper.groupDisplay = function(group){
     var display = "";
+
+    if (group.text) {
+        display = group.text;
+    }
+
     if (group && group.header) {
         display = group.header;
     }
+
+
+
         return display;
 };
+
+//get the value of a particular extension
+FHIRHelper.getExtensionValue = function(model,url,type) {
+    var value;
+    if (model && model.extension) {
+        _.each(model.extension,function(ext) {
+            if (ext.url === url){
+                value = ext[type];
+
+            }
+        });
+    }
+    return value;
+}
+
+FHIRHelper.addExtension = function(model,url,value,type) {
+    //add a particular extension
+    var updated = false;
+    if (model.extension) {
+        _.each(model.extension,function(ext) {
+            if (ext.url === url){
+                ext[type] = value;
+                updated = true;
+            }
+        });
+        if (! updated) {
+            var ext = {url:url};
+            ext[type] = value;
+            model.extension.push(ext)
+        }
+    } else {
+        var ext = {url:url};
+        ext[type] = value;
+        model.extension = [(ext)];
+    }
+}

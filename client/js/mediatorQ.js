@@ -32,10 +32,10 @@ MediatorQ.assert = function( outcome, description ) {
     }
 }
 
-
-Backbone.on('newquestion',function(vo){
+//the questionairre has been updated in the designer...
+Backbone.on('Q:updated',function(vo){
     //alert('new')
-    console.log(vo);
+    //console.log(vo);
     qDesignerView.render();
 })
 

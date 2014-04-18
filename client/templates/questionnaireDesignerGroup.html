@@ -6,9 +6,34 @@
     <form role="form" class="form-horizontal">
 
         <div class="form-group">
+            <label class="col-sm-2 control-label">Columns</label>
+            <div class="col-sm-10">
+
+                <div class="radio-inline">
+                    <label>
+                        <input type="radio" value='1' name="qdGroupCols" checked="checked">
+                        1 Column
+                    </label>
+                </div>
+                <div class="radio-inline">
+                    <label>
+                        <input type="radio" value='2' name="qdGroupCols">
+                        2 Column
+                    </label>
+                </div>
+                <div class="radio-inline">
+                    <label>
+                        <input type="radio" value='3' name="qdGroupCols">
+                        3 Column
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
             <label for="qdgHeader" class="col-sm-2 control-label">Header</label>
             <div class="col-sm-10">
-                <input type='text' class="form-control" id="qdgHeader" placeholder="Text displayed above group contents" value='{{group.text}}'/>
+                <input type='text' class="form-control" id="qdgHeader" placeholder="Text displayed above group contents" value='{{group.header}}'/>
             </div>
         </div>
 
@@ -26,5 +51,7 @@
 
     <button class="btn btn-primary" id="qdgAddQuestion">New Question this group</button>
     <button class="btn btn-default">Remove group</button>
-    <button class="btn btn-default">Add sub group</button>
+    <button class="btn btn-default" id="qdgAddSubGroup">Add sub group</button>
+    <button class="btn btn-default" id="qdgUpdateGroup">Update group</button>
+
 </div>
