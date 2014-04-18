@@ -118,7 +118,7 @@
 
 
         $('.myPane').hide();        //initially hide all the panes...
-        $('#homeTab').show();       //show the home tab
+        $('#designerTab').show();       //show the home tab
 
         //activate the tabs on the navbar
         $(".navMainOption").on('click',function(ev){
@@ -156,7 +156,7 @@
         var uri = '/api/oneresource/Questionnaire/ct6-soap1';
         //var uri = './samples/soapQuestionnaire.xml';
         $.get(uri,function(Q){
-            console.log(Q)
+            //console.log(Q)
             var form = Q.group;     //the root element of the form
 
             //navView.html
@@ -171,7 +171,7 @@
             //sets globals html & htmlNav - todo - there will be a  better way...
             renderQ.showGroup(form,0);  //create the questionnaire form
 
-            console.log(htmlNav);
+            //console.log(htmlNav);
 
             //var vo = showGroup(form,0);  //create the questionnaire form
             //var html1 = renderQ.vo.form;
@@ -284,6 +284,15 @@
 
     });
 
+    Handlebars.registerHelper('groupDisplay',function(grp){
+        return FHIRHelper.groupDisplay(grp);
+
+    });
+
+    Handlebars.registerHelper('questionDisplay',function(grp){
+        return FHIRHelper.questionDisplay(grp);
+
+    });
 
 
 
@@ -394,6 +403,17 @@
     <div><div class="center-block"> <input type="checkbox" id='formComplete'/> Form Complete</div></div>
     <hr />
 </script>
+
+<!-- A hb partial that will render a template for a CodeableConcept-->
+<script id="cc-partialDEP" type="text/x-handlebars-template">
+    <div class="form-group">
+        <label for="ccp-text" class="col-sm-2 control-label">Text</label>
+        <div class="col-sm-5">
+            <input type='text' class="form-control" id="ccp-text" value='{{text}}'/>
+        </div>
+    </div>
+</script>
+
 
 <script src="js/mediatorQ.js"></script>
 

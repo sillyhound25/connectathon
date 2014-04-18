@@ -16,7 +16,7 @@ var QuestionnaireSelectView = BaseView.extend({
     },
     render : function() {
         var that = this;
-        console.log(this.model);
+        //console.log(this.model);
         this.getTemplate('questionnaireSelect',function(){
             //will setup that.template as a handlebars template
             //model is a fhir bundle...

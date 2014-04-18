@@ -33,6 +33,12 @@ MediatorQ.assert = function( outcome, description ) {
 }
 
 
+Backbone.on('newquestion',function(vo){
+    //alert('new')
+    console.log(vo);
+    qDesignerView.render();
+})
+
 //The user selects either forms or templates
 //extend to include patient select
 Backbone.listenTo(questionnaireSelectView,'qSelect:select',function(vo){

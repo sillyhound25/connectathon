@@ -36,9 +36,10 @@ FHIRHelper.questionDisplay = function(quest){
 };
 
 
+//return a display that identifies a questionnaire group...
 FHIRHelper.groupDisplay = function(group){
     var display = "";
-    if (group.header) {
+    if (group && group.header) {
         display = group.header;
     }
         return display;

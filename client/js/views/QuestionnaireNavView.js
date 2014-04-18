@@ -3,7 +3,7 @@
 //the navigation bar for a questionnaire.
 var QuestionNavView = Backbone.View.extend({
     initialize : function() {
-        console.log('init');
+        //console.log('init');
     },
     events : {
         "click .mynav" : "select",

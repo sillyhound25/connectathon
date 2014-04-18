@@ -9,16 +9,28 @@
 var QuestionnaireDesignerView = BaseView.extend({
     events : {
         "click .qGroup" : "group",
-        "click .qQuestion" : "question"
+        "click .qQuestion" : "group"
     },
     group : function(ev) {
+        //the user has selected a group or question detail...
         ev.preventDefault();
         ev.stopPropagation();
+        $('.qdgDetail').hide(); //hide all the detail views...
+
         var id = ev.currentTarget.getAttribute('data-id');
-        alert(id)
+        console.log(id)
+
+        _.each(this.viewRef,function(view){
+            if (view.cid === id) {
+                console.log('render')
+                view.render();
+                return;
+            }
+        })
+
 
     },
-    question : function(ev) {
+    questionDEP : function(ev) {
         ev.preventDefault();
         ev.stopPropagation();
         var id = ev.currentTarget.getAttribute('data-id');
@@ -41,14 +53,15 @@ var QuestionnaireDesignerView = BaseView.extend({
         }
 
         //var inx = ctx.setRef(ctx);
-        var groupView = new QuestionnaireDesignerGroupView();
-        ctx.groupRef.push(groupView);
+        //each instance of the view needs to have its own DOM element...
+        var el = $('<div></div>').appendTo($('#qdDetail'));
+        var groupView = new QuestionnaireDesignerGroupView({el:el,model:grp});
+        ctx.viewRef.push(groupView);
         //console.log(inx);
         var display = "<div class='qGroup' data-id='"+groupView.cid+"'>" + tab + FHIRHelper.groupDisplay(grp) + '</div>';
         var newNode = $(display).appendTo(node);
 
         if (grp.question){
-
             ctx.addQuestions(newNode,grp.question,lvl,ctx)
         }
 
@@ -67,8 +80,10 @@ var QuestionnaireDesignerView = BaseView.extend({
         }
 
         _.each(arQuest,function(quest){
-            var questView = new QuestionnaireDesignerQuestionView();
-            ctx.questRef.push(questView);
+            var el = $('<div></div>').appendTo($('#qdDetail'));
+
+            var questView = new QuestionnaireDesignerQuestionView({el:el,model:quest});
+            ctx.viewRef.push(questView);
 
             var display = "<div class='qQuestion' data-id='"+questView.cid+"'>"+tab +FHIRHelper.questionDisplay(quest) + "</div>"
             $(display).appendTo(gNode);
@@ -77,18 +92,18 @@ var QuestionnaireDesignerView = BaseView.extend({
     },
     render : function() {
         var that = this;
-        console.log(this.model);
+        //console.log(this.model);
         this.getTemplate('questionnaireDesigner',function(){
             //the skeleton for the Q
             that.$el.html(that.template(that.model));
 
-            that.groupRef = [];
-            that.questRef = [];
+            that.viewRef = [];
+            //that.questRef = [];
 
             that.addGroup(that.model.group,$('#qdGroups'),that,0)
 
-            console.log(that.groupRef)
-            console.log(that.questRef)
+            //console.log(that.viewRef)
+           // console.log(that.questRef)
         })
     }
 
