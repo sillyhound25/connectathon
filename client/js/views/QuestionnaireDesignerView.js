@@ -8,8 +8,8 @@
 
 var QuestionnaireDesignerView = BaseView.extend({
     events : {
-        "click .qGroup" : "group",
-        "click .qQuestion" : "group",
+        "click .qGroup" : "itemSelected",
+        "click .qQuestion" : "itemSelected",
         "shown.bs.tab a[data-toggle='tab']" : "tabSelect",
         "click #qdFormUpdate" : "update"
     },
@@ -20,6 +20,7 @@ var QuestionnaireDesignerView = BaseView.extend({
         this.headerView.update();
 
         alert(JSON.stringify(this.model,null,2))
+
 
         if (this.isNew) {
             var desiredId = $('#qdId').val();
@@ -33,17 +34,23 @@ var QuestionnaireDesignerView = BaseView.extend({
         //create a new model. The model will be a FHIR Questionnaire resource, but the
         //object passed in is a bundle entry (and so contains the id). If no object is passed in,
         //then it is a new questionnaire.
-        //at the momebt there is a memory leak (viewRef is not being cleared) but I'm leaving that so I can
+        //at the moment I susyect there is a memory leak (viewRef is not being cleared) but I'm leaving that so I can
         //experiment with chrome memory checking...
 
-        console.log(entry);
+        //console.log(entry);
         if (entry) {
             this.model = entry.content;
+
+            if (! this.model.group) {
+                //It's legal for a questionnaire not to have a top level group, but the designer expects one...
+                this.model.group = {};
+            }
+
             this.id = entry.id;
             this.isNew = false;
 
         } else {
-            this.model = {group : {}};       //model.group holds the layout...
+            this.model = {group : {},resourceType:'Questionnaire'};       //model.group holds the layout...
             this.isNew = true;
             delete this.id;         //no id for a new resource
         }
@@ -69,7 +76,7 @@ var QuestionnaireDesignerView = BaseView.extend({
         }
 
     },
-    group : function(ev) {
+    itemSelected : function(ev) {
         //the user has selected a group or question  in the outline, so show the detail...
         ev.preventDefault();
         ev.stopPropagation();
@@ -77,6 +84,13 @@ var QuestionnaireDesignerView = BaseView.extend({
         $('.qdgDetail').hide(); //hide all the detail views...
 
         var id = ev.currentTarget.getAttribute('data-id');
+
+        $('.qQuestion').removeClass('qdSelected');
+        $('.qGroup').removeClass('qdSelected');
+
+        $(ev.currentTarget).addClass('qdSelected');
+        //because nodes are hierarchical, the class will cover children unless overridden....
+        $(ev.currentTarget).children().addClass('qdNotSelected');
 
 
         _.each(this.viewRef,function(view){
@@ -89,6 +103,12 @@ var QuestionnaireDesignerView = BaseView.extend({
     },
 
     addGroup : function(grp,node,ctx,lvl) {
+        /*
+        if (! grp) {
+            //It's legal for a questionnaire not to have a top level group...
+            return;
+        }
+        */
         //adds a group to the layout...
         var tab = "";
         for (var i=0; i<= lvl;i++) {
@@ -103,6 +123,17 @@ var QuestionnaireDesignerView = BaseView.extend({
         //console.log(inx);
         var display = "<div class='qGroup' data-id='"+groupView.cid+"'>" + tab + FHIRHelper.groupDisplay(grp) + '</div>';
         var newNode = $(display).appendTo(node);
+
+
+        //if this is a new question, then render it immediately. If there are more than one - or a new group -  then
+        //the last one will be rendered...
+        if (grp.text === 'new group') {
+            $('.qdgDetail').hide(); //hide all the detail views...
+            groupView.render();
+
+        }
+
+
 
         if (grp.question){
             ctx.addQuestions(newNode,grp.question,lvl,ctx)
@@ -133,8 +164,18 @@ var QuestionnaireDesignerView = BaseView.extend({
                 text = text.substr(0,47) + '...';
             }
 
-            var display = "<div class='qQuestion' data-id='"+questView.cid+"'>"+tab + text + "</div>"
+            var display = "<div class='qQuestion' data-indent='"+glvl+"' data-id='"+questView.cid+"'>"+tab + text + "</div>"
             var questNode = $(display).appendTo(gNode);
+
+            //if this is a new question, then render it immediately. If there are more than one - or a new group -  then
+            //the last one will be rendered...
+            if (quest.text === 'new question') {
+                $('.qdgDetail').hide(); //hide all the detail views...
+                questView.render();
+
+            }
+
+
 
             if (quest.group) {
                 //this question also has groups attached
@@ -161,7 +202,7 @@ var QuestionnaireDesignerView = BaseView.extend({
         }
         $('#qdGroups').html("");
 
-        html="";        //the global variable - I don;t like this!
+        html="";        //the global variable - I don't like this!
         this.addGroup(this.model.group,$('#qdGroups'),this,0)
 
     },
@@ -169,15 +210,17 @@ var QuestionnaireDesignerView = BaseView.extend({
         var that = this;
         //console.log(this.model);
         this.getTemplate('questionnaireDesigner',function(){
-            //create the skeleton for the Questionnaire...
+            //create the skeleton for the Questionnaire Designer tabs...
             that.$el.html(that.template({id:that.id}));
 
             //now, disable the ID unless this is a new model
+            //changed my mind...
             if (that.isNew) {
                 //$("#qdIdText").text("Enter ID")
                 $("#qdId").attr('placeholder','Enter an ID or leave blank for the server to assign');
+                $("#qdId").val('test42');      //<<<< just to be lazt!
             } else {
-                $("#qdId").attr('disabled',true);
+                //$("#qdId").attr('disabled',true);
             }
 
             //need to create the headerview after the DOM node has been created...

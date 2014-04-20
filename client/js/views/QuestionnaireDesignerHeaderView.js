@@ -25,6 +25,7 @@ var QuestionnaireDesignerHeaderView = BaseView.extend({
         model.status =$("input[name='qdhStatus']:checked").val();
         //---- the name...
 
+        model.authored = moment().format();
 
         var text = $('#qdh_text').val();
         var code = $('#qdh_code').val();
@@ -41,7 +42,7 @@ var QuestionnaireDesignerHeaderView = BaseView.extend({
             }
         }
 
-console.log(model)
+        //console.log(model)
 
     },
     render: function() {

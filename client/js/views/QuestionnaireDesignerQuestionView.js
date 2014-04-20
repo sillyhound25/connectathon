@@ -12,7 +12,6 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
         this.arAnswerFormat = ['decimal','integer','boolean','date','dateTime','instant',
             'single-choice','multiple-choice','open-single-choice','open-multiple-choice']
     },
-
     events : {
         "click #qdqAddSubGroup" : "addGroup",
         "click #qdqUpdateQuestion" : "update"
@@ -53,7 +52,35 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
         this.model = quest;
         console.log(this.model);
 
-        Backbone.trigger('Q:updated');  //will cause the designer to re-render
+        //update the layout hieracrhy
+        //$("ul[data-group='Companies'] li[data-company='Microsoft']")
+
+        //the entry in the Table Of Contents for this entry...
+
+        var tocEntry = $("div[data-id='"+cid+"']");
+        var indent = parseInt( tocEntry.attr('data-indent'));
+        var txt = "";
+        console.log(indent)
+
+        for (var i=0; i <= indent+1; i++){
+            txt += "&nbsp;&nbsp;&nbsp;";
+        }
+        txt += quest.text.trim();
+        //console.log(txt)
+        tocEntry.html(txt);
+
+
+
+        //console.log('|'+tocEntry.text()+'|');
+
+        //console.log(tocEntry.text().split(" ").length + 1) //3
+
+
+        //tocEntry.text('      al')
+
+        //<div class='qGroup' data-id='"+groupView.cid+
+
+        //Backbone.trigger('Q:updated');  //will cause the designer to re-render
     },
     render : function() {
         var that = this;

@@ -45,12 +45,12 @@ var QuestionnaireListView = BaseView.extend({
             _.each(that.model.entry,function(ent){
                 ent.meta = {};
                 if (ent.content.name) {
-                    console.log(ent.content.name);
+                    //console.log(ent.content.name);
                     ent.meta.name = FHIRHelper.ccDisplay(ent.content.name)
                 } else {
                     ent.meta.name = ent.id.getLogicalID();
                 }
-                console.log(ent)
+                //console.log(ent)
             })
 
 

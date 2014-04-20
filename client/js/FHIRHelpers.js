@@ -42,6 +42,11 @@ FHIRHelper.questionDisplay = function(quest){
 FHIRHelper.groupDisplay = function(group){
     var display = "No title";
 
+    if (!group) {
+        display = "No Group defined";
+        return;
+    }
+
     if (group.text) {
         display = group.text;
     }
@@ -50,9 +55,7 @@ FHIRHelper.groupDisplay = function(group){
         display = group.header;
     }
 
-
-
-        return display;
+    return display;
 };
 
 //get the value of a particular extension

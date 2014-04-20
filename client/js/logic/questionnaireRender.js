@@ -7,6 +7,12 @@ var renderQ = {},
 //show a group
 renderQ.showGroup = function(grp,lvl) {
     //console.log(lvl, grp.header);
+    if (! grp) {
+        //legal to have no group..
+        return;
+    }
+
+
     if (grp.header) {
         var klass = 'formNav'+lvl;
 

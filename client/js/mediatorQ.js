@@ -5,9 +5,9 @@
 
 
 String.prototype.getLogicalID = function (){
-    g = this.indexOf('.');
+    g = this.lastIndexOf('/');
     if (g > -1) {
-        return this.substr(0,g)
+        return this.substr(g+1,200)
     } else {
         return this.toString();
     }
@@ -24,8 +24,7 @@ Backbone.myConstants = {};
 Backbone.myConstants.arSystem = [];
 Backbone.myConstants.arSystem.push({label:'http://loinc.org',value:'http://loinc.org'});
 Backbone.myConstants.arSystem.push({label:'http://snomed.info/sct',value:'http://snomed.info/sct'});
-
-
+Backbone.myConstants.arSystem.push({label:'http://fhir.orionhealth.com',value:'http://fhir.orionhealth.com'});
 
 
 var questionnaireSelectView = new QuestionnaireSelectView({el:'#qSelect'});
@@ -49,8 +48,53 @@ Backbone.on('Q:updated',function(vo){
 
 
 //the user wishes to save a new Questionnaire
-Backbone.listenTo(qDesignerView,'qd:saveNewQ',function(vo){
+Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
     console.log(vo);
+
+    //always put the questionnaire at the moment...
+    if (!vo.id) {
+        alert('You must give the questionnaire an ID');
+        return;
+    }
+
+    //vlaidate reosurce. This strictly belongs somewhere else - ?model
+    var Q = vo.Q
+
+
+
+    //the proxy server will make the correct FHIR call based on the contents of the resource...
+    var uri = '/api/'+vo.id.getLogicalID();
+    MediatorQ.showWorking();
+    $.ajax (uri,{
+        method : 'PUT',
+        data : JSON.stringify(Q),
+        headers : {
+            'content-type' : 'application/json'
+            //'content-location' : vid - not version aware updates yet...
+        },
+        success : function(xhr,status){
+            MediatorQ.hideWorking();
+            alert('Questionnaire updated')
+
+
+        },
+        error : function(xhr,status,err){
+            MediatorQ.hideWorking();
+            console.log(xhr.responseText)
+
+            try {
+                console.log(JSON.parse(xhr.responseText))
+            } catch (e) {
+                console.log('invalid json');
+            }
+
+            alert('There was an error - check the console')
+
+
+        }
+    })
+
+
 });
 
 //The user selects either forms or templates
@@ -95,13 +139,19 @@ Backbone.listenTo(questionnaireListView,'qlv:design',function(vo){
 //user has selected a template or form to view...
 Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     var id = vo.id;     //form or template
-    //alert(id);
+
 
     var entry = _.findWhere(MediatorQ.allQuests.entry,{id:id})
     console.log(entry);
 
     html = "";
     renderQ.showGroup(entry.content.group,0);  //create the questionnaire form
+
+
+    if (html === "") {
+        html = "Not enough content to preview";
+    }
+
     $('#displayQ').html(html);
     $('textarea').autosize();
 

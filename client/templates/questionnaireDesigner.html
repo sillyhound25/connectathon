@@ -9,6 +9,13 @@
         color: green;
         cursor: pointer;
     }
+    .qdSelected {
+        background-color: #f5fafd;
+    }
+    .qdNotSelected{
+        background-color: white;
+    }
+
 </style>
 
 
@@ -20,7 +27,7 @@
              <input class="form-control" type='text' id = "qdId" value='{{id}}'    />
         </div>
         <div class="col-sm-4 col-md-4">
-            <button class="btn btn-primary pull-right" id='qdFormUpdate'>Update</button>
+            <button class="btn btn-primary pull-right" id='qdFormUpdate'>Update on Server</button>
         </div>
 
     </div>
@@ -46,7 +53,7 @@
             <div class="col-sm-4 col-md-4">
                 <div id='qdGroups'></div>
             </div>
-            <div class="col-sm-8 col-md-8">
+            <div class="col-sm-8 col-md-8" style="border-left: 1px solid #808080">
                 <div id='qdDetail'></div>
             </div>
         </div>
