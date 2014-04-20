@@ -11,9 +11,6 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
         //don't include string, as that is coded in the template...
         this.arAnswerFormat = ['decimal','integer','boolean','date','dateTime','instant',
             'single-choice','multiple-choice','open-single-choice','open-multiple-choice']
-
-
-
     },
 
     events : {
@@ -26,17 +23,22 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
 
         quest.group = quest.group || [];
         quest.group.push({text:'new group',header:'new group'});
-        console.log(quest)
+        //console.log(quest)
         Backbone.trigger('Q:updated');  //will cause the designer to re-render
     },
     update : function() {
         //update this question
+        //note that the id is constructed to be unique - {{cid}}qdq_{{name}}{{position}}
+        console.log(this.model);
         var quest = this.model;     //the model is the fhir pojo group
+        var cid = this.cid;         //the client id for the view...
+        quest.text = $('#' + cid + 'qdq_text').val();
 
-        quest.text = $('#qdq_text').val();
+        var code = $('#' + cid + 'qdq_code0').val();
+        var system = $('#' + cid + 'qdq_system0').val();
 
-        var code = $('#qdq_code').val();
-        var system = $('#qdq_system').val();
+        console.log(code,system);
+
         if (quest.name) {
             if (quest.name.coding) {
                 quest.name.coding[0].code = code;
@@ -47,18 +49,9 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
         } else {
             quest.name = {coding:[{code:code,system:system}]}
         }
-
-        //<url value="http://hl7.org/fhir/questionnaire-extensions#answerFormat"/>
-
-        //the name - a cc
-
-        //group.header = $('#qdgHeader').val();
-
-        //var numCols =$("input[name='qdGroupCols']:checked").val();
-
-        //console.log(numCols)
-
-        //this.addExtension("fhir.orionhealth.com/questionnaire#numcol",numCols,"valueInteger");
+        //delete this.model;
+        this.model = quest;
+        console.log(this.model);
 
         Backbone.trigger('Q:updated');  //will cause the designer to re-render
     },
@@ -69,11 +62,39 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
 
             //console.log(that)
 
-            that.$el.html(that.template(that.model));
+            //need to use a clone as we're adding illegal properties (cid) to the model so the id's can be unique......
+            //note: **must** be a deep clone, or the coding will pick up the cid...
+            var clone = {};
+            $.extend(true,clone,that.model)
+
+            //must be a name for the template to render the controls...
+            if (! clone.name) {
+                clone.name = {text:"",coding: [{code:"",system:""}]}
+            }
+            //add the cid as an attribute
+            clone.name.coding[0].cid = that.cid;
+            clone.cid = that.cid;
+
+            //console.log(clone,that.cid);
+
+            that.$el.html(that.template(clone));
 
             _.each(that.arAnswerFormat,function(opt){
-                $('#qdq_answerType').append("<option value='"+opt+"'>"+opt+"</option>");
+                $('#'+that.cid+'qdq_answerType').append("<option value='"+opt+"'>"+opt+"</option>");
             })
+
+            $('.qdq_system').selectize({
+                persist: true,
+                maxItems: 1,
+                create:true,
+                options: Backbone.myConstants.arSystem,
+                labelField: "label",
+                valueField: "value"
+            });
+
+
+
+
             //that.$el.html(that.template({group:that.model,display:FHIRHelper.groupDisplay(that.model)}));
         })
     }

@@ -14,6 +14,13 @@ var QuestionnaireDesignerView = BaseView.extend({
         "click #qdFormUpdate" : "update"
     },
     update : function() {
+        //need to get any updates from the header. This will update the shared mode directly..
+        //alert(JSON.stringify(this.model,null,2))
+
+        this.headerView.update();
+
+        alert(JSON.stringify(this.model,null,2))
+
         if (this.isNew) {
             var desiredId = $('#qdId').val();
             this.trigger('qd:saveNewQ',{id:desiredId,Q:this.model})
@@ -36,36 +43,45 @@ var QuestionnaireDesignerView = BaseView.extend({
             this.isNew = false;
 
         } else {
-            this.model = {group : []};       //model.group holds the
+            this.model = {group : {}};       //model.group holds the layout...
             this.isNew = true;
-            delete this.id;
+            delete this.id;         //no id for a new resource
         }
-    },
+
+        //create a view object for the header...  (the el is set in in render from questionerDesigner.html)
+        //this.headerView = new QuestionnaireDesignerHeaderView({el: $('#qdHeaderDiv')});
+        //this.headerView = null;//new QuestionnaireDesignerHeaderView({el: $('#qdHeaderDiv'),model:this.model});
+        },
 
     tabSelect : function(ev) {
         if (ev.target.getAttribute('href') === '#qdPreview') {
             //moving to the preview mode - render the form...
+            if (this.model.group && (this.model.group.group || this.model.group.question)) {
+                //todo - the renderer uses the global html & htmlNav. There must be a better way...
+                html = "";
+                renderQ.showGroup(this.model.group,0);  //create the questionnaire form
+                $('#qdPreviewDiv').html(html);
+            } else {
+                alert('You need some groups or questions first!')
+            }
 
-            //todo - the renderer uses the global html & htmlNav. There must be a better way...
-            html = "";
-            renderQ.showGroup(this.model.group,0);  //create the questionnaire form
-            $('#qdPreviewDiv').html(html);
 
         }
 
     },
     group : function(ev) {
-        //the user has selected a group or question detail...
+        //the user has selected a group or question  in the outline, so show the detail...
         ev.preventDefault();
         ev.stopPropagation();
+
         $('.qdgDetail').hide(); //hide all the detail views...
 
         var id = ev.currentTarget.getAttribute('data-id');
-        //console.log(id)
+
 
         _.each(this.viewRef,function(view){
             if (view.cid === id) {
-                //console.log('render')
+
                 view.render();
                 return;
             }
@@ -134,6 +150,21 @@ var QuestionnaireDesignerView = BaseView.extend({
 
 
     },
+    redrawOutline : function() {
+        //called when the outline has been updated
+
+        if (this.viewRef) {
+            _.each(this.viewRef,function(view){
+               // console.log(view)
+                view.remove();
+            })
+        }
+        $('#qdGroups').html("");
+
+        html="";        //the global variable - I don;t like this!
+        this.addGroup(this.model.group,$('#qdGroups'),this,0)
+
+    },
     render : function() {
         var that = this;
         //console.log(this.model);
@@ -149,7 +180,9 @@ var QuestionnaireDesignerView = BaseView.extend({
                 $("#qdId").attr('disabled',true);
             }
 
-
+            //need to create the headerview after the DOM node has been created...
+            that.headerView = new QuestionnaireDesignerHeaderView({el: $('#qdHeaderDiv'),model:that.model});
+            that.headerView.render();
             //that.$el.html(that.template(that.model));
 
             that.viewRef = [];  //will hold the child views for group and question...

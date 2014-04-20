@@ -34,7 +34,7 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
 
         group.group = group.group || [];
         group.group.push({text:'new group',header:'new group'});
-        console.log(group)
+        //console.log(group)
         Backbone.trigger('Q:updated');  //will cause the designer to re-render
     },
     addQuestion : function(ev){
@@ -44,8 +44,8 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
         var group = this.model;     //the model is the fhir pojo group
         group.question = group.question || [];
         group.question.push({text:'new question'});
-        console.log(group)
-        //console.log('y')
+        //console.log(group)
+
         Backbone.trigger('Q:updated');  //will cause the designer to re-render
     },
     render : function() {
@@ -54,12 +54,8 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
         this.getTemplate('questionnaireDesignerGroup',function(){
 
             that.$el.html(that.template({group:that.model}));
-            //that.$el.html(that.template({group:that.model,display:FHIRHelper.groupDisplay(that.model)}));
 
             //set the column count
-
-
-
             var numCols = Backbone.FHIRHelper.getExtensionValue(that.model,"fhir.orionhealth.com/questionnaire#numcol","valueInteger");
             //console.log(numCols)
             if (numCols) {

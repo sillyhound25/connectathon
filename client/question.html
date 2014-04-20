@@ -9,6 +9,7 @@
     <script src="js/libs/backbone-min.js"></script>
     <script src="js/libs/moment.min.js"></script>
     <script src="js/libs/jquery.autosize.js"></script>
+    <script src="js/libs/selectize.min.js"></script>
 
     <script src="js/views/BaseView.js"></script>
     <script src="js/views/QuestionnaireNavView.js"></script>
@@ -18,6 +19,7 @@
     <script src="js/views/QuestionnaireDesignerView.js"></script>
     <script src="js/views/QuestionnaireDesignerGroupView.js"></script>
     <script src="js/views/QuestionnaireDesignerQuestionView.js"></script>
+    <script src="js/views/QuestionnaireDesignerHeaderView.js"></script>
 
     <script src="js/logic/questionnaireRender.js"></script>
 
@@ -29,6 +31,7 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
 
     <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/selectize.bootstrap3.css">
     <!-- Latest compiled and minified JavaScript -->
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
@@ -110,7 +113,9 @@
     $(document).ready(function(){
 
 
-        Backbone.myFunctions = {};
+       // Backbone.myFunctions = {};
+
+
 
         $('.myPane').hide();        //initially hide all the panes...
         $('#homeTab').show();       //show the home tab
@@ -121,6 +126,7 @@
             Backbone.myFunctions.showMainTab(tabName)
         })
 
+        //myfunction defined in mediatorQ
         Backbone.myFunctions.showMainTab = function(tabName) {
             var $menuItem = $("li[data-page='"+tabName+"']");
             $(".navMainOption").removeClass('active');
@@ -141,10 +147,11 @@
         Z.templates.groupTemplate = Handlebars.compile($('#groupTemplate').html())
         Z.templates.saveButtonTemplate = Handlebars.compile($('#saveButtonTemplate').html())
 
+        renderQ.Z = Z;  //renderQ defined in questionnaireRender.js
 
         questionnaireSelectView.render();
 
-
+/* - don't remove just yet...
         var uri = '/api/oneresource/Questionnaire/ct6-soap1';
         //var uri = './samples/soapQuestionnaire.xml';
         $.get(uri,function(Q){
@@ -179,6 +186,8 @@
             qDesignerView.render();
         })
 
+
+        */
 
     Handlebars.registerHelper('logicalID',function(str){
         var ar = str.split('/');

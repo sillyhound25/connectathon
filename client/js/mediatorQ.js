@@ -16,8 +16,18 @@ String.prototype.getLogicalID = function (){
 
 var MediatorQ={};
 
+Backbone.myFunctions = {};
 
-//for some reason these aren't working when defined in the mediator script...
+Backbone.myConstants = {};
+
+//default namespaces. todo: dynamically allow these to be added to...
+Backbone.myConstants.arSystem = [];
+Backbone.myConstants.arSystem.push({label:'http://loinc.org',value:'http://loinc.org'});
+Backbone.myConstants.arSystem.push({label:'http://snomed.info/sct',value:'http://snomed.info/sct'});
+
+
+
+
 var questionnaireSelectView = new QuestionnaireSelectView({el:'#qSelect'});
 var questionnaireListView = new QuestionnaireListView({el:'#qList'});
 var navView = new QuestionNavView({el:'#formNav'});
@@ -34,7 +44,7 @@ MediatorQ.assert = function( outcome, description ) {
 
 //the questionairre has been updated in the designer...
 Backbone.on('Q:updated',function(vo){
-    qDesignerView.render();
+    qDesignerView.redrawOutline();
 })
 
 
