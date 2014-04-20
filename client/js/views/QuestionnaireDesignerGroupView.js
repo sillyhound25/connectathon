@@ -11,7 +11,36 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
     events : {
         "click #qdgAddQuestion" : "addQuestion",
         "click #qdgAddSubGroup" : "addGroup",
-        "click #qdgUpdateGroup" : "update"
+        "click #qdgUpdateGroup" : "update",
+        "click #qdgMoveUp" : 'moveUp',
+        "click #qdgMoveDown" : 'moveDown'
+    },
+    moveUp : function() {
+        var parentGroup = this.parentGroup; //the parent of this group
+        var inx = this.positionInList;      //the position of this group in that list
+        //var lst = parentGroup.group;
+        if (inx > 0) {
+            this.swapGroups(parentGroup.group,inx,inx-1);
+            Backbone.trigger('Q:updated');
+        } else {
+            alert('Already at the top')
+        }
+    },
+    moveDown : function() {
+        console.log('dn')
+        var parentGroup = this.parentGroup; //the parent of this group
+        var inx = this.positionInList;      //the position of this group in that list
+        if (inx < parentGroup.group.length-1){
+            this.swapGroups(parentGroup.group,inx,inx+1);
+            Backbone.trigger('Q:updated');
+        }  else {
+            alert('Already at the bottom')
+        }
+    },
+    swapGroups : function(lst, index_a, index_b) {
+        var temp = lst[index_a];
+        lst[index_a] = lst[index_b];
+        lst[index_b] = temp;
     },
     update : function() {
         var group = this.model;     //the model is the fhir pojo group
@@ -35,16 +64,13 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
         var txt = "";
         console.log(indent)
 
-        for (var i=0; i <= indent+1; i++){
+        for (var i=0; i <= indent; i++){
             txt += "&nbsp;&nbsp;&nbsp;";
         }
 
         txt += group.header.trim();
-        //http://stackoverflow.com/questions/4106809/in-jquery-how-can-i-change-an-elements-text-without-changing-its-child-elements/4106957#4106957
-        tocEntry.contents().filter(function(){ return this.nodeType == 3; }).filter(':first').text(txt);
-       // tocEntry.text(txt);
 
-        //tocEntry.html(txt);
+        tocEntry.html(txt);
 
 
         //Backbone.trigger('Q:updated');  //will cause the designer to re-render

@@ -28,6 +28,8 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
         if (inx > 0){
            this.swapQuestions(parent.question,inx,inx-1);
             Backbone.trigger('Q:updated');
+        } else {
+            alert('Already at the top')
         }
     },
     moveDown : function() {
@@ -37,7 +39,10 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
         if (inx < parent.question.length-1){
             this.swapQuestions(parent.question,inx,inx+1);
             Backbone.trigger('Q:updated');
+        }  else {
+            alert('Already at the bottom')
         }
+
     },
     swapQuestions : function(lst, index_a, index_b) {
         var temp = lst[index_a];

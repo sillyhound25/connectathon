@@ -102,23 +102,31 @@ var QuestionnaireDesignerView = BaseView.extend({
         })
     },
 
-    addGroup : function(grp,node,ctx,lvl) {
+
+    //note: no loger a hierarchy of nodes rooted at $('#qdGroups')
+    addGroup : function(grp,node,ctx,lvl,parentGroup,parentGroupIndex) {
         //adds a group to the layout...
         var tab = "";
         for (var i=0; i<= lvl;i++) {
             tab += "&nbsp;&nbsp;&nbsp;";
         }
 
-        //var inx = ctx.setRef(ctx);
         //each instance of the view needs to have its own DOM element...
         var el = $('<div></div>').appendTo($('#qdDetail'));
         var groupView = new QuestionnaireDesignerGroupView({el:el,model:grp});
+
+        //pass in the parents to this group (if any). These will be used in the re-ordering...
+        groupView.parentGroup = parentGroup;
+        groupView.positionInList = parentGroupIndex;     //the position of the questionin the list
+
+
         ctx.viewRef.push(groupView);
         //console.log(inx);
         var display = "<div class='qGroup' data-indent='"+lvl+"' data-id='"+groupView.cid+"'>" + tab + FHIRHelper.groupDisplay(grp) + '</div>';
 
-        var newNode = $(display).appendTo(node);
-
+        //var newNode = $(display).appendTo(node);
+        //$('#qdGroups')
+        var newNode = $(display).appendTo($('#qdGroups'));
 
         //if this is a new group, then render it immediately. If there are more than one - or a new group -  then
         //the last one will be rendered...
@@ -128,17 +136,19 @@ var QuestionnaireDesignerView = BaseView.extend({
         }
 
         if (grp.question){
-            ctx.addQuestions(newNode,grp.question,lvl,ctx,grp)
+            ctx.addQuestions(grp.question,lvl,ctx,grp)
+            //ctx.addQuestions(newNode,grp.question,lvl,ctx,grp)
         }
 
         if (grp.group) {
-            $.each(grp.group,function(inx,childGroup){
+            $.each(grp.group,function(grpInx,childGroup){
                 var newLevel = lvl +1;
-                ctx.addGroup(childGroup,newNode,ctx,newLevel)
+                ctx.addGroup(childGroup,newNode,ctx,newLevel,grp,grpInx)
             })
         }
     },
-    addQuestions : function(gNode,arQuest,glvl,ctx,grp) {
+    addQuestions : function(arQuest,glvl,ctx,grp) {
+        //addQuestions : function(gNode,arQuest,glvl,ctx,grp) {
         //add questions to the group node in the layout
         var tab = "";
         for (var i=0; i<= glvl+1;i++) {
@@ -160,8 +170,10 @@ var QuestionnaireDesignerView = BaseView.extend({
             }
 
             var display = "<div class='qQuestion' data-indent='"+glvl+"' data-id='"+questView.cid+"'>"+tab + text + "</div>"
-            var questNode = $(display).appendTo(gNode);
 
+
+            //var questNode = $(display).appendTo(gNode);
+            var questNode = $(display).appendTo($('#qdGroups'));
             //if this is a new question, then render it immediately. If there are more than one - or a new group -  then
             //the last one will be rendered...
             if (quest.text === 'new question') {
@@ -171,14 +183,12 @@ var QuestionnaireDesignerView = BaseView.extend({
 
             if (quest.group) {
                 //this question also has groups attached
-                _.each(quest.group,function(questGroup){
-                        var newQuestionLevel = glvl +1;
-                        ctx.addGroup(questGroup,questNode,ctx,newQuestionLevel)
+                _.each(quest.group,function(questGroup,inx){
+                        var newQuestionLevel = glvl +2;     //<<<<<<<<< not sure why this isn't 1...
+                        ctx.addGroup(questGroup,questNode,ctx,newQuestionLevel,quest,inx)
                 })
             }
         })
-
-
     },
     redrawOutline : function() {
         //called when the outline has been updated
