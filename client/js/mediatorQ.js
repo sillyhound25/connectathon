@@ -26,6 +26,9 @@ Backbone.myConstants.arSystem.push({label:'http://loinc.org',value:'http://loinc
 Backbone.myConstants.arSystem.push({label:'http://snomed.info/sct',value:'http://snomed.info/sct'});
 Backbone.myConstants.arSystem.push({label:'http://fhir.orionhealth.com',value:'http://fhir.orionhealth.com'});
 
+Backbone.myConstants.extensionDefn = {};
+Backbone.myConstants.extensionDefn.answerFormat = {url:"http://hl7.org/fhir/questionnaire-extensions#answerFormat",type:'valueCode'};
+
 
 var questionnaireSelectView = new QuestionnaireSelectView({el:'#qSelect'});
 var questionnaireListView = new QuestionnaireListView({el:'#qList'});

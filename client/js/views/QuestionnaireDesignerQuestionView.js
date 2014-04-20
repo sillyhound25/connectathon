@@ -14,10 +14,57 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
     },
     events : {
         "click #qdqAddSubGroup" : "addGroup",
-        "click #qdqUpdateQuestion" : "update"
+        "click #qdqUpdateQuestion" : "update",
+         "click #qdqAddQuestion" : "addQuestion",
+         "click .form-control" : "flagDirty",
+         "blur .form-control": "flagDirty",
+             "click #qdqMoveUp" : "moveUp",
+        "click #qdqMoveDown" : "moveDown"
+    },
+    moveUp : function() {
+        console.log('up')
+        var parent = this.parentGroup;      //the group that this question belongs to
+        var inx = this.positionInList;      //the index of this question in the list of questions
+        if (inx > 0){
+           this.swapQuestions(parent.question,inx,inx-1);
+            Backbone.trigger('Q:updated');
+        }
+    },
+    moveDown : function() {
+        console.log('dn')
+        var parent = this.parentGroup;      //the group that this question belongs to
+        var inx = this.positionInList;      //the index of this question in the list of questions
+        if (inx < parent.question.length-1){
+            this.swapQuestions(parent.question,inx,inx+1);
+            Backbone.trigger('Q:updated');
+        }
+    },
+    swapQuestions : function(lst, index_a, index_b) {
+        var temp = lst[index_a];
+        lst[index_a] = lst[index_b];
+        lst[index_b] = temp;
+    },
+    flagDirty : function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        //indicate that this question has been modified
+        this._dirty = true;
+        $('#qdq_modified').html('Modified');
+
+    },
+    addQuestion : function() {
+        //add a new question to the group - ie a sibling question
+        var parent = this.parentGroup;      //the group that this question belongs to
+
+        //group.question = group.question || [];
+        parent.question.push({text:'new question'});
+        //console.log(group)
+
+        Backbone.trigger('Q:updated');  //will cause the designer to re-render
+
     },
     addGroup : function() {
-
+        //add a child group to this question
         var quest = this.model;     //the model is the fhir pojo group
 
         quest.group = quest.group || [];
@@ -28,7 +75,7 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
     update : function() {
         //update this question
         //note that the id is constructed to be unique - {{cid}}qdq_{{name}}{{position}}
-        console.log(this.model);
+        //console.log(this.model);
         var quest = this.model;     //the model is the fhir pojo group
         var cid = this.cid;         //the client id for the view...
         quest.text = $('#' + cid + 'qdq_text').val();
@@ -36,7 +83,18 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
         var code = $('#' + cid + 'qdq_code0').val();
         var system = $('#' + cid + 'qdq_system0').val();
 
-        console.log(code,system);
+
+        var answerFormat =$("#"+cid+"qdq_answerType").val();
+        console.log(answerFormat);
+
+
+        Backbone.FHIRHelper.addExtension(this.model,Backbone.myConstants.extensionDefn.answerFormat.url,
+            answerFormat,Backbone.myConstants.extensionDefn.answerFormat.type);
+        //Backbone.FHIRHelper.addExtension(this.model,"http://hl7.org/fhir/questionnaire-extensions#answerFormat",answerFormat,"valueCode");
+
+
+
+        //console.log(code,system);
 
         if (quest.name) {
             if (quest.name.coding) {
@@ -52,9 +110,6 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
         this.model = quest;
         console.log(this.model);
 
-        //update the layout hieracrhy
-        //$("ul[data-group='Companies'] li[data-company='Microsoft']")
-
         //the entry in the Table Of Contents for this entry...
 
         var tocEntry = $("div[data-id='"+cid+"']");
@@ -65,26 +120,16 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
         for (var i=0; i <= indent+1; i++){
             txt += "&nbsp;&nbsp;&nbsp;";
         }
+
         txt += quest.text.trim();
-        //console.log(txt)
         tocEntry.html(txt);
 
-
-
-        //console.log('|'+tocEntry.text()+'|');
-
-        //console.log(tocEntry.text().split(" ").length + 1) //3
-
-
-        //tocEntry.text('      al')
-
-        //<div class='qGroup' data-id='"+groupView.cid+
 
         //Backbone.trigger('Q:updated');  //will cause the designer to re-render
     },
     render : function() {
         var that = this;
-        console.log(this.model);
+        //console.log(this.model);
         this.getTemplate('questionnaireDesignerQuestion',function(){
 
             //console.log(that)
@@ -106,9 +151,21 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
 
             that.$el.html(that.template(clone));
 
+
+            var answerFormatElement = that.cid+'qdq_answerType';
             _.each(that.arAnswerFormat,function(opt){
-                $('#'+that.cid+'qdq_answerType').append("<option value='"+opt+"'>"+opt+"</option>");
+                $('#'+answerFormatElement).append("<option value='"+opt+"'>"+opt+"</option>");
             })
+
+            //var answerFormat = FHIRHelper.getExtensionValue (clone,"http://hl7.org/fhir/questionnaire-extensions#answerFormat","valueCode")
+            var answerFormat = FHIRHelper.getExtensionValue (clone,
+                Backbone.myConstants.extensionDefn.answerFormat.url,Backbone.myConstants.extensionDefn.answerFormat.type)
+
+
+            //console.log(answerFormat)
+            if (answerFormat) {
+                $('#'+answerFormatElement).val(answerFormat);
+            }
 
             $('.qdq_system').selectize({
                 persist: true,

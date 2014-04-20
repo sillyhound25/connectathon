@@ -85,8 +85,8 @@ var QuestionnaireDesignerView = BaseView.extend({
 
         var id = ev.currentTarget.getAttribute('data-id');
 
-        $('.qQuestion').removeClass('qdSelected');
-        $('.qGroup').removeClass('qdSelected');
+        $('.qQuestion').removeClass('qdSelected qdNotSelected');
+        $('.qGroup').removeClass('qdSelected qdNotSelected');
 
         $(ev.currentTarget).addClass('qdSelected');
         //because nodes are hierarchical, the class will cover children unless overridden....
@@ -136,7 +136,7 @@ var QuestionnaireDesignerView = BaseView.extend({
 
 
         if (grp.question){
-            ctx.addQuestions(newNode,grp.question,lvl,ctx)
+            ctx.addQuestions(newNode,grp.question,lvl,ctx,grp)
         }
 
         if (grp.group) {
@@ -146,17 +146,20 @@ var QuestionnaireDesignerView = BaseView.extend({
             })
         }
     },
-    addQuestions : function(gNode,arQuest,glvl,ctx) {
+    addQuestions : function(gNode,arQuest,glvl,ctx,grp) {
         //add questions to the group node in the layout
         var tab = "";
         for (var i=0; i<= glvl+1;i++) {
             tab += "&nbsp;&nbsp;&nbsp;";
         }
 
-        _.each(arQuest,function(quest){
+        _.each(arQuest,function(quest,inx){
             var el = $('<div></div>').appendTo($('#qdDetail'));
 
             var questView = new QuestionnaireDesignerQuestionView({el:el,model:quest});
+            //store a reference to the parent group. Used to allow a question to create a sibling...
+            questView.parentGroup = grp;
+            questView.positionInList = inx;     //the position of the questionin the list
             ctx.viewRef.push(questView);
 
             var text = FHIRHelper.questionDisplay(quest);

@@ -8,6 +8,7 @@
         </div>
         <div class="col-md-4 col-sm-4">
             <div class="pull-right">({{cid}})</div>
+            <div class="pull-right"><div class="label label-default" id='qdq_modified'></div></div>
         </div>
     </div>
 
@@ -72,12 +73,15 @@
 
     </form>
 <!--
-    <button class="btn btn-default">New Question this group</button>
+
     -->
     <div class="row">
         <div class="col-md-8 col-sm-8">
+            <button class="btn btn-default" id="qdqMoveUp"><i class="glyphicon glyphicon-arrow-up" ></i></button>
+            <button class="btn btn-default" id="qdqMoveDown"><i class="glyphicon glyphicon-arrow-down" ></i></button>
             <button class="btn btn-default">Remove question</button>
             <button class="btn btn-default" id ='qdqAddSubGroup' >Add sub group</button>
+            <button class="btn btn-default" id ='qdqAddQuestion'>New Question this group</button>
         </div>
         <div class="col-md-4 col-sm-4">
             <button class="btn btn-success pull-right" id='qdqUpdateQuestion'>Update Question</button>
