@@ -103,12 +103,6 @@ var QuestionnaireDesignerView = BaseView.extend({
     },
 
     addGroup : function(grp,node,ctx,lvl) {
-        /*
-        if (! grp) {
-            //It's legal for a questionnaire not to have a top level group...
-            return;
-        }
-        */
         //adds a group to the layout...
         var tab = "";
         for (var i=0; i<= lvl;i++) {
@@ -121,19 +115,17 @@ var QuestionnaireDesignerView = BaseView.extend({
         var groupView = new QuestionnaireDesignerGroupView({el:el,model:grp});
         ctx.viewRef.push(groupView);
         //console.log(inx);
-        var display = "<div class='qGroup' data-id='"+groupView.cid+"'>" + tab + FHIRHelper.groupDisplay(grp) + '</div>';
+        var display = "<div class='qGroup' data-indent='"+lvl+"' data-id='"+groupView.cid+"'>" + tab + FHIRHelper.groupDisplay(grp) + '</div>';
+
         var newNode = $(display).appendTo(node);
 
 
-        //if this is a new question, then render it immediately. If there are more than one - or a new group -  then
+        //if this is a new group, then render it immediately. If there are more than one - or a new group -  then
         //the last one will be rendered...
-        if (grp.text === 'new group') {
-            $('.qdgDetail').hide(); //hide all the detail views...
+        if (grp.header === 'new group') {
+            $('#qdgDetail').children().hide(); //hide all the detail views...
             groupView.render();
-
         }
-
-
 
         if (grp.question){
             ctx.addQuestions(newNode,grp.question,lvl,ctx,grp)
@@ -175,21 +167,15 @@ var QuestionnaireDesignerView = BaseView.extend({
             if (quest.text === 'new question') {
                 $('.qdgDetail').hide(); //hide all the detail views...
                 questView.render();
-
             }
-
-
 
             if (quest.group) {
                 //this question also has groups attached
                 _.each(quest.group,function(questGroup){
-
                         var newQuestionLevel = glvl +1;
                         ctx.addGroup(questGroup,questNode,ctx,newQuestionLevel)
-
                 })
             }
-
         })
 
 

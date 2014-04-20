@@ -18,7 +18,7 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
          "click #qdqAddQuestion" : "addQuestion",
          "click .form-control" : "flagDirty",
          "blur .form-control": "flagDirty",
-             "click #qdqMoveUp" : "moveUp",
+         "click #qdqMoveUp" : "moveUp",
         "click #qdqMoveDown" : "moveDown"
     },
     moveUp : function() {
@@ -92,9 +92,6 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
             answerFormat,Backbone.myConstants.extensionDefn.answerFormat.type);
         //Backbone.FHIRHelper.addExtension(this.model,"http://hl7.org/fhir/questionnaire-extensions#answerFormat",answerFormat,"valueCode");
 
-
-
-        //console.log(code,system);
 
         if (quest.name) {
             if (quest.name.coding) {

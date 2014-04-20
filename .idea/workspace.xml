@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3a9b3cc9-926c-402b-bbe7-016794926cb7" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerGroupView.js" afterPath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerGroupView.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerQuestionView.js" afterPath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerQuestionView.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js" afterPath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/mediatorQ.js" afterPath="$PROJECT_DIR$/client/js/mediatorQ.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/questionnaireDesigner.html" afterPath="$PROJECT_DIR$/client/templates/questionnaireDesigner.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html" afterPath="$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/questionnaireDesignerQuestion.html" afterPath="$PROJECT_DIR$/client/templates/questionnaireDesignerQuestion.html" />
     </list>
     <ignored path="AlexUpdate.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -79,11 +77,11 @@
     <file path="/mediatorQ.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398021429765" ignored="false" />
     <file path="/questionnaireRender.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397955157954" ignored="false" />
     <file path="/FHIRHelpers.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397954129348" ignored="false" />
-    <file path="/QuestionnaireDesignerView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398023418369" ignored="false" />
-    <file path="/QuestionnaireDesignerGroupView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397851883794" ignored="false" />
+    <file path="/QuestionnaireDesignerView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398025550066" ignored="false" />
+    <file path="/QuestionnaireDesignerGroupView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398026901593" ignored="false" />
     <file path="/QuestionnaireDesignerAnswerView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397778241307" ignored="false" />
     <file path="/questionnaireDesigner.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397965879059" ignored="false" />
-    <file path="/questionnaireDesignerGroup.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397982528328" ignored="false" />
+    <file path="/questionnaireDesignerGroup.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398025844444" ignored="false" />
     <file path="/questionnaireDesignerAnswer.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397769592011" ignored="false" />
     <file path="/QuestionnaireDesignerQuestionView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398024190189" ignored="false" />
     <file path="/questionnaireDesignerQuestion.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398024226884" ignored="false" />
@@ -108,41 +106,49 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="QuestionnaireDesignerView.js" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="QuestionnaireDesignerGroupView.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerGroupView.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="43" column="8" selection-start="1411" selection-end="1411" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#0#160#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="QuestionnaireDesignerView.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="161" column="36" selection-start="5762" selection-end="5776" vertical-scroll-proportion="0.0">
+            <state line="119" column="8" selection-start="4375" selection-end="4375" vertical-scroll-proportion="0.360262">
               <folding>
                 <element signature="e#0#160#0" expanded="false" />
                 <element signature="e#445#918#0" expanded="false" />
                 <element signature="e#947#2259#0" expanded="false" />
                 <element signature="e#2291#2892#0" expanded="false" />
                 <element signature="e#2926#3710#0" expanded="false" />
-                <element signature="e#3755#5171#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="questionnaireDesignerQuestion.html" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/templates/questionnaireDesignerQuestion.html">
+      <file leaf-file-name="questionnaireDesignerGroup.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="80" column="101" selection-start="2874" selection-end="2874" vertical-scroll-proportion="-8.458333">
+            <state line="43" column="19" selection-start="1319" selection-end="1319" vertical-scroll-proportion="-7.5">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="QuestionnaireDesignerQuestionView.js" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="QuestionnaireDesignerQuestionView.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerQuestionView.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="42" selection-start="1503" selection-end="1503" vertical-scroll-proportion="0.7532751">
+            <state line="121" column="27" selection-start="4143" selection-end="4521" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="e#0#160#0" expanded="false" />
                 <element signature="e#348#498#0" expanded="false" />
-                <element signature="e#4013#4086#0" expanded="false" />
-                <element signature="e#4855#4962#0" expanded="false" />
-                <element signature="e#5222#5306#0" expanded="false" />
+                <element signature="e#3971#4044#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -170,18 +176,18 @@
         <option value="$PROJECT_DIR$/client/templates/questionnaireSelect.html" />
         <option value="$PROJECT_DIR$/client/templates/questionnaireDesignerHeader.html" />
         <option value="$PROJECT_DIR$/client/question.html" />
-        <option value="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerGroupView.js" />
         <option value="$PROJECT_DIR$/client/js/FHIRHelpers.js" />
         <option value="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerHeaderView.js" />
         <option value="$PROJECT_DIR$/client/js/logic/questionnaireRender.js" />
         <option value="$PROJECT_DIR$/client/js/views/QuestionnaireListView.js" />
         <option value="$PROJECT_DIR$/client/templates/questionnaireList.html" />
-        <option value="$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html" />
         <option value="$PROJECT_DIR$/client/templates/questionnaireDesigner.html" />
         <option value="$PROJECT_DIR$/client/js/mediatorQ.js" />
-        <option value="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js" />
         <option value="$PROJECT_DIR$/client/templates/questionnaireDesignerQuestion.html" />
         <option value="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerQuestionView.js" />
+        <option value="$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html" />
+        <option value="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerGroupView.js" />
+        <option value="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js" />
       </list>
     </option>
   </component>
@@ -530,7 +536,7 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2961918" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.7755682" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25108224" sideWeight="0.7038082" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21428572" sideWeight="0.7038082" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2990127" sideWeight="0.8174603" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2961918" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
@@ -675,13 +681,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="0" selection-start="204" selection-end="204" vertical-scroll-proportion="0.24193548">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/js/FHIRHelpers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="61" column="55" selection-start="1383" selection-end="1438" vertical-scroll-proportion="0.0">
@@ -738,9 +737,34 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/templates/questionnaireDesignerQuestion.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="80" column="101" selection-start="2874" selection-end="2874" vertical-scroll-proportion="-24.708334">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerQuestionView.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="121" column="27" selection-start="4143" selection-end="4521" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#0#160#0" expanded="false" />
+            <element signature="e#348#498#0" expanded="false" />
+            <element signature="e#3971#4044#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="19" selection-start="1319" selection-end="1319" vertical-scroll-proportion="-7.5">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerGroupView.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="48" column="78" selection-start="1353" selection-end="1624" vertical-scroll-proportion="0.0">
+        <state line="43" column="8" selection-start="1411" selection-end="1411" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="e#0#160#0" expanded="false" />
           </folding>
@@ -749,34 +773,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="161" column="36" selection-start="5762" selection-end="5776" vertical-scroll-proportion="0.0">
+        <state line="119" column="8" selection-start="4375" selection-end="4375" vertical-scroll-proportion="0.360262">
           <folding>
             <element signature="e#0#160#0" expanded="false" />
             <element signature="e#445#918#0" expanded="false" />
             <element signature="e#947#2259#0" expanded="false" />
             <element signature="e#2291#2892#0" expanded="false" />
             <element signature="e#2926#3710#0" expanded="false" />
-            <element signature="e#3755#5171#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/templates/questionnaireDesignerQuestion.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="101" selection-start="2874" selection-end="2874" vertical-scroll-proportion="-8.458333">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerQuestionView.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="42" selection-start="1503" selection-end="1503" vertical-scroll-proportion="0.7532751">
-          <folding>
-            <element signature="e#0#160#0" expanded="false" />
-            <element signature="e#348#498#0" expanded="false" />
-            <element signature="e#4013#4086#0" expanded="false" />
-            <element signature="e#4855#4962#0" expanded="false" />
-            <element signature="e#5222#5306#0" expanded="false" />
           </folding>
         </state>
       </provider>
