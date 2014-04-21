@@ -7,14 +7,29 @@
 var QuestionnaireListView = BaseView.extend({
     events : {
         "click .viewQ" : "view",
-        "click .viewQSource" : "source"
+        "click .fillin" : "fillin",
+        "click .designQSource" : "design"
+
 
     },
-    source : function(ev) {
+
+    design : function(ev) {
+        var that = this;
         var id = ev.currentTarget.getAttribute('data-id');
-        $.get(id,function(data){
-            console.log(data)
-        })
+        that.trigger("qlv:design",{id:id});
+/*
+        $.get(id,function(Q){
+            console.log(Q)
+
+        }) */
+    },
+    fillin : function(ev) {
+        var id = ev.currentTarget.getAttribute('data-id');
+        this.trigger('qlv:fillin',{id:id});
+
+      //  $.get(id,function(data){
+        //    console.log(data)
+        //})
         //window.open(id);
     },
     view : function(ev){
@@ -32,12 +47,12 @@ var QuestionnaireListView = BaseView.extend({
             _.each(that.model.entry,function(ent){
                 ent.meta = {};
                 if (ent.content.name) {
-                    console.log(ent.content.name);
+                    //console.log(ent.content.name);
                     ent.meta.name = FHIRHelper.ccDisplay(ent.content.name)
                 } else {
                     ent.meta.name = ent.id.getLogicalID();
                 }
-                console.log(ent)
+                //console.log(ent)
             })
 
 

@@ -1,0 +1,78 @@
+<!--  the main page for the designer-->
+
+<style>
+    .qGroup {
+        color: red;
+        cursor: pointer;
+    }
+    .qQuestion {
+        color: green;
+        cursor: pointer;
+    }
+    .qdSelected {
+        background-color: #f5fafd;
+    }
+    .qdNotSelected{
+        background-color: white;
+    }
+
+</style>
+
+
+<form role="form" class="form-horizontal">
+    <div class="form-group">
+        <label for="qdId" class="col-sm-2 col-md-2 control-label">Questionnaire ID:</label>
+
+        <div class="col-sm-6 col-md-6">
+             <input class="form-control" type='text' id = "qdId" value='{{id}}'    />
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <button class="btn btn-primary pull-right" id='qdFormUpdate'>Update on Server</button>
+        </div>
+
+    </div>
+</form>
+<hr />
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#qdHeader" data-toggle="tab">Header</a></li>
+    <li><a href="#qdDesign" data-toggle="tab">Layout</a></li>
+    <li><a href="#qdPreview" data-toggle="tab">Preview</a></li>
+    <li><a href="#qdSource" data-toggle="tab">Source</a></li>
+</ul>
+
+<br />
+<div class="tab-content" >
+
+    <div class="active tab-pane" id="qdHeader">
+        <div id="qdHeaderDiv"></div>
+    </div>
+
+
+
+    <div class="tab-pane" id="qdDesign">
+        <div class="row">
+            <div class="col-sm-3 col-md-3">
+                <div id='qdGroups'></div>
+            </div>
+            <div class="col-sm-9 col-md-9" style="border-left: 1px solid #808080">
+                <div id='qdDetail'></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane" id="qdPreview">
+        <div id="qdPreviewDiv"></div>
+    </div>
+
+    <div class="tab-pane" id="qdSource">
+        <textarea class="form-control "  rows="25" id='qdSourceDiv'></textarea>
+
+    </div>
+
+
+</div>
+
+
+
+
+

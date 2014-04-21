@@ -1,4 +1,5 @@
 
+//these have to be globals for the recursive algorithm to work. todo would like to fix this...
 var renderQ = {},
     html = "",
     htmlNav = "";
@@ -7,6 +8,12 @@ var renderQ = {},
 //show a group
 renderQ.showGroup = function(grp,lvl) {
     //console.log(lvl, grp.header);
+    if (! grp) {
+        //legal to have no group..
+        return;
+    }
+
+
     if (grp.header) {
         var klass = 'formNav'+lvl;
 
@@ -23,8 +30,17 @@ renderQ.showGroup = function(grp,lvl) {
 
 
     //display all the questions in this group -
-    var numCol = 1;         //the number of columns to display (like a flow layout) - come fron an extension
-    var mayRepeat = false;  //if the group can repeat...
+    //var numCol = 1;         //the number of columns to display (like a flow layout) - come fron an extension
+    //var mayRepeat = false;  //if the group can repeat...
+
+
+    var extensions = FHIRHelper.getAllExtensions(grp);
+
+    console.log(extensions);
+    extensions.numCol = extensions.numCol || 1;     //default is 1 col...
+
+
+    /*
     if (grp.extension){     //there are extensions to this group...
         _.each(grp.extension,function(ext){
             switch (ext.url) {
@@ -40,8 +56,9 @@ renderQ.showGroup = function(grp,lvl) {
         })
     }
 
+    */
 
-    html += renderQ.Z.templates.groupTemplate({group: grp,level:displayLevel});
+    html += Backbone.myTemplates.groupTemplate({group: grp,level:displayLevel, mayRepeat : extensions.mayRepeat});
 
 
 
@@ -49,16 +66,28 @@ renderQ.showGroup = function(grp,lvl) {
         html += "<row>"
         _.each(grp.question,function(quest,inx){
             var id='q-'+lvl+'-'+inx;
-            html += renderQ.showQuestion(quest,id,numCol);
+            renderQ.showQuestion(quest,id,extensions.numCol);
+            //html += renderQ.showQuestion(quest,id,numCol);
             //console.log(inx % numCol);
-            if(inx % numCol === 1 ) {
+            if(inx % extensions.numCol === 1 ) {
                 //if at the col count then close the row and create a now one
                 html += "</row><row>"
             }
+
+
+            if (quest.group){
+                //this question has groups...
+                _.each(quest.group,function(questGrp){
+                    lvl ++;
+                    renderQ.showGroup(questGrp,lvl);
+                })
+
+
+            }
+
         })
         html += "</row>";
     }
-
 
     if (grp.group) {
         lvl++;
@@ -73,22 +102,18 @@ renderQ.showGroup = function(grp,lvl) {
 //numCol is the number of columns...
 renderQ.showQuestion = function(quest,id,numCol) {
 
-    var display = "No description";     //the text of the question
-
-    //If there is a code with a name then it can be edited...
     var code;
     if (quest.name && quest.name.coding && quest.name.coding.length > 0 && quest.name.coding[0].code) {
         code = quest.name.coding[0].code;
-        display = code;
-    }
-    if (quest.text) {
-        display = quest.text;
     }
 
+    var display = FHIRHelper.questionDisplay(quest)
 
     //FHIRHelper.ccDisplay
     //choose the correct template based on the number of columns...
     var templateName = "questionTemplate" + numCol + "col";
-    return renderQ.Z.templates[templateName]({question: quest,id:id,code:code,display:display});
+    html +=  Backbone.myTemplates[templateName]({question: quest,id:id,code:code,display:display});
+
+
 }
 

@@ -9,22 +9,33 @@
     <script src="js/libs/backbone-min.js"></script>
     <script src="js/libs/moment.min.js"></script>
     <script src="js/libs/jquery.autosize.js"></script>
+    <script src="js/libs/selectize.min.js"></script>
+    <script src="js/libs/json2xml.js"></script>
 
     <script src="js/views/BaseView.js"></script>
     <script src="js/views/QuestionnaireNavView.js"></script>
     <script src="js/views/QuestionnaireListView.js"></script>
     <script src="js/views/QuestionnaireSelectView.js"></script>
 
+    <script src="js/views/QuestionnaireDesignerView.js"></script>
+    <script src="js/views/QuestionnaireDesignerGroupView.js"></script>
+    <script src="js/views/QuestionnaireDesignerQuestionView.js"></script>
+    <script src="js/views/QuestionnaireDesignerHeaderView.js"></script>
+
     <script src="js/logic/questionnaireRender.js"></script>
 
     <script src="js/FHIRHelpers.js"></script>
 
     <!-- Latest compiled and minified CSS-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!--
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    -->
     <!-- Optional theme-->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
 
     <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/selectize.bootstrap3.css">
     <!-- Latest compiled and minified JavaScript -->
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
@@ -64,11 +75,13 @@
             </a>
             <a class="navbar-brand" href="#">  Questionnaire</a>
         </div>
-        <ul class="nav navbar-nav">
-            <li class="active  navMainOption" data-page='homeTab'><a href="#"><i class="glyphicon glyphicon-home"></i> Find Questionnaire</a> </li>
-            <li class="navMainOption" data-page='newFormTab'><a href="#"><i class="glyphicon glyphicon-file"></i> New Form</a> </li>
 
+        <ul class="nav navbar-nav">
+            <li class="active navMainOption" data-page='homeTab'><a href="#"><i class="glyphicon glyphicon-home"></i> Find Questionnaire</a> </li>
+            <li class="navMainOption" data-page='newFormTab'><a href="#"><i class="glyphicon glyphicon-file"></i> New Form</a> </li>
+            <li class="navMainOption" data-page='designerTab'><a href="#"><i class="glyphicon glyphicon-file"></i> Designer</a> </li>
         </ul>
+
         <ul class="nav navbar-nav pull-right">
             <li class="navMainOption" data-page='helpTab'><a href="#" ><i class="glyphicon glyphicon-question-sign"></i> </a></li>
         </ul>
@@ -94,58 +107,56 @@
         </div>
     </div>
 
+    <div class="myPane" id="designerTab">
+        <div id="qDesigner"></div>
+
+    </div>
 </div>
 
-
-
-
 <script>
-
-
-
     $(document).ready(function(){
-
 
         $('.myPane').hide();        //initially hide all the panes...
         $('#homeTab').show();       //show the home tab
 
         //activate the tabs on the navbar
         $(".navMainOption").on('click',function(ev){
-            $(".navMainOption").removeClass('active');
-            $(ev.currentTarget).addClass('active');
-            //show the appropriate pane...
-            $('.myPane').hide();
-            var paneToShow = ev.currentTarget.getAttribute('data-page')
-            $('#'+paneToShow).show();
+            var tabName =  ev.currentTarget.getAttribute('data-page');
+            Backbone.myFunctions.showMainTab(tabName)
         })
 
+        //myfunction defined in mediatorQ
+        Backbone.myFunctions.showMainTab = function(tabName) {
+            var $menuItem = $("li[data-page='"+tabName+"']");
+            $(".navMainOption").removeClass('active');
+            $menuItem.addClass("active");
+            $('.myPane').hide();
+            $('#'+tabName).show();
 
-       // var html="";    //todo -should these be in Z...
-       // var htmlNav = "";       //The form navigation bar...
+        }
 
+        Backbone.myTemplates = {};
 
-        //this will be a cross reference between the class of a control and
-        //var xRef = {};
-
-        var Z = {'templates':{}}    //a global object to avoid polluting the global namespace...
+        //var Z = {'templates':{}}    //a global object to avoid polluting the global namespace...
 
 
         //todo - there will be a better way as these templates are almost identical...
-        Z.templates.questionTemplate1col = Handlebars.compile($('#questionTemplate1col').html())
-        Z.templates.questionTemplate2col = Handlebars.compile($('#questionTemplate2col').html())
-        Z.templates.questionTemplate3col = Handlebars.compile($('#questionTemplate3col').html())
+        Backbone.myTemplates.questionTemplate1col = Handlebars.compile($('#questionTemplate1col').html())
+        Backbone.myTemplates.questionTemplate2col = Handlebars.compile($('#questionTemplate2col').html())
+        Backbone.myTemplates.questionTemplate3col = Handlebars.compile($('#questionTemplate3col').html())
 
-        Z.templates.groupTemplate = Handlebars.compile($('#groupTemplate').html())
-        Z.templates.saveButtonTemplate = Handlebars.compile($('#saveButtonTemplate').html())
+        Backbone.myTemplates.groupTemplate = Handlebars.compile($('#groupTemplate').html())
+        Backbone.myTemplates.saveButtonTemplate = Handlebars.compile($('#saveButtonTemplate').html())
 
+        //renderQ.Z = Z;  //renderQ defined in questionnaireRender.js
 
         questionnaireSelectView.render();
 
-
+/* - don't remove just yet...
         var uri = '/api/oneresource/Questionnaire/ct6-soap1';
         //var uri = './samples/soapQuestionnaire.xml';
         $.get(uri,function(Q){
-            console.log(Q)
+            //console.log(Q)
             var form = Q.group;     //the root element of the form
 
             //navView.html
@@ -157,118 +168,51 @@
 
             //renderQ.vo = {html:"",htmlNav:""}
             renderQ.Z = Z;
+
+            //var htmlx = "";
+
             //sets globals html & htmlNav - todo - there will be a  better way...
             renderQ.showGroup(form,0);  //create the questionnaire form
 
-            console.log(htmlNav);
+            //console.log(h);
 
             //var vo = showGroup(form,0);  //create the questionnaire form
             //var html1 = renderQ.vo.form;
             navView.html += htmlNav;
-            //html1 += Z.templates.saveButtonTemplate();   //render the save button
 
             $('#form').html(html);
             navView.render();
 
-            //$('#formNav').html(vo.nav);
+            qDesignerView.init({content:Q,id:uri});
+            qDesignerView.render();
         })
 
-/*
 
-    //show a group
-    function showGroup(grp,lvl) {
-        //console.log(lvl, grp.header);
-        if (grp.header) {
-            var klass = 'formNav'+lvl;
+        */
 
-            //todo - move this into the view...
-            var templateStr = "<div class=' <%= klass%>'><a class='mynav'><%= text%></a></div>"
-            htmlNav += _.template(templateStr,{text:grp.header,klass:klass});//  "<div >"+grp.header+"</div>"
-        }
-
-        var displayLevel = lvl;
-        if (displayLevel > 2) {
-            displayLevel = 2;
-        }
+        Handlebars.registerHelper('logicalID',function(str){
+            var ar = str.split('/');
+            return ar[ar.length-1];
+        })
 
 
-        //display all the questions in this group -
-        var numCol = 1;         //the number of columns to display (like a flow layout) - come fron an extension
-        var mayRepeat = false;  //if the group can repeat...
-        if (grp.extension){     //there are extensions to this group...
-            _.each(grp.extension,function(ext){
-                switch (ext.url) {
-                    case 'fhir.orionhealth.com/questionnaire#numcol' : {
-                        numCol = ext.valueInteger;
-                        break;
-                    }
-                    case 'http://hl7.org/fhir/questionnaire-extensions#mayRepeat' : {
-                        mayRepeat = ext.valueBoolean;
-                        break;
-                    }
-                }
-            })
-        }
+        //generate a display for a codeable concept
+        Handlebars.registerHelper('ccDisplay',function(cc){
+            return FHIRHelper.ccDisplay(cc);
 
+        });
 
-        html += Z.templates.groupTemplate({group: grp,level:displayLevel});
+        Handlebars.registerHelper('groupDisplay',function(grp){
+            return FHIRHelper.groupDisplay(grp);
 
+        });
 
+        Handlebars.registerHelper('questionDisplay',function(grp){
+            return FHIRHelper.questionDisplay(grp);
 
-        if (grp.question) {
-            html += "<row>"
-            _.each(grp.question,function(quest,inx){
-                var id='q-'+lvl+'-'+inx;
-                html += showQuestion(quest,id,numCol);
-                //console.log(inx % numCol);
-                if(inx % numCol === 1 ) {
-                    //if at the col count then close the row and create a now one
-                    html += "</row><row>"
-                }
-            })
-            html += "</row>";
-        }
-
-
-        if (grp.group) {
-            lvl++;
-            _.each(grp.group,function(grp1){
-                showGroup(grp1,lvl);
-            })
-        }
-        return {form: html,nav : htmlNav};
-    }
-
-    //show a single question (and possibly an answer)
-    //numCol is the number of columns...
-    function showQuestion(quest,id,numCol) {
-
-        //If there is a code with a name then it can be edited...
-        var code;
-        if (quest.name && quest.name.coding && quest.name.coding.length > 0 && quest.name.coding[0].code) {
-            code = quest.name.coding[0].code;
-        }
-
-        //choose the correct template based on the number of columns...
-        var templateName = "questionTemplate" + numCol + "col";
-        return Z.templates[templateName]({question: quest,id:id,code:code});
-    }
-
-*/
-    Handlebars.registerHelper('logicalID',function(str){
-        var ar = str.split('/');
-        return ar[ar.length-1];
-            })
+        });
 
     });
-
-    //generate a display for a codeable concept
-    Handlebars.registerHelper('ccDisplay',function(cc){
-        return FHIRHelper.ccDisplay(cc);
-
-    });
-
-
 
 
 </script>
@@ -298,6 +242,8 @@
 
 </script>
 
+<!--
+
 <script type="handlebars/template" id='questionTemplate1colDEP'>
 
     <div class="col-sm-12 col-md-12">
@@ -318,6 +264,8 @@
     </div>
 
 </script>
+
+-->
 
 <script type="handlebars/template" id='questionTemplate2col'>
 
@@ -365,8 +313,15 @@
 <script type="handlebars/template" id='groupTemplate'>
     <div class="row">
         <div class="col-sm-12 col-md-12">
-            <div class="header{{level}}" title="{{group.text}}">{{group.header}}</div>
-
+            <div class="header{{level}}" title="{{group.text}}">{{group.header}}
+                {{#if mayRepeat}}
+                    <div class="pull-right">
+                        <a href='#' style="margin:8px">
+                            <i class="glyphicon glyphicon-plus-sign"></i>
+                        </a>
+                    </div>
+                {{/if}}
+            </div>
         </div>
     </div>
 </script>
@@ -379,6 +334,18 @@
     <hr />
 </script>
 
+<!-- A hb partial that will render a template for a CodeableConcept-->
+<script id="cc-partialDEP" type="text/x-handlebars-template">
+    <div class="form-group">
+        <label for="ccp-text" class="col-sm-2 control-label">Text</label>
+        <div class="col-sm-5">
+            <input type='text' class="form-control" id="ccp-text" value='{{text}}'/>
+        </div>
+    </div>
+</script>
+
+
+<!-- Needs to be last...-->
 <script src="js/mediatorQ.js"></script>
 
 </body>

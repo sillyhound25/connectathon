@@ -1,0 +1,88 @@
+<!--  the  page for the designer group-->
+
+<div class='qdgDetail'>
+
+    <div class="row">
+        <div class="col-md-8 col-sm-8">
+            <h4 class='qGroup'>Group Details:{{groupDisplay group}} </h4>
+
+        </div>
+        <div class="col-md-4 col-sm-4">
+            <div class="pull-right"><span id='{{cid}}qdgNotice'></span>  ({{cid}})</div>
+        </div>
+    </div>
+
+
+    <form role="form" class="form-horizontal">
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Text</label>
+            <div class="col-sm-10">
+                <input type='text' class="form-control" id="{{cid}}qdgText" placeholder="Additional Text" value='{{text}}'/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Header</label>
+            <div class="col-sm-10">
+                <input type='text' class="form-control" id="{{cid}}qdgHeader" placeholder="Text displayed above group contents" value='{{header}}'/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">May Repeat</label>
+            <div class="col-sm-1">
+                <input type='checkbox' class="form-control" id="{{cid}}qdgMayRepeat" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Columns</label>
+            <div class="col-sm-10">
+
+                <div class="radio-inline">
+                    <label>
+                        <input type="radio" value='1' name="qdGroupCols" checked="checked">
+                        1 Column
+                    </label>
+                </div>
+                <div class="radio-inline">
+                    <label>
+                        <input type="radio" value='2' name="qdGroupCols">
+                        2 Column
+                    </label>
+                </div>
+                <div class="radio-inline">
+                    <label>
+                        <input type="radio" value='3' name="qdGroupCols">
+                        3 Column
+                    </label>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </form>
+
+
+
+    <div class="row">
+        <div class="col-md-8 col-sm-8">
+            <button class="btn btn-default" id="qdgMoveUp"><i class="glyphicon glyphicon-arrow-up" ></i></button>
+            <button class="btn btn-default" id="qdgMoveDown"><i class="glyphicon glyphicon-arrow-down" ></i></button>
+            <button class="btn btn-default" id="qdgAddQuestion">New Question this group</button>
+            <button class="btn btn-default">Remove group</button>
+            <button class="btn btn-default" id="qdgAddSubGroup">Add sub group</button>
+        </div>
+        <div class="col-md-4 col-sm-4">
+            <button class="btn btn-success pull-right" id="qdgUpdateGroup">Update Group</button>
+        </div>
+    </div>
+
+
+
+
+
+</div>
