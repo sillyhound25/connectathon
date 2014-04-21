@@ -3,13 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="3a9b3cc9-926c-402b-bbe7-016794926cb7" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/FHIRHelpers.js" afterPath="$PROJECT_DIR$/client/js/FHIRHelpers.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerGroupView.js" afterPath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerGroupView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerQuestionView.js" afterPath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerQuestionView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js" afterPath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/QuestionnaireListView.js" afterPath="$PROJECT_DIR$/client/js/views/QuestionnaireListView.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/mediatorQ.js" afterPath="$PROJECT_DIR$/client/js/mediatorQ.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/question.html" afterPath="$PROJECT_DIR$/client/question.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/questionnaireList.html" afterPath="$PROJECT_DIR$/client/templates/questionnaireList.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/logic/questionnaireRender.js" afterPath="$PROJECT_DIR$/client/js/logic/questionnaireRender.js" />
     </list>
     <ignored path="AlexUpdate.iws" />
@@ -71,7 +66,7 @@
     <file path="/editExtension.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395702326839" ignored="false" />
     <file path="/pansasService.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1396934001276" ignored="false" />
     <file path="/pandasService.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397613115327" ignored="false" />
-    <file path="/question.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398064286392" ignored="false" />
+    <file path="/question.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398066694271" ignored="false" />
     <file path="/soapQuestionnaire.xml" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397533174945" ignored="false" />
     <file path="/QuestionnaireNavView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397598828932" ignored="false" />
     <file path="/QuestionnaireListView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397863890012" ignored="false" />
@@ -80,8 +75,8 @@
     <file path="/QuestionnaireSelectView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397689735016" ignored="false" />
     <file path="/questionnaireSelect.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397938154533" ignored="false" />
     <file path="/mediatorQ.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398063706804" ignored="false" />
-    <file path="/questionnaireRender.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397955157954" ignored="false" />
-    <file path="/FHIRHelpers.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398061129576" ignored="false" />
+    <file path="/questionnaireRender.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398066173929" ignored="false" />
+    <file path="/FHIRHelpers.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398065868685" ignored="false" />
     <file path="/QuestionnaireDesignerView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398061813408" ignored="false" />
     <file path="/QuestionnaireDesignerGroupView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398061490511" ignored="false" />
     <file path="/QuestionnaireDesignerAnswerView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397778241307" ignored="false" />
@@ -114,37 +109,37 @@
       <file leaf-file-name="mediatorQ.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/js/mediatorQ.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="157" column="45" selection-start="4868" selection-end="4868" vertical-scroll-proportion="0.0">
+            <state line="31" column="0" selection-start="1248" selection-end="1248" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="e#0#146#0" expanded="false" />
                 <element signature="e#192#331#0" expanded="false" />
                 <element signature="e#241#284#0" expanded="false" />
                 <element signature="e#290#329#0" expanded="false" />
-                <element signature="e#1699#1775#0" expanded="false" />
-                <element signature="e#1719#1773#0" expanded="false" />
-                <element signature="e#2637#2770#0" expanded="false" />
-                <element signature="e#2945#3260#0" expanded="false" />
-                <element signature="e#3043#3116#0" expanded="false" />
-                <element signature="e#3127#3187#0" expanded="false" />
-                <element signature="e#3275#3319#0" expanded="false" />
-                <element signature="e#3426#3678#0" expanded="false" />
-                <element signature="e#3549#3674#0" expanded="false" />
-                <element signature="e#3790#3902#0" expanded="false" />
-                <element signature="e#5114#5132#0" expanded="false" />
-                <element signature="e#5598#6080#0" expanded="false" />
-                <element signature="e#5850#5905#0" expanded="false" />
-                <element signature="e#6246#7289#0" expanded="false" />
-                <element signature="e#6474#6520#0" expanded="false" />
-                <element signature="e#6526#6588#0" expanded="false" />
-                <element signature="e#6621#6719#0" expanded="false" />
-                <element signature="e#6725#6916#0" expanded="false" />
-                <element signature="e#6761#6908#0" expanded="false" />
-                <element signature="e#6961#7285#0" expanded="false" />
-                <element signature="e#7076#7251#0" expanded="false" />
-                <element signature="e#7138#7186#0" expanded="false" />
-                <element signature="e#7192#7241#0" expanded="false" />
-                <element signature="e#7326#7355#0" expanded="false" />
-                <element signature="e#7392#7421#0" expanded="false" />
+                <element signature="e#1698#1774#0" expanded="false" />
+                <element signature="e#1718#1772#0" expanded="false" />
+                <element signature="e#2636#2769#0" expanded="false" />
+                <element signature="e#2944#3259#0" expanded="false" />
+                <element signature="e#3042#3115#0" expanded="false" />
+                <element signature="e#3126#3186#0" expanded="false" />
+                <element signature="e#3274#3318#0" expanded="false" />
+                <element signature="e#3425#3677#0" expanded="false" />
+                <element signature="e#3548#3673#0" expanded="false" />
+                <element signature="e#3789#3901#0" expanded="false" />
+                <element signature="e#5113#5131#0" expanded="false" />
+                <element signature="e#5597#6079#0" expanded="false" />
+                <element signature="e#5849#5904#0" expanded="false" />
+                <element signature="e#6245#7288#0" expanded="false" />
+                <element signature="e#6473#6519#0" expanded="false" />
+                <element signature="e#6525#6587#0" expanded="false" />
+                <element signature="e#6620#6718#0" expanded="false" />
+                <element signature="e#6724#6915#0" expanded="false" />
+                <element signature="e#6760#6907#0" expanded="false" />
+                <element signature="e#6960#7284#0" expanded="false" />
+                <element signature="e#7075#7250#0" expanded="false" />
+                <element signature="e#7137#7185#0" expanded="false" />
+                <element signature="e#7191#7240#0" expanded="false" />
+                <element signature="e#7325#7354#0" expanded="false" />
+                <element signature="e#7391#7420#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -153,7 +148,7 @@
       <file leaf-file-name="questionnaireRender.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/js/logic/questionnaireRender.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="104" column="33" selection-start="3037" selection-end="3037" vertical-scroll-proportion="-7.6538463">
+            <state line="60" column="25" selection-start="1683" selection-end="1683" vertical-scroll-proportion="-2.8846154">
               <folding />
             </state>
           </provider>
@@ -162,9 +157,9 @@
       <file leaf-file-name="FHIRHelpers.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/js/FHIRHelpers.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="62" column="77" selection-start="1420" selection-end="1420" vertical-scroll-proportion="0.0">
+            <state line="80" column="4" selection-start="2013" selection-end="2013" vertical-scroll-proportion="0.0">
               <folding>
-                <element signature="e#3343#4168#0" expanded="false" />
+                <element signature="e#3898#4723#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -227,11 +222,18 @@
       <file leaf-file-name="question.html" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/question.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="147" column="10" selection-start="5374" selection-end="5374" vertical-scroll-proportion="0.5273224">
+            <state line="318" column="51" selection-start="10951" selection-end="10951" vertical-scroll-proportion="0.6202186">
               <folding>
                 <element signature="tag#div#0;tag#nav#0;tag#body#0;tag#html#0" expanded="false" />
                 <element signature="tag#div#0;tag#div#1;tag#body#0;tag#html#0" expanded="false" />
-                <element signature="tag#div#1;tag#div#1;tag#body#0;tag#html#0" expanded="false" />
+                <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="tag#script#0;tag#body#0;tag#html#0" expanded="false" />
+                <element signature="tag#script#1;tag#body#0;tag#html#0" expanded="false" />
+                <element signature="e#8087#8920#0" expanded="false" />
+                <element signature="tag#script#2;tag#body#0;tag#html#0" expanded="false" />
+                <element signature="tag#script#3;tag#body#0;tag#html#0" expanded="false" />
+                <element signature="tag#script#5;tag#body#0;tag#html#0" expanded="false" />
+                <element signature="tag#script#6;tag#body#0;tag#html#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -271,15 +273,15 @@
         <option value="$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html" />
         <option value="$PROJECT_DIR$/client/templates/questionnaireDesignerQuestion.html" />
         <option value="$PROJECT_DIR$/client/templates/questionnaireDesigner.html" />
-        <option value="$PROJECT_DIR$/client/js/FHIRHelpers.js" />
         <option value="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerGroupView.js" />
         <option value="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerQuestionView.js" />
         <option value="$PROJECT_DIR$/client/js/views/QuestionnaireListView.js" />
         <option value="$PROJECT_DIR$/client/templates/questionnaireList.html" />
         <option value="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js" />
         <option value="$PROJECT_DIR$/client/js/mediatorQ.js" />
-        <option value="$PROJECT_DIR$/client/question.html" />
+        <option value="$PROJECT_DIR$/client/js/FHIRHelpers.js" />
         <option value="$PROJECT_DIR$/client/js/logic/questionnaireRender.js" />
+        <option value="$PROJECT_DIR$/client/question.html" />
       </list>
     </option>
   </component>
@@ -421,28 +423,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="AlexUpdate" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="AlexUpdate" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -776,15 +756,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/js/FHIRHelpers.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="77" selection-start="1420" selection-end="1420" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#3343#4168#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="46" column="36" selection-start="1565" selection-end="1565" vertical-scroll-proportion="0.0">
@@ -839,55 +810,71 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/js/mediatorQ.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="157" column="45" selection-start="4868" selection-end="4868" vertical-scroll-proportion="0.0">
+        <state line="31" column="0" selection-start="1248" selection-end="1248" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="e#0#146#0" expanded="false" />
             <element signature="e#192#331#0" expanded="false" />
             <element signature="e#241#284#0" expanded="false" />
             <element signature="e#290#329#0" expanded="false" />
-            <element signature="e#1699#1775#0" expanded="false" />
-            <element signature="e#1719#1773#0" expanded="false" />
-            <element signature="e#2637#2770#0" expanded="false" />
-            <element signature="e#2945#3260#0" expanded="false" />
-            <element signature="e#3043#3116#0" expanded="false" />
-            <element signature="e#3127#3187#0" expanded="false" />
-            <element signature="e#3275#3319#0" expanded="false" />
-            <element signature="e#3426#3678#0" expanded="false" />
-            <element signature="e#3549#3674#0" expanded="false" />
-            <element signature="e#3790#3902#0" expanded="false" />
-            <element signature="e#5114#5132#0" expanded="false" />
-            <element signature="e#5598#6080#0" expanded="false" />
-            <element signature="e#5850#5905#0" expanded="false" />
-            <element signature="e#6246#7289#0" expanded="false" />
-            <element signature="e#6474#6520#0" expanded="false" />
-            <element signature="e#6526#6588#0" expanded="false" />
-            <element signature="e#6621#6719#0" expanded="false" />
-            <element signature="e#6725#6916#0" expanded="false" />
-            <element signature="e#6761#6908#0" expanded="false" />
-            <element signature="e#6961#7285#0" expanded="false" />
-            <element signature="e#7076#7251#0" expanded="false" />
-            <element signature="e#7138#7186#0" expanded="false" />
-            <element signature="e#7192#7241#0" expanded="false" />
-            <element signature="e#7326#7355#0" expanded="false" />
-            <element signature="e#7392#7421#0" expanded="false" />
+            <element signature="e#1698#1774#0" expanded="false" />
+            <element signature="e#1718#1772#0" expanded="false" />
+            <element signature="e#2636#2769#0" expanded="false" />
+            <element signature="e#2944#3259#0" expanded="false" />
+            <element signature="e#3042#3115#0" expanded="false" />
+            <element signature="e#3126#3186#0" expanded="false" />
+            <element signature="e#3274#3318#0" expanded="false" />
+            <element signature="e#3425#3677#0" expanded="false" />
+            <element signature="e#3548#3673#0" expanded="false" />
+            <element signature="e#3789#3901#0" expanded="false" />
+            <element signature="e#5113#5131#0" expanded="false" />
+            <element signature="e#5597#6079#0" expanded="false" />
+            <element signature="e#5849#5904#0" expanded="false" />
+            <element signature="e#6245#7288#0" expanded="false" />
+            <element signature="e#6473#6519#0" expanded="false" />
+            <element signature="e#6525#6587#0" expanded="false" />
+            <element signature="e#6620#6718#0" expanded="false" />
+            <element signature="e#6724#6915#0" expanded="false" />
+            <element signature="e#6760#6907#0" expanded="false" />
+            <element signature="e#6960#7284#0" expanded="false" />
+            <element signature="e#7075#7250#0" expanded="false" />
+            <element signature="e#7137#7185#0" expanded="false" />
+            <element signature="e#7191#7240#0" expanded="false" />
+            <element signature="e#7325#7354#0" expanded="false" />
+            <element signature="e#7391#7420#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/js/FHIRHelpers.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="80" column="4" selection-start="2013" selection-end="2013" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#3898#4723#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/js/logic/questionnaireRender.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="104" column="33" selection-start="3037" selection-end="3037" vertical-scroll-proportion="-7.6538463">
+        <state line="60" column="25" selection-start="1683" selection-end="1683" vertical-scroll-proportion="-2.8846154">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/question.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="147" column="10" selection-start="5374" selection-end="5374" vertical-scroll-proportion="0.5273224">
+        <state line="318" column="51" selection-start="10951" selection-end="10951" vertical-scroll-proportion="0.6202186">
           <folding>
             <element signature="tag#div#0;tag#nav#0;tag#body#0;tag#html#0" expanded="false" />
             <element signature="tag#div#0;tag#div#1;tag#body#0;tag#html#0" expanded="false" />
-            <element signature="tag#div#1;tag#div#1;tag#body#0;tag#html#0" expanded="false" />
+            <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="tag#script#0;tag#body#0;tag#html#0" expanded="false" />
+            <element signature="tag#script#1;tag#body#0;tag#html#0" expanded="false" />
+            <element signature="e#8087#8920#0" expanded="false" />
+            <element signature="tag#script#2;tag#body#0;tag#html#0" expanded="false" />
+            <element signature="tag#script#3;tag#body#0;tag#html#0" expanded="false" />
+            <element signature="tag#script#5;tag#body#0;tag#html#0" expanded="false" />
+            <element signature="tag#script#6;tag#body#0;tag#html#0" expanded="false" />
           </folding>
         </state>
       </provider>

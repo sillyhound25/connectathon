@@ -27,7 +27,10 @@
     <script src="js/FHIRHelpers.js"></script>
 
     <!-- Latest compiled and minified CSS-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!--
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    -->
     <!-- Optional theme-->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
 
@@ -239,6 +242,8 @@
 
 </script>
 
+<!--
+
 <script type="handlebars/template" id='questionTemplate1colDEP'>
 
     <div class="col-sm-12 col-md-12">
@@ -259,6 +264,8 @@
     </div>
 
 </script>
+
+-->
 
 <script type="handlebars/template" id='questionTemplate2col'>
 
@@ -306,8 +313,15 @@
 <script type="handlebars/template" id='groupTemplate'>
     <div class="row">
         <div class="col-sm-12 col-md-12">
-            <div class="header{{level}}" title="{{group.text}}">{{group.header}}</div>
-
+            <div class="header{{level}}" title="{{group.text}}">{{group.header}}
+                {{#if mayRepeat}}
+                    <div class="pull-right">
+                        <a href='#' style="margin:8px">
+                            <i class="glyphicon glyphicon-plus-sign"></i>
+                        </a>
+                    </div>
+                {{/if}}
+            </div>
         </div>
     </div>
 </script>

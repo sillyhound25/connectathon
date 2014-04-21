@@ -62,6 +62,23 @@ FHIRHelper.groupDisplay = function(group){
 
 //return an object with all known extensions in it. Others will be ignored...
 FHIRHelper.getAllExtensions = function(model) {
+    var vo = {};
+    if (model.extension){     //there are extensions to this group...
+
+        _.each(model.extension,function(ext){
+            switch (ext.url) {
+                case 'fhir.orionhealth.com/questionnaire#numcol' : {
+                    vo.numCol = ext.valueInteger;
+                    break;
+                }
+                case 'http://hl7.org/fhir/questionnaire-extensions#mayRepeat' : {
+                    vo.mayRepeat = ext.valueBoolean;
+                    break;
+                }
+            }
+        })
+    }
+    return vo;
 
 }
 

@@ -30,8 +30,17 @@ renderQ.showGroup = function(grp,lvl) {
 
 
     //display all the questions in this group -
-    var numCol = 1;         //the number of columns to display (like a flow layout) - come fron an extension
-    var mayRepeat = false;  //if the group can repeat...
+    //var numCol = 1;         //the number of columns to display (like a flow layout) - come fron an extension
+    //var mayRepeat = false;  //if the group can repeat...
+
+
+    var extensions = FHIRHelper.getAllExtensions(grp);
+
+    console.log(extensions);
+    extensions.numCol = extensions.numCol || 1;     //default is 1 col...
+
+
+    /*
     if (grp.extension){     //there are extensions to this group...
         _.each(grp.extension,function(ext){
             switch (ext.url) {
@@ -47,8 +56,9 @@ renderQ.showGroup = function(grp,lvl) {
         })
     }
 
+    */
 
-    html += Backbone.myTemplates.groupTemplate({group: grp,level:displayLevel});
+    html += Backbone.myTemplates.groupTemplate({group: grp,level:displayLevel, mayRepeat : extensions.mayRepeat});
 
 
 
@@ -56,10 +66,10 @@ renderQ.showGroup = function(grp,lvl) {
         html += "<row>"
         _.each(grp.question,function(quest,inx){
             var id='q-'+lvl+'-'+inx;
-            renderQ.showQuestion(quest,id,numCol);
+            renderQ.showQuestion(quest,id,extensions.numCol);
             //html += renderQ.showQuestion(quest,id,numCol);
             //console.log(inx % numCol);
-            if(inx % numCol === 1 ) {
+            if(inx % extensions.numCol === 1 ) {
                 //if at the col count then close the row and create a now one
                 html += "</row><row>"
             }
