@@ -58,8 +58,30 @@ FHIRHelper.groupDisplay = function(group){
     return display;
 };
 
+
+
+//remove an extension
+FHIRHelper.removeExtension = function(model,extensionDefn) {
+    var url = extensionDefn.url;
+    var type = extensionDefn.type;
+    var pos = -1;
+    var value;
+    if (model && model.extension) {
+        _.each(model.extension,function(ext,inx) {
+            if (ext.url === url){
+                pos = inx;
+            }
+        });
+        if (pos) {
+            model.extension.splice(pos,1);  //remove the extension
+        }
+    }
+}
+
 //get the value of a particular extension
-FHIRHelper.getExtensionValue = function(model,url,type) {
+FHIRHelper.getExtensionValue = function(model,extensionDefn) {
+    var url = extensionDefn.url;
+    var type = extensionDefn.type;
     var value;
     if (model && model.extension) {
         _.each(model.extension,function(ext) {
@@ -72,8 +94,12 @@ FHIRHelper.getExtensionValue = function(model,url,type) {
     return value;
 }
 
-FHIRHelper.addExtension = function(model,url,value,type) {
+//set an extension value on a model
+FHIRHelper.addExtension = function(model,extensionDefn,value) {
     //add a particular extension
+    var url = extensionDefn.url;
+    var type = extensionDefn.type;
+
     var updated = false;
     if (model.extension) {
         _.each(model.extension,function(ext) {

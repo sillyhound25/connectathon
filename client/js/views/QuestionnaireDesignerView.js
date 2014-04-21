@@ -19,7 +19,11 @@ var QuestionnaireDesignerView = BaseView.extend({
 
         this.headerView.update();
 
-        alert(JSON.stringify(this.model,null,2))
+        if (! window.confirm("Are you sure you wish to update this Questionnaire?")) {
+            return;
+        }
+
+        //alert(JSON.stringify(this.model,null,2))
 
 
         if (this.isNew) {

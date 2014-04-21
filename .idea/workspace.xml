@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3a9b3cc9-926c-402b-bbe7-016794926cb7" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/FHIRHelpers.js" afterPath="$PROJECT_DIR$/client/js/FHIRHelpers.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerGroupView.js" afterPath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerGroupView.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerQuestionView.js" afterPath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerQuestionView.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js" afterPath="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/js/mediatorQ.js" afterPath="$PROJECT_DIR$/client/js/mediatorQ.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html" afterPath="$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/templates/questionnaireDesignerQuestion.html" afterPath="$PROJECT_DIR$/client/templates/questionnaireDesignerQuestion.html" />
     </list>
     <ignored path="AlexUpdate.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -51,7 +54,7 @@
     <file path="/mediator.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397439993032" ignored="false" />
     <file path="/ProfileQueryView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397191656148" ignored="false" />
     <file path="/profileQuery.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395277032702" ignored="false" />
-    <file path="/a.dummy" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397949771419" ignored="false" />
+    <file path="/a.dummy" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398050264333" ignored="false" />
     <file path="/medicationadministration.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1395263223380" ignored="false" />
     <file path="/profileContent.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397273650371" ignored="false" />
     <file path="/ProfileContentView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397273978684" ignored="false" />
@@ -74,14 +77,14 @@
     <file path="/questionnaireList.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397966452093" ignored="false" />
     <file path="/QuestionnaireSelectView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397689735016" ignored="false" />
     <file path="/questionnaireSelect.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397938154533" ignored="false" />
-    <file path="/mediatorQ.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398021429765" ignored="false" />
+    <file path="/mediatorQ.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398049017518" ignored="false" />
     <file path="/questionnaireRender.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397955157954" ignored="false" />
-    <file path="/FHIRHelpers.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397954129348" ignored="false" />
-    <file path="/QuestionnaireDesignerView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398034982317" ignored="false" />
-    <file path="/QuestionnaireDesignerGroupView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398034721415" ignored="false" />
+    <file path="/FHIRHelpers.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398050697814" ignored="false" />
+    <file path="/QuestionnaireDesignerView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398048878022" ignored="false" />
+    <file path="/QuestionnaireDesignerGroupView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398051014232" ignored="false" />
     <file path="/QuestionnaireDesignerAnswerView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397778241307" ignored="false" />
     <file path="/questionnaireDesigner.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397965879059" ignored="false" />
-    <file path="/questionnaireDesignerGroup.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398033688258" ignored="false" />
+    <file path="/questionnaireDesignerGroup.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398050878969" ignored="false" />
     <file path="/questionnaireDesignerAnswer.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1397769592011" ignored="false" />
     <file path="/QuestionnaireDesignerQuestionView.js" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398024190189" ignored="false" />
     <file path="/questionnaireDesignerQuestion.html" changelist="3a9b3cc9-926c-402b-bbe7-016794926cb7" time="1398024226884" ignored="false" />
@@ -106,36 +109,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="QuestionnaireDesignerGroupView.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerGroupView.js">
+      <file leaf-file-name="questionnaireDesignerQuestion.html" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/client/templates/questionnaireDesignerQuestion.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="37" column="9" selection-start="1309" selection-end="1309" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="e#0#160#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="QuestionnaireDesignerView.js" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="190" column="10" selection-start="7398" selection-end="7398" vertical-scroll-proportion="1.875">
-              <folding>
-                <element signature="e#0#160#0" expanded="false" />
-                <element signature="e#445#918#0" expanded="false" />
-                <element signature="e#947#2259#0" expanded="false" />
-                <element signature="e#2291#2892#0" expanded="false" />
-                <element signature="e#2926#3710#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="questionnaireDesignerGroup.html" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="61" column="57" selection-start="2001" selection-end="2010" vertical-scroll-proportion="-5.25">
+            <state line="12" column="14" selection-start="447" selection-end="447" vertical-scroll-proportion="0.4674221">
               <folding />
             </state>
           </provider>
@@ -144,12 +121,30 @@
       <file leaf-file-name="QuestionnaireDesignerQuestionView.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerQuestionView.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="45" column="6" selection-start="1280" selection-end="1739" vertical-scroll-proportion="0.0">
+            <state line="127" column="22" selection-start="4594" selection-end="4594" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="e#0#160#0" expanded="false" />
                 <element signature="e#348#498#0" expanded="false" />
-                <element signature="e#4090#4163#0" expanded="false" />
+                <element signature="e#4020#4093#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="questionnaireDesignerGroup.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="10" column="72" selection-start="296" selection-end="332" vertical-scroll-proportion="-6.25">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FHIRHelpers.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/js/FHIRHelpers.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="72" column="13" selection-start="1688" selection-end="1688" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -176,18 +171,18 @@
         <option value="$PROJECT_DIR$/client/templates/questionnaireSelect.html" />
         <option value="$PROJECT_DIR$/client/templates/questionnaireDesignerHeader.html" />
         <option value="$PROJECT_DIR$/client/question.html" />
-        <option value="$PROJECT_DIR$/client/js/FHIRHelpers.js" />
         <option value="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerHeaderView.js" />
         <option value="$PROJECT_DIR$/client/js/logic/questionnaireRender.js" />
         <option value="$PROJECT_DIR$/client/js/views/QuestionnaireListView.js" />
         <option value="$PROJECT_DIR$/client/templates/questionnaireList.html" />
         <option value="$PROJECT_DIR$/client/templates/questionnaireDesigner.html" />
-        <option value="$PROJECT_DIR$/client/js/mediatorQ.js" />
-        <option value="$PROJECT_DIR$/client/templates/questionnaireDesignerQuestion.html" />
-        <option value="$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html" />
-        <option value="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerQuestionView.js" />
-        <option value="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerGroupView.js" />
         <option value="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js" />
+        <option value="$PROJECT_DIR$/client/js/mediatorQ.js" />
+        <option value="$PROJECT_DIR$/client/js/FHIRHelpers.js" />
+        <option value="$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html" />
+        <option value="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerGroupView.js" />
+        <option value="$PROJECT_DIR$/client/js/views/QuestionnaireDesignerQuestionView.js" />
+        <option value="$PROJECT_DIR$/client/templates/questionnaireDesignerQuestion.html" />
       </list>
     </option>
   </component>
@@ -407,7 +402,7 @@
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="options.lastSelected" value="vcs.Git" />
     <property name="recentsLimit" value="5" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/client/question.html" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/client/js" />
     <property name="restartRequiresConfirmation" value="true" />
     <property name="FullScreen" value="false" />
     <property name="DefaultHtmlFileTemplate" value="Html5" />
@@ -533,13 +528,13 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3286119" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2961918" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.41043723" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.7755682" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21428572" sideWeight="0.7038082" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21645021" sideWeight="0.5895628" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2990127" sideWeight="0.8174603" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2961918" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.41043723" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26375178" sideWeight="0.8672439" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -621,20 +616,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/client/templates/questionnaireDesignerHeader.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="83" selection-start="1539" selection-end="1549" vertical-scroll-proportion="-10.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/js/models/ProfileModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="131" column="26" selection-start="4179" selection-end="4198" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerHeaderView.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="44" column="10" selection-start="1365" selection-end="1365" vertical-scroll-proportion="0.0">
@@ -681,13 +662,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/js/FHIRHelpers.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="61" column="55" selection-start="1383" selection-end="1438" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/templates/questionnaireDesigner.html">
       <provider selected="true" editor-type-id="text-editor">
         <state line="55" column="41" selection-start="1384" selection-end="1384" vertical-scroll-proportion="-20.0">
@@ -697,90 +671,108 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="10" selection-start="757" selection-end="757" vertical-scroll-proportion="-5.769231">
+          <folding>
+            <element signature="e#0#160#0" expanded="false" />
+            <element signature="e#1067#2379#0" expanded="false" />
+            <element signature="e#2411#3012#0" expanded="false" />
+            <element signature="e#3046#3830#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/js/models/ProfileModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="4" selection-start="998" selection-end="998" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/js/mediator.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="280" column="51" selection-start="10177" selection-end="10177" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/js/mediatorQ.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="53" selection-start="1048" selection-end="1048" vertical-scroll-proportion="0.0">
+        <state line="31" column="127" selection-start="1242" selection-end="1242" vertical-scroll-proportion="-3.9615386">
           <folding>
             <element signature="e#0#146#0" expanded="false" />
             <element signature="e#192#331#0" expanded="false" />
             <element signature="e#241#284#0" expanded="false" />
             <element signature="e#290#329#0" expanded="false" />
-            <element signature="e#1444#1520#0" expanded="false" />
-            <element signature="e#1464#1518#0" expanded="false" />
-            <element signature="e#2221#2928#0" expanded="false" />
-            <element signature="e#2299#2432#0" expanded="false" />
-            <element signature="e#2472#2565#0" expanded="false" />
-            <element signature="e#2607#2922#0" expanded="false" />
-            <element signature="e#2705#2778#0" expanded="false" />
-            <element signature="e#2789#2849#0" expanded="false" />
-            <element signature="e#2937#2981#0" expanded="false" />
-            <element signature="e#3088#3340#0" expanded="false" />
-            <element signature="e#3211#3336#0" expanded="false" />
-            <element signature="e#3452#3564#0" expanded="false" />
-            <element signature="e#3683#4076#0" expanded="false" />
-            <element signature="e#3709#3727#0" expanded="false" />
-            <element signature="e#4193#4675#0" expanded="false" />
-            <element signature="e#4445#4500#0" expanded="false" />
-            <element signature="e#4841#5884#0" expanded="false" />
-            <element signature="e#5069#5115#0" expanded="false" />
-            <element signature="e#5121#5183#0" expanded="false" />
-            <element signature="e#5216#5314#0" expanded="false" />
-            <element signature="e#5320#5511#0" expanded="false" />
-            <element signature="e#5356#5503#0" expanded="false" />
-            <element signature="e#5556#5880#0" expanded="false" />
-            <element signature="e#5671#5846#0" expanded="false" />
-            <element signature="e#5733#5781#0" expanded="false" />
-            <element signature="e#5787#5836#0" expanded="false" />
-            <element signature="e#5921#5950#0" expanded="false" />
-            <element signature="e#5987#6016#0" expanded="false" />
+            <element signature="e#1699#1775#0" expanded="false" />
+            <element signature="e#1719#1773#0" expanded="false" />
+            <element signature="e#2554#2687#0" expanded="false" />
+            <element signature="e#2862#3177#0" expanded="false" />
+            <element signature="e#2960#3033#0" expanded="false" />
+            <element signature="e#3044#3104#0" expanded="false" />
+            <element signature="e#3192#3236#0" expanded="false" />
+            <element signature="e#3343#3595#0" expanded="false" />
+            <element signature="e#3466#3591#0" expanded="false" />
+            <element signature="e#3707#3819#0" expanded="false" />
+            <element signature="e#3938#4331#0" expanded="false" />
+            <element signature="e#3964#3982#0" expanded="false" />
+            <element signature="e#4448#4930#0" expanded="false" />
+            <element signature="e#4700#4755#0" expanded="false" />
+            <element signature="e#5096#6139#0" expanded="false" />
+            <element signature="e#5324#5370#0" expanded="false" />
+            <element signature="e#5376#5438#0" expanded="false" />
+            <element signature="e#5471#5569#0" expanded="false" />
+            <element signature="e#5575#5766#0" expanded="false" />
+            <element signature="e#5611#5758#0" expanded="false" />
+            <element signature="e#5811#6135#0" expanded="false" />
+            <element signature="e#5926#6101#0" expanded="false" />
+            <element signature="e#5988#6036#0" expanded="false" />
+            <element signature="e#6042#6091#0" expanded="false" />
+            <element signature="e#6176#6205#0" expanded="false" />
+            <element signature="e#6242#6271#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/templates/questionnaireDesignerQuestion.html">
+    <entry file="file://$PROJECT_DIR$/client/js/FHIRHelpers.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="117" selection-start="2671" selection-end="2890" vertical-scroll-proportion="-6.25">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="61" column="57" selection-start="2001" selection-end="2010" vertical-scroll-proportion="-5.25">
+        <state line="72" column="13" selection-start="1688" selection-end="1688" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerQuestionView.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="6" selection-start="1280" selection-end="1739" vertical-scroll-proportion="0.0">
+        <state line="127" column="22" selection-start="4594" selection-end="4594" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="e#0#160#0" expanded="false" />
             <element signature="e#348#498#0" expanded="false" />
-            <element signature="e#4090#4163#0" expanded="false" />
+            <element signature="e#4020#4093#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerGroupView.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="9" selection-start="1309" selection-end="1309" vertical-scroll-proportion="0.0">
+        <state line="75" column="35" selection-start="2550" selection-end="2550" vertical-scroll-proportion="0.53958946">
           <folding>
             <element signature="e#0#160#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/js/views/QuestionnaireDesignerView.js">
+    <entry file="file://$PROJECT_DIR$/client/templates/questionnaireDesignerGroup.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="190" column="10" selection-start="7398" selection-end="7398" vertical-scroll-proportion="1.875">
-          <folding>
-            <element signature="e#0#160#0" expanded="false" />
-            <element signature="e#445#918#0" expanded="false" />
-            <element signature="e#947#2259#0" expanded="false" />
-            <element signature="e#2291#2892#0" expanded="false" />
-            <element signature="e#2926#3710#0" expanded="false" />
-          </folding>
+        <state line="10" column="72" selection-start="296" selection-end="332" vertical-scroll-proportion="-6.25">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/templates/questionnaireDesignerQuestion.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="14" selection-start="447" selection-end="447" vertical-scroll-proportion="0.4674221">
+          <folding />
         </state>
       </provider>
     </entry>

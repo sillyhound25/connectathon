@@ -28,6 +28,10 @@ Backbone.myConstants.arSystem.push({label:'http://fhir.orionhealth.com',value:'h
 
 Backbone.myConstants.extensionDefn = {};
 Backbone.myConstants.extensionDefn.answerFormat = {url:"http://hl7.org/fhir/questionnaire-extensions#answerFormat",type:'valueCode'};
+Backbone.myConstants.extensionDefn.numCol = {url:"http://fhir.orionhealth.com/questionnaire#numcol",type:'valueInteger'};
+Backbone.myConstants.extensionDefn.mayRepeat = {url:"http://hl7.org/fhir/questionnaire-extensions#mayRepeat",type:'valueBoolean'};
+
+
 
 
 var questionnaireSelectView = new QuestionnaireSelectView({el:'#qSelect'});

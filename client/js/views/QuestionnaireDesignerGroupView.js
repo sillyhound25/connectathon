@@ -49,29 +49,34 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
         group.header = $('#'+cid+'qdgHeader').val();
 
         var numCols =$("input[name='qdGroupCols']:checked").val();
-
         //console.log(numCols)
 
-        Backbone.FHIRHelper.addExtension(this.model,"fhir.orionhealth.com/questionnaire#numcol",numCols,"valueInteger");
+        Backbone.FHIRHelper.addExtension(this.model,Backbone.myConstants.extensionDefn.numCol,numCols);
+
+
+        var id = '#'+cid + "qdgMayRepeat";
+        //console.log(id, $(id).is(':checked'));
+        if ($(id).is(':checked')){
+            Backbone.FHIRHelper.addExtension(this.model,Backbone.myConstants.extensionDefn.mayRepeat,true);
+        }
 
 
         //the entry in the Table Of Contents for this group...
         var tocEntry = $("div[data-id='"+cid+"']");
 
-        console.log(tocEntry)
+        //console.log(tocEntry)
 
         var indent = parseInt(tocEntry.attr('data-indent'));
         var txt = "";
-        console.log(indent)
 
         for (var i=0; i <= indent; i++){
             txt += "&nbsp;&nbsp;&nbsp;";
         }
 
         txt += group.header.trim();
-
         tocEntry.html(txt);
 
+        $('#'+cid+'qdgNotice').show().addClass('alert alert-success').html('Changes saved').fadeOut(2000);
 
         //Backbone.trigger('Q:updated');  //will cause the designer to re-render
     },
@@ -114,8 +119,20 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
 
             that.$el.html(that.template(clone));
 
+            //set the mayRepeat
+
+            var mayRepeat = Backbone.FHIRHelper.getExtensionValue(that.model,
+                Backbone.myConstants.extensionDefn.mayRepeat);
+            if (mayRepeat) {
+                var id = '#'+that.cid + "qdgMayRepeat";
+                $(id).attr('checked',true);
+            }
+
             //set the column count
-            var numCols = Backbone.FHIRHelper.getExtensionValue(that.model,"fhir.orionhealth.com/questionnaire#numcol","valueInteger");
+            //note we're not using cid: and it still seems to work - is cid: unnessecary as the event is captured
+            //by the view???
+            var numCols = Backbone.FHIRHelper.getExtensionValue(that.model,
+                Backbone.myConstants.extensionDefn.numCol);
             //console.log(numCols)
             if (numCols) {
                 $('input[name="qdGroupCols"]').val([numCols]);

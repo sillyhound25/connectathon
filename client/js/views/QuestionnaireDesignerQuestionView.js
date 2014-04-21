@@ -93,8 +93,7 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
         console.log(answerFormat);
 
 
-        Backbone.FHIRHelper.addExtension(this.model,Backbone.myConstants.extensionDefn.answerFormat.url,
-            answerFormat,Backbone.myConstants.extensionDefn.answerFormat.type);
+        Backbone.FHIRHelper.addExtension(this.model,Backbone.myConstants.extensionDefn.answerFormat,answerFormat);
         //Backbone.FHIRHelper.addExtension(this.model,"http://hl7.org/fhir/questionnaire-extensions#answerFormat",answerFormat,"valueCode");
 
 
@@ -126,6 +125,7 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
         txt += quest.text.trim();
         tocEntry.html(txt);
 
+        $('#'+cid+'qdqNotice').show().addClass('alert alert-success').html('Changes saved').fadeOut(2000);
 
         //Backbone.trigger('Q:updated');  //will cause the designer to re-render
     },
@@ -161,7 +161,7 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
 
             //var answerFormat = FHIRHelper.getExtensionValue (clone,"http://hl7.org/fhir/questionnaire-extensions#answerFormat","valueCode")
             var answerFormat = FHIRHelper.getExtensionValue (clone,
-                Backbone.myConstants.extensionDefn.answerFormat.url,Backbone.myConstants.extensionDefn.answerFormat.type)
+                Backbone.myConstants.extensionDefn.answerFormat)
 
 
             //console.log(answerFormat)
