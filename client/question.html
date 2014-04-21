@@ -113,11 +113,6 @@
 <script>
     $(document).ready(function(){
 
-
-       // Backbone.myFunctions = {};
-
-
-
         $('.myPane').hide();        //initially hide all the panes...
         $('#homeTab').show();       //show the home tab
 
@@ -137,18 +132,20 @@
 
         }
 
-        var Z = {'templates':{}}    //a global object to avoid polluting the global namespace...
+        Backbone.myTemplates = {};
+
+        //var Z = {'templates':{}}    //a global object to avoid polluting the global namespace...
 
 
         //todo - there will be a better way as these templates are almost identical...
-        Z.templates.questionTemplate1col = Handlebars.compile($('#questionTemplate1col').html())
-        Z.templates.questionTemplate2col = Handlebars.compile($('#questionTemplate2col').html())
-        Z.templates.questionTemplate3col = Handlebars.compile($('#questionTemplate3col').html())
+        Backbone.myTemplates.questionTemplate1col = Handlebars.compile($('#questionTemplate1col').html())
+        Backbone.myTemplates.questionTemplate2col = Handlebars.compile($('#questionTemplate2col').html())
+        Backbone.myTemplates.questionTemplate3col = Handlebars.compile($('#questionTemplate3col').html())
 
-        Z.templates.groupTemplate = Handlebars.compile($('#groupTemplate').html())
-        Z.templates.saveButtonTemplate = Handlebars.compile($('#saveButtonTemplate').html())
+        Backbone.myTemplates.groupTemplate = Handlebars.compile($('#groupTemplate').html())
+        Backbone.myTemplates.saveButtonTemplate = Handlebars.compile($('#saveButtonTemplate').html())
 
-        renderQ.Z = Z;  //renderQ defined in questionnaireRender.js
+        //renderQ.Z = Z;  //renderQ defined in questionnaireRender.js
 
         questionnaireSelectView.render();
 
@@ -190,29 +187,29 @@
 
         */
 
-    Handlebars.registerHelper('logicalID',function(str){
-        var ar = str.split('/');
-        return ar[ar.length-1];
-            })
+        Handlebars.registerHelper('logicalID',function(str){
+            var ar = str.split('/');
+            return ar[ar.length-1];
+        })
+
+
+        //generate a display for a codeable concept
+        Handlebars.registerHelper('ccDisplay',function(cc){
+            return FHIRHelper.ccDisplay(cc);
+
+        });
+
+        Handlebars.registerHelper('groupDisplay',function(grp){
+            return FHIRHelper.groupDisplay(grp);
+
+        });
+
+        Handlebars.registerHelper('questionDisplay',function(grp){
+            return FHIRHelper.questionDisplay(grp);
+
+        });
 
     });
-
-    //generate a display for a codeable concept
-    Handlebars.registerHelper('ccDisplay',function(cc){
-        return FHIRHelper.ccDisplay(cc);
-
-    });
-
-    Handlebars.registerHelper('groupDisplay',function(grp){
-        return FHIRHelper.groupDisplay(grp);
-
-    });
-
-    Handlebars.registerHelper('questionDisplay',function(grp){
-        return FHIRHelper.questionDisplay(grp);
-
-    });
-
 
 
 </script>

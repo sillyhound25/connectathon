@@ -53,6 +53,10 @@ Backbone.on('Q:updated',function(vo){
     qDesignerView.redrawOutline();
 })
 
+Backbone.on('Q:redrawContent',function(vo){
+    qDesignerView.redrawContent();
+})
+
 
 //the user wishes to save a new Questionnaire
 Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
@@ -125,6 +129,40 @@ Backbone.listenTo(questionnaireSelectView,'qlv:newQ',function(vo){
     Backbone.myFunctions.showMainTab("designerTab");
 
 });
+
+
+//user has selected a template to fill in...
+Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
+    var id = vo.id;
+    console.log(id);
+
+    var uri = '/api/oneresource/Questionnaire/' + id.getLogicalID();
+    console.log(uri);
+    $.get(uri,function(Q){
+
+        var form = Q.group;     //the root element of the form
+
+        //navView is the navigational view - the overall layout of the form to assist the user completing it...
+        navView.model = Q;      //the navView has the questionnaire as a model
+        navView.html = "";      //todo - should have a proper thing
+        navView.html += "<h5>Document Navigation</h5>";
+        //renderQ.Z = Z;
+
+        //sets globals html & htmlNav - todo - there will be a  better way...
+        renderQ.showGroup(form,0);  //create the questionnaire form
+        navView.html += htmlNav;
+
+        $('#form').html(html);
+        navView.render();
+
+        qDesignerView.init({content:Q,id:uri});
+        qDesignerView.render();
+        Backbone.myFunctions.showMainTab('newFormTab');
+    })
+
+
+
+})
 
 //user has selected a template or form to view...
 Backbone.listenTo(questionnaireListView,'qlv:design',function(vo){

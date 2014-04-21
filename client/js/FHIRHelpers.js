@@ -60,6 +60,13 @@ FHIRHelper.groupDisplay = function(group){
 
 
 
+//return an object with all known extensions in it. Others will be ignored...
+FHIRHelper.getAllExtensions = function(model) {
+
+}
+
+
+
 //remove an extension
 FHIRHelper.removeExtension = function(model,extensionDefn) {
     var url = extensionDefn.url;

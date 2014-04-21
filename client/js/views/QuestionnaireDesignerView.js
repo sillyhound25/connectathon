@@ -41,7 +41,6 @@ var QuestionnaireDesignerView = BaseView.extend({
         //at the moment I susyect there is a memory leak (viewRef is not being cleared) but I'm leaving that so I can
         //experiment with chrome memory checking...
 
-        //console.log(entry);
         if (entry) {
             this.model = entry.content;
 
@@ -52,7 +51,7 @@ var QuestionnaireDesignerView = BaseView.extend({
 
             this.id = entry.id;
             this.isNew = false;
-
+            //this.redrawContent();
         } else {
             this.model = {group : {},resourceType:'Questionnaire'};       //model.group holds the layout...
             this.isNew = true;
@@ -70,8 +69,9 @@ var QuestionnaireDesignerView = BaseView.extend({
             if (this.model.group && (this.model.group.group || this.model.group.question)) {
                 //todo - the renderer uses the global html & htmlNav. There must be a better way...
                 html = "";
-                renderQ.showGroup(this.model.group,0);  //create the questionnaire form
+                renderQ.showGroup(this.model.group,0);  //create the questionnaire outline
                 $('#qdPreviewDiv').html(html);
+
             } else {
                 alert('You need some groups or questions first!')
             }
@@ -194,6 +194,10 @@ var QuestionnaireDesignerView = BaseView.extend({
             }
         })
     },
+    redrawContent : function() {
+        //re-display the content of the questionnaire - as an xml  resource...
+        $('#qdSourceDiv').val(FHIRHelper.getXML(this.model));
+    },
     redrawOutline : function() {
         //called when the outline has been updated
 
@@ -215,6 +219,9 @@ var QuestionnaireDesignerView = BaseView.extend({
         this.getTemplate('questionnaireDesigner',function(){
             //create the skeleton for the Questionnaire Designer tabs...
             that.$el.html(that.template({id:that.id}));
+
+            //display the content of the Q as XML...
+            that.redrawContent();
 
             //now, disable the ID unless this is a new model
             //changed my mind...

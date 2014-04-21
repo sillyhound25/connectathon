@@ -48,7 +48,7 @@ renderQ.showGroup = function(grp,lvl) {
     }
 
 
-    html += renderQ.Z.templates.groupTemplate({group: grp,level:displayLevel});
+    html += Backbone.myTemplates.groupTemplate({group: grp,level:displayLevel});
 
 
 
@@ -102,7 +102,7 @@ renderQ.showQuestion = function(quest,id,numCol) {
     //FHIRHelper.ccDisplay
     //choose the correct template based on the number of columns...
     var templateName = "questionTemplate" + numCol + "col";
-    html +=  renderQ.Z.templates[templateName]({question: quest,id:id,code:code,display:display});
+    html +=  Backbone.myTemplates[templateName]({question: quest,id:id,code:code,display:display});
 
 
 }

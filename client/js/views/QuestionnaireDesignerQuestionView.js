@@ -127,6 +127,7 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
 
         $('#'+cid+'qdqNotice').show().addClass('alert alert-success').html('Changes saved').fadeOut(2000);
 
+        Backbone.trigger('Q:redrawContent');
         //Backbone.trigger('Q:updated');  //will cause the designer to re-render
     },
     render : function() {
