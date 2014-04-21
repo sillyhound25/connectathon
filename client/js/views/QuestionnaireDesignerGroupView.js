@@ -78,6 +78,11 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
 
         $('#'+cid+'qdgNotice').show().addClass('alert alert-success').html('Changes saved').fadeOut(2000);
 
+
+        $('#qdSourceDiv').val(FHIRHelper.getXML(this.model));
+
+       // $('#qdSourceDiv').val(JSON.stringify(this.model,null,2))
+
         //Backbone.trigger('Q:updated');  //will cause the designer to re-render
     },
     addGroup : function(ev){

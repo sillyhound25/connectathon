@@ -1,4 +1,5 @@
 
+//these have to be globals for the recursive algorithm to work. todo would like to fix this...
 var renderQ = {},
     html = "",
     htmlNav = "";
