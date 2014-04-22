@@ -66,8 +66,23 @@ Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
 
     //vlaidate reosurce. This strictly belongs somewhere else - ?model
     var Q = vo.Q
+    /*
+    if ( 'content-location' : vid) {
+
+    }
 
 
+    //get the current url
+    var hxId;
+    if (entry.link) {
+        _.each(entry.link,function(lnk){
+            if (lnk.rel==='self') {
+                hxId = lnk.href;
+                console.log(hxId);
+            }
+        })
+    }
+*/
 
     //the proxy server will make the correct FHIR call based on the contents of the resource...
     var uri = '/api/'+vo.id.getLogicalID();
@@ -76,12 +91,13 @@ Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
         method : 'PUT',
         data : JSON.stringify(Q),
         headers : {
-            'content-type' : 'application/json'
-            //'content-location' : vid - not version aware updates yet...
+            'content-type' : 'application/json',
+            'content-location' : vo.historyId // - not version aware updates yet...
         },
         success : function(xhr,status){
             MediatorQ.hideWorking();
             alert('Questionnaire updated')
+
 
 
         },
@@ -167,6 +183,19 @@ Backbone.listenTo(questionnaireListView,'qlv:design',function(vo){
 
     var entry = _.findWhere(MediatorQ.allQuests.entry,{id:id})
     console.log(entry);
+
+    //get the current url
+    var hxId;
+    if (entry.link) {
+        _.each(entry.link,function(lnk){
+            if (lnk.rel==='self') {
+                hxId = lnk.href;
+                console.log(hxId);
+            }
+        })
+    }
+
+
     var Q = entry.content; //the questionnaire...
 
     //qDesignerView.init(Q);
@@ -233,6 +262,7 @@ MediatorQ.getQuests = function(type,callback) {
 
     function filterBundle(bundle,callback) {
         //this is only needed until the server handles status query
+
         $.each(bundle.entry,function(inx,ent){
 
             if (arStatus.indexOf(ent.content.status) > -1) {

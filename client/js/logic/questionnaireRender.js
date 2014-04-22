@@ -34,6 +34,7 @@ renderQ.showGroup = function(grp,lvl) {
     //var mayRepeat = false;  //if the group can repeat...
 
 
+    console.log(grp)
     var extensions = FHIRHelper.getAllExtensions(grp);
 
     console.log(extensions);
@@ -112,6 +113,9 @@ renderQ.showQuestion = function(quest,id,numCol) {
     //FHIRHelper.ccDisplay
     //choose the correct template based on the number of columns...
     var templateName = "questionTemplate" + numCol + "col";
+
+    console.log(templateName)
+
     html +=  Backbone.myTemplates[templateName]({question: quest,id:id,code:code,display:display});
 
 

@@ -28,9 +28,9 @@ var QuestionnaireDesignerView = BaseView.extend({
 
         if (this.isNew) {
             var desiredId = $('#qdId').val();
-            this.trigger('qd:saveNewQ',{id:desiredId,Q:this.model})
+            this.trigger('qd:saveNewQ',{id:desiredId,Q:this.model,historyId: this.historyId})
         } else {
-            this.trigger('qd:updateQ',{id:this.id,Q:this.model})
+            this.trigger('qd:updateQ',{id:this.id,Q:this.model,historyId: this.historyId})
         }
 
     },
@@ -40,7 +40,7 @@ var QuestionnaireDesignerView = BaseView.extend({
         //then it is a new questionnaire.
         //at the moment I susyect there is a memory leak (viewRef is not being cleared) but I'm leaving that so I can
         //experiment with chrome memory checking...
-
+        var that = this;
         if (entry) {
             this.model = entry.content;
 
@@ -51,9 +51,20 @@ var QuestionnaireDesignerView = BaseView.extend({
 
             this.id = entry.id;
             this.isNew = false;
+
+            //get the version specifc id...
+            if (entry.link) {
+                _.each(entry.link,function(lnk){
+                    if (lnk.rel==='self') {
+                        that.historyId = lnk.href;
+                        console.log(that.historyId);
+                    }
+                })
+            }
+
             //this.redrawContent();
         } else {
-            this.model = {group : {},resourceType:'Questionnaire'};       //model.group holds the layout...
+            this.model = {resourceType:'Questionnaire', group : {group : [{header : 'group1'}]}};       //model.group holds the layout...
             this.isNew = true;
             delete this.id;         //no id for a new resource
         }
@@ -196,7 +207,9 @@ var QuestionnaireDesignerView = BaseView.extend({
     },
     redrawContent : function() {
         //re-display the content of the questionnaire - as an xml  resource...
-        $('#qdSourceDiv').val(FHIRHelper.getXML(this.model));
+        //$('#qdSourceDiv').val(FHIRHelper.getXML(this.model));
+        $('#qdSourceDiv').val(JSON.stringify(this.model,null,2));
+
     },
     redrawOutline : function() {
         //called when the outline has been updated

@@ -66,8 +66,9 @@ FHIRHelper.getAllExtensions = function(model) {
     if (model.extension){     //there are extensions to this group...
 
         _.each(model.extension,function(ext){
+            console.log(ext.url)
             switch (ext.url) {
-                case 'fhir.orionhealth.com/questionnaire#numcol' : {
+                case 'http://fhir.orionhealth.com/questionnaire#numcol' : {
                     vo.numCol = ext.valueInteger;
                     break;
                 }
