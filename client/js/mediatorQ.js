@@ -220,9 +220,6 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
 
 });
 
-
-
-
 //at the moment we're getting all questionnaires and filtering here because Furore is not filtering on status...
 MediatorQ.getQuests = function(type,callback) {
     var searchQuery = {resource:'Questionnaire',params:[]}

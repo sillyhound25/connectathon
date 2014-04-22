@@ -100,8 +100,12 @@
 
 <div class="container-fluid">
     <div class="myPane" id="homeTab">
+
+
         <div id="qSelect"></div>
         <div id="qList"></div>
+
+
     </div>
 
     <div class="myPane" id="newFormTab">
@@ -159,7 +163,8 @@
 
         //renderQ.Z = Z;  //renderQ defined in questionnaireRender.js
 
-        questionnaireSelectView.render();
+        //todo - questionnaireSelectView is redundant I think...
+        //questionnaireSelectView.render();
 
 /* - don't remove just yet...
         var uri = '/api/oneresource/Questionnaire/ct6-soap1';
@@ -220,6 +225,15 @@
             return FHIRHelper.questionDisplay(grp);
 
         });
+
+        //show the templates to start with...
+        MediatorQ.showWorking();
+        MediatorQ.getQuests('template',function(bundle){
+            MediatorQ.hideWorking()
+            questionnaireListView.model = bundle;
+            questionnaireListView.render();
+        })
+
 
     });
 

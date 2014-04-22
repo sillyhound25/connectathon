@@ -4,32 +4,49 @@
 <div class="row">
     <div class="col-sm-4 col-md-4">
 
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#qlTemplateTab" data-toggle="tab">Templates</a></li>
+            <li><a href="#qlFormTab" data-toggle="tab">Patient Forms</a></li>
+        </ul>
 
-        <h4>Matching Questionnaires</h4>
-        <table class="table table-bordered table-condensed">
-            <thead><tr><th>Name</th><th>Status</th><th>Action</th></tr></thead>
-        {{#each entry}}
-            <!-- Only while the server doesn't support status query-->
-            {{#if include}}
-            <tr>
+        <div class="tab-content" >
+            <div class="active tab-pane" id="qlTemplateTab">
+                <h4>Templates</h4>
+                <table class="table table-bordered table-condensed">
+                    <thead><tr><th>Name</th><th>Status</th><th>Action</th></tr></thead>
+                    {{#each entry}}
+                        <!-- Only while the server doesn't support status query-->
+                        {{#if include}}
+                        <tr>
 
-                <td title="{{id}}"><a href='#' class='viewQ' data-id='{{id}}'>{{meta.name}}</a>
-                    <div>{{logicalID id}}</div>
-                </td>
-                <td>{{content.status}}</td>
+                            <td title="{{id}}"><a href='#' class='viewQ' data-id='{{id}}'>{{meta.name}}</a>
+                                <div>{{logicalID id}}</div>
+                            </td>
+                            <td>{{content.status}}</td>
 
-                <td><a href='#' class='viewQ' data-id='{{id}}'>Preview</a>
-                <div><a href='#' class='fillin' data-id='{{id}}'>Fill In</a></div>
-                <div><a href='#' class='designQSource' data-id='{{id}}'>Design</a></div>
-                </td>
-            </tr>
-            {{/if}}
-        {{/each}}
+                            <td><a href='#' class='viewQ' data-id='{{id}}'>Preview</a>
+                                <div><a href='#' class='fillin' data-id='{{id}}'>Fill In</a></div>
+                                <div><a href='#' class='designQSource' data-id='{{id}}'>Design</a></div>
+                            </td>
+                        </tr>
+                        {{/if}}
+                    {{/each}}
+                </table>
+            </div>
 
-</table>
+            <div class="tab-pane" id="qlFormTab">
+                <br />
+                Select Patient <input type='text' id='qlSelectPatientName' value='roel'/>
+                <button class="btn btn-primary" id='qlSelectPatient'>Select</button>
+
+                <div id='qlPatientList'></div>
+            </div>
+        </div>
+
 
     </div>
     <div class="col-sm-8 col-md-8">
+        <div id="qlPatientQuestionnaires"></div>
         <div id="displayQ"></div>
     </div>
 </div>
