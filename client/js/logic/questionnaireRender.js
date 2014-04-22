@@ -41,24 +41,6 @@ renderQ.showGroup = function(grp,lvl) {
     extensions.numCol = extensions.numCol || 1;     //default is 1 col...
 
 
-    /*
-    if (grp.extension){     //there are extensions to this group...
-        _.each(grp.extension,function(ext){
-            switch (ext.url) {
-                case 'fhir.orionhealth.com/questionnaire#numcol' : {
-                    numCol = ext.valueInteger;
-                    break;
-                }
-                case 'http://hl7.org/fhir/questionnaire-extensions#mayRepeat' : {
-                    mayRepeat = ext.valueBoolean;
-                    break;
-                }
-            }
-        })
-    }
-
-    */
-
     html += Backbone.myTemplates.groupTemplate({group: grp,level:displayLevel, mayRepeat : extensions.mayRepeat});
 
 

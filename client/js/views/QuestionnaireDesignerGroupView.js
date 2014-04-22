@@ -48,6 +48,9 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
         group.text = $('#'+cid+'qdgText').val();
         group.header = $('#'+cid+'qdgHeader').val();
 
+
+
+
         var numCols =$("input[name='qdGroupCols']:checked").val();
         //console.log(numCols)
 
@@ -63,9 +66,6 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
 
         //the entry in the Table Of Contents for this group...
         var tocEntry = $("div[data-id='"+cid+"']");
-
-        //console.log(tocEntry)
-
         var indent = parseInt(tocEntry.attr('data-indent'));
         var txt = "";
 
@@ -80,12 +80,6 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
 
 
         Backbone.trigger('Q:redrawContent');
-
-        //$('#qdSourceDiv').val(FHIRHelper.getXML(this.model));
-
-       // $('#qdSourceDiv').val(JSON.stringify(this.model,null,2))
-
-        //Backbone.trigger('Q:updated');  //will cause the designer to re-render
     },
     addGroup : function(ev){
         ev.preventDefault();
@@ -122,7 +116,7 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
             var clone = {};
             $.extend(true,clone,that.model)
             clone.cid = that.cid;
-
+            clone.isRoot = that.isRoot;     //the root group can't have questions...
 
             that.$el.html(that.template(clone));
 

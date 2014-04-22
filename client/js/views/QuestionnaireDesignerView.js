@@ -14,17 +14,12 @@ var QuestionnaireDesignerView = BaseView.extend({
         "click #qdFormUpdate" : "update"
     },
     update : function() {
-        //need to get any updates from the header. This will update the shared mode directly..
-        //alert(JSON.stringify(this.model,null,2))
-
+        //need to get any updates from the header. This will update the shared model directly..
         this.headerView.update();
 
         if (! window.confirm("Are you sure you wish to update this Questionnaire?")) {
             return;
         }
-
-        //alert(JSON.stringify(this.model,null,2))
-
 
         if (this.isNew) {
             var desiredId = $('#qdId').val();
@@ -64,7 +59,7 @@ var QuestionnaireDesignerView = BaseView.extend({
 
             //this.redrawContent();
         } else {
-            this.model = {resourceType:'Questionnaire', group : {group : [{header : 'group1'}]}};       //model.group holds the layout...
+            this.model = {resourceType:'Questionnaire', group : {header:'Root',group : [{header : 'group1'}]}};       //model.group holds the layout...
             this.isNew = true;
             delete this.id;         //no id for a new resource
         }
@@ -98,6 +93,7 @@ var QuestionnaireDesignerView = BaseView.extend({
 
         $('.qdgDetail').hide(); //hide all the detail views...
 
+        //the client id the view (group or question) repsonsible for rendering this item
         var id = ev.currentTarget.getAttribute('data-id');
 
         $('.qQuestion').removeClass('qdSelected qdNotSelected');
@@ -132,6 +128,9 @@ var QuestionnaireDesignerView = BaseView.extend({
         //each instance of the view needs to have its own DOM element...
         var el = $('<div></div>').appendTo($('#qdDetail'));
         var groupView = new QuestionnaireDesignerGroupView({el:el,model:grp});
+        if (lvl == 0) {
+            groupView.isRoot = true;       //the root group. Can't have questions
+        }
 
         //pass in the parents to this group (if any). These will be used in the re-ordering...
         groupView.parentGroup = parentGroup;
@@ -141,9 +140,6 @@ var QuestionnaireDesignerView = BaseView.extend({
         ctx.viewRef.push(groupView);
         //console.log(inx);
         var display = "<div class='qGroup' data-indent='"+lvl+"' data-id='"+groupView.cid+"'>" + tab + FHIRHelper.groupDisplay(grp) + '</div>';
-
-        //var newNode = $(display).appendTo(node);
-        //$('#qdGroups')
         var newNode = $(display).appendTo($('#qdGroups'));
 
         //if this is a new group, then render it immediately. If there are more than one - or a new group -  then
@@ -183,8 +179,8 @@ var QuestionnaireDesignerView = BaseView.extend({
             ctx.viewRef.push(questView);
 
             var text = FHIRHelper.questionDisplay(quest);
-            if (text.length > 50) {
-                text = text.substr(0,47) + '...';
+            if (text.length > 40) {
+                text = text.substr(0,37) + '...';
             }
 
             var display = "<div class='qQuestion' data-indent='"+glvl+"' data-id='"+questView.cid+"'>"+tab + text + "</div>"

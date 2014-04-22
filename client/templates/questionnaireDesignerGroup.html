@@ -30,38 +30,40 @@
         </div>
 
 
+        {{#unless isRoot}}
+            <div class="form-group">
+                <label class="col-sm-2 control-label">May Repeat</label>
+                <div class="col-sm-1">
+                    <input type='checkbox' class="form-control" id="{{cid}}qdgMayRepeat" />
+                </div>
 
-        <div class="form-group">
-            <label class="col-sm-2 control-label">May Repeat</label>
-            <div class="col-sm-1">
-                <input type='checkbox' class="form-control" id="{{cid}}qdgMayRepeat" />
+                <label class="col-sm-2 control-label">Columns</label>
+                <div class="col-sm-7">
+
+                    <div class="radio-inline">
+                        <label>
+                            <input type="radio" value='1' name="qdGroupCols" checked="checked">
+                            1 Column
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label>
+                            <input type="radio" value='2' name="qdGroupCols">
+                            2 Column
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label>
+                            <input type="radio" value='3' name="qdGroupCols">
+                            3 Column
+                        </label>
+                    </div>
+                </div>
+
             </div>
-        </div>
 
-        <div class="form-group">
-            <label class="col-sm-2 control-label">Columns</label>
-            <div class="col-sm-10">
 
-                <div class="radio-inline">
-                    <label>
-                        <input type="radio" value='1' name="qdGroupCols" checked="checked">
-                        1 Column
-                    </label>
-                </div>
-                <div class="radio-inline">
-                    <label>
-                        <input type="radio" value='2' name="qdGroupCols">
-                        2 Column
-                    </label>
-                </div>
-                <div class="radio-inline">
-                    <label>
-                        <input type="radio" value='3' name="qdGroupCols">
-                        3 Column
-                    </label>
-                </div>
-            </div>
-        </div>
+        {{/unless}}
 
 
 
@@ -72,10 +74,12 @@
 
     <div class="row">
         <div class="col-md-8 col-sm-8">
-            <button class="btn btn-default" id="qdgMoveUp"><i class="glyphicon glyphicon-arrow-up" ></i></button>
-            <button class="btn btn-default" id="qdgMoveDown"><i class="glyphicon glyphicon-arrow-down" ></i></button>
-            <button class="btn btn-default" id="qdgAddQuestion">New Question this group</button>
-            <button class="btn btn-default">Remove group</button>
+            {{#unless isRoot}}
+                <button class="btn btn-default" id="qdgMoveUp"><i class="glyphicon glyphicon-arrow-up" ></i></button>
+                <button class="btn btn-default" id="qdgMoveDown"><i class="glyphicon glyphicon-arrow-down" ></i></button>
+                <button class="btn btn-default" id="qdgAddQuestion">New Question this group</button>
+                <button class="btn btn-default">Remove group</button>
+            {{/unless}}
             <button class="btn btn-default" id="qdgAddSubGroup">Add sub group</button>
         </div>
         <div class="col-md-4 col-sm-4">
