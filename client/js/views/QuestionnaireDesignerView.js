@@ -52,7 +52,7 @@ var QuestionnaireDesignerView = BaseView.extend({
             this.id = entry.id;
             this.isNew = false;
 
-            //get the version specifc id...
+            //get the version specific id...
             if (entry.link) {
                 _.each(entry.link,function(lnk){
                     if (lnk.rel==='self') {
@@ -116,8 +116,11 @@ var QuestionnaireDesignerView = BaseView.extend({
             }
         })
     },
-
-
+    setVersion : function(v){
+        //set the version specific Id. Needed for servers (like blaze) that check that sort of thing...
+        this.historyId = v;
+        console.log(v)
+    },
     //note: no loger a hierarchy of nodes rooted at $('#qdGroups')
     addGroup : function(grp,node,ctx,lvl,parentGroup,parentGroupIndex) {
         //adds a group to the layout...

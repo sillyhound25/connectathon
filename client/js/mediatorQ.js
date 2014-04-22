@@ -56,7 +56,7 @@ Backbone.on('Q:redrawContent',function(vo){
 
 //the user wishes to save a new Questionnaire
 Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
-    console.log(vo);
+    //console.log(vo);
 
     //always put the questionnaire at the moment...
     if (!vo.id) {
@@ -66,23 +66,8 @@ Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
 
     //vlaidate reosurce. This strictly belongs somewhere else - ?model
     var Q = vo.Q
-    /*
-    if ( 'content-location' : vid) {
 
-    }
-
-
-    //get the current url
-    var hxId;
-    if (entry.link) {
-        _.each(entry.link,function(lnk){
-            if (lnk.rel==='self') {
-                hxId = lnk.href;
-                console.log(hxId);
-            }
-        })
-    }
-*/
+    //console.log(vo)
 
     //the proxy server will make the correct FHIR call based on the contents of the resource...
     var uri = '/api/'+vo.id.getLogicalID();
@@ -94,10 +79,14 @@ Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
             'content-type' : 'application/json',
             'content-location' : vo.historyId // - not version aware updates yet...
         },
-        success : function(xhr,status){
+        success : function(data,status,xhr){
             MediatorQ.hideWorking();
             alert('Questionnaire updated')
-
+            //console.log(data);
+            //set the current version in the view. This is needed for version checking servers...
+            if (data.headers) {
+                qDesignerView.setVersion(data.headers['content-location']);
+            }
 
 
         },

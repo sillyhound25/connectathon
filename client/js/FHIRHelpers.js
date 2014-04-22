@@ -1,5 +1,5 @@
 /**
- * display helpers for FHIR
+ *  helpers for FHIR
  */
 
 var FHIRHelper = {};
@@ -66,6 +66,21 @@ FHIRHelper.getAllExtensions = function(model) {
     if (model.extension){     //there are extensions to this group...
 
         _.each(model.extension,function(ext){
+            _.each(Backbone.myConstants.extensionDefn,function(extDefn,key){
+                console.log(extDefn)
+                if (ext.url === extDefn.url) {
+                    vo[key] = ext[extDefn.type]
+                }
+
+            })
+
+        });
+/*
+        console.log(vo);
+        vo = {}
+
+
+        _.each(model.extension,function(ext){
             console.log(ext.url)
             switch (ext.url) {
                 case 'http://fhir.orionhealth.com/questionnaire#numcol' : {
@@ -78,6 +93,8 @@ FHIRHelper.getAllExtensions = function(model) {
                 }
             }
         })
+
+        */
     }
     return vo;
 
