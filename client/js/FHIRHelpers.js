@@ -67,7 +67,7 @@ FHIRHelper.getAllExtensions = function(model) {
 
         _.each(model.extension,function(ext){
             _.each(Backbone.myConstants.extensionDefn,function(extDefn,key){
-                console.log(extDefn)
+                //console.log(extDefn)
                 if (ext.url === extDefn.url) {
                     vo[key] = ext[extDefn.type]
                 }

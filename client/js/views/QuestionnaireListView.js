@@ -2,38 +2,25 @@
  * Render a list of questionnaires and allow selection
  */
 
-
-
 var QuestionnaireListView = BaseView.extend({
     events : {
         "click .viewQ" : "view",
         "click .fillin" : "fillin",
         "click .designQSource" : "design"
-
-
     },
 
     design : function(ev) {
         var that = this;
         var id = ev.currentTarget.getAttribute('data-id');
         that.trigger("qlv:design",{id:id});
-/*
-        $.get(id,function(Q){
-            console.log(Q)
-
-        }) */
     },
+
     fillin : function(ev) {
         var id = ev.currentTarget.getAttribute('data-id');
         this.trigger('qlv:fillin',{id:id});
-
-      //  $.get(id,function(data){
-        //    console.log(data)
-        //})
-        //window.open(id);
     },
     view : function(ev){
-      var id = ev.currentTarget.getAttribute('data-id');
+        var id = ev.currentTarget.getAttribute('data-id');
         this.trigger('qlv:view',{id:id});
     },
     render : function() {
@@ -41,7 +28,6 @@ var QuestionnaireListView = BaseView.extend({
         console.log(this.model);
         this.getTemplate('questionnaireList',function(){
             //will setup that.template as a handlebars template
-            //that.template();
             //model is a fhir bundle...
             //get the display title - not all Q;s have a name...
             _.each(that.model.entry,function(ent){
@@ -52,11 +38,7 @@ var QuestionnaireListView = BaseView.extend({
                 } else {
                     ent.meta.name = ent.id.getLogicalID();
                 }
-                //console.log(ent)
             })
-
-
-
             that.$el.html(that.template(that.model));
         })
     }

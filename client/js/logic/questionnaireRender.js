@@ -7,12 +7,11 @@ var renderQ = {},
 
 //show a group
 renderQ.showGroup = function(grp,lvl) {
-    //console.log(lvl, grp.header);
     if (! grp) {
         //legal to have no group..
+        alert('Group is null');
         return;
     }
-
 
     if (grp.header) {
         var klass = 'formNav'+lvl;
@@ -28,18 +27,8 @@ renderQ.showGroup = function(grp,lvl) {
         displayLevel = 2;
     }
 
-
-    //display all the questions in this group -
-    //var numCol = 1;         //the number of columns to display (like a flow layout) - come fron an extension
-    //var mayRepeat = false;  //if the group can repeat...
-
-
-    console.log(grp)
     var extensions = FHIRHelper.getAllExtensions(grp);
-
-    console.log(extensions);
     extensions.numCol = extensions.numCol || 1;     //default is 1 col...
-
 
     html += Backbone.myTemplates.groupTemplate({group: grp,level:displayLevel, mayRepeat : extensions.mayRepeat});
 
@@ -96,7 +85,7 @@ renderQ.showQuestion = function(quest,id,numCol) {
     //choose the correct template based on the number of columns...
     var templateName = "questionTemplate" + numCol + "col";
 
-    console.log(templateName)
+    //console.log(templateName)
 
     html +=  Backbone.myTemplates[templateName]({question: quest,id:id,code:code,display:display});
 

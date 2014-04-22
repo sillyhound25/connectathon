@@ -34,8 +34,10 @@ var questionnaireSelectView = new QuestionnaireSelectView({el:'#qSelect'});
 var questionnaireListView = new QuestionnaireListView({el:'#qList'});
 var navView = new QuestionNavView({el:'#formNav'});
 
+var qFillinView = new QuestionnaireFillinView({el:'#form'});
+
 var qDesignerView = new QuestionnaireDesignerView({el:'#qDesigner'});
-//qDesignerView.render();
+
 
 //a simple assertion checker (based on John Resigs one) that shows a message if the outcome is false
 MediatorQ.assert = function( outcome, description ) {
@@ -53,10 +55,8 @@ Backbone.on('Q:redrawContent',function(vo){
     qDesignerView.redrawContent();
 })
 
-
 //the user wishes to save a new Questionnaire
 Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
-    //console.log(vo);
 
     //always put the questionnaire at the moment...
     if (!vo.id) {
@@ -66,9 +66,6 @@ Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
 
     //vlaidate reosurce. This strictly belongs somewhere else - ?model
     var Q = vo.Q
-
-    //console.log(vo)
-
     //the proxy server will make the correct FHIR call based on the contents of the resource...
     var uri = '/api/'+vo.id.getLogicalID();
     MediatorQ.showWorking();
@@ -82,7 +79,6 @@ Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
         success : function(data,status,xhr){
             MediatorQ.hideWorking();
             alert('Questionnaire updated')
-            //console.log(data);
             //set the current version in the view. This is needed for version checking servers...
             if (data.headers) {
                 qDesignerView.setVersion(data.headers['content-location']);
@@ -131,15 +127,19 @@ Backbone.listenTo(questionnaireSelectView,'qlv:newQ',function(vo){
 
 });
 
-
 //user has selected a template to fill in...
 Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
     var id = vo.id;
-    console.log(id);
+    //console.log(id);
 
     var uri = '/api/oneresource/Questionnaire/' + id.getLogicalID();
-    console.log(uri);
+    //console.log(uri);
     $.get(uri,function(Q){
+
+
+        qFillinView.init({Q:Q,id:id});
+        qFillinView.render();
+
 
         var form = Q.group;     //the root element of the form
 
@@ -147,17 +147,16 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
         navView.model = Q;      //the navView has the questionnaire as a model
         navView.html = "";      //todo - should have a proper thing
         navView.html += "<h5>Document Navigation</h5>";
-        //renderQ.Z = Z;
 
         //sets globals html & htmlNav - todo - there will be a  better way...
         renderQ.showGroup(form,0);  //create the questionnaire form
         navView.html += htmlNav;
 
-        $('#form').html(html);
+       // $('#form').html(html);
         navView.render();
 
-        qDesignerView.init({content:Q,id:uri});
-        qDesignerView.render();
+       // qDesignerView.init({content:Q,id:uri});
+       // qDesignerView.render();
         Backbone.myFunctions.showMainTab('newFormTab');
     })
 
