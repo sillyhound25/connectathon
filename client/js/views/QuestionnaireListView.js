@@ -1,34 +1,46 @@
 /**
- * Render a list of questionnaires and allow selection
+ * Has a number of functions:
+ *   - Render a list of questionnaire templates and allow selection
+ *   - Allows the user to select a patient, view their Q's and create a new form (based on a template)
  */
 
 var QuestionnaireListView = BaseView.extend({
     initialize : function( ) {
-        //a short template to render a list of patients...
+
+        //get the patient name from a Patient resource
         Handlebars.registerHelper('getPName',function(entry){
             try {
                 return entry.content.name[0].text;
             } catch (e){
                 return 'unknown name';
             }
+        });
 
-        })
+        //get the Q name from a Questionnaire resource
         Handlebars.registerHelper('getQName',function(entry){
             try {
                 return entry.content.name.coding[0].display;
             } catch (e) {
                 return 'Unnamed Questionnaire';
             }
+        });
 
-        })
-
+        //a short template to render a list of patients...
         var listPat = '<ul class="list-unstyled">{{#each entry}}<li>' +
             '<a href="#" class="qlOnePatient" data-id="{{id}}">{{getPName this}}</a></li>{{/each}}</ul>';
         this.listPatientTemplate = Handlebars.compile(listPat);
 
+        //a short template to render a list of questionnaires...
         var listQ = '<ul class="list-unstyled">{{#each entry}}<li>' +
             '<a href="#" class="qlPatientQ" data-id="{{id}}">{{getQName this}}</a></li>{{/each}}</ul>';
+        listQ += "<div><button class='btn btn-success pull-right' id='qlNewQ'>New Form</button> </div>";
         this.listPatientQTemplate = Handlebars.compile(listQ);
+
+        //list the templates in the modal select box...
+        var listTemplates = '<ul class="list-unstyled">{{#each entry}}{{#if include}}<div>' +
+            '<input type="radio" name="qlTemplateNew" value="{{id}}"/>' +
+            '{{getQName this}}</div>{{/if}}</li>{{/each}}</ul>';
+        this.listTemplates = Handlebars.compile(listTemplates);
 
     },
     events : {
@@ -36,24 +48,60 @@ var QuestionnaireListView = BaseView.extend({
         "click .fillin" : "fillin",
         "click .designQSource" : "design",
         "click #qlSelectPatient" : "selectPatient",
-        "click .qlOnePatient" : "patientselected"
+        "click .qlOnePatient" : "patientselected",
+        "click .qlPatientQ" : "QSelected",
+         "click #qlNewQ" : "newForm"
+    },
+    newForm : function() {
+        //the user wants to create a new form. Display a list of templates, and create a handler
+        //to handle the 'select template' option.
+        var that = this;
+
+        //the dialog to display the list of possible templates
+        var genDialogFrame = $('#generalModelDlg').html();      //the frams for the modal dialog
+        $('#modalDialogDiv').html(genDialogFrame);      //write the frame to the DOM
+        //will render the templates as a list. Note that the model is a bundle of Q's
+        $('#modal-content').html(this.listTemplates(this.model));
+        $('#generalDlgTitle').html('Please select the template to use');
+
+        //this.model = the bundle of templates...
+        console.log(that.selectedPatientID);
+        //and show the modal...
+        $('#generalDlg').modal();
+
+        //the handler when a template is selected
+        $("#generalDlgSelect").on('click',function(){
+            //that.newTemplateSelected();
+            var qID =$("input[name='qlTemplateNew']:checked").val();
+
+            //will cause the selected template to be displayed by fillin
+            that.trigger('qlv:fillin',{questionnaireID:qID,patientID:that.selectedPatientID,isNew:true});
+
+        })
+
+    },
+    QSelected : function(ev) {
+        //a single questionnaire has been selected for viewing.
+
+        console.log(ev.currentTarget);
+        var id = $(ev.currentTarget).attr('data-id');
+        this.trigger('qlv:view',{id:id});
     },
     patientselected : function(ev) {
         //a patient has been selected from the list. Get their completed questionnaires
         //again, this should probably be in helper functions or the mediator
         var that=this;
-        console.log(ev.currentTarget);
-        var id = $(ev.currentTarget).attr('data-id');
+        //console.log(ev.currentTarget);
+        this.selectedPatientID = $(ev.currentTarget).attr('data-id');
 
+        //console.log(this.selectedPatientID);
 
-        console.log(id);
-
-        //get the patient and update the list. This code probably belongs in mediator
-        var query = {resource:'Questionnaire',params : [{name:'subject',value:id.getLogicalID()}]};
-        console.log(query)
+        //get all the questionnaires where the subject is this patient
+        var query = {resource:'Questionnaire',params : [{name:'subject',value:this.selectedPatientID.getLogicalID()}]};
+        //console.log(query)
         var queryString = JSON.stringify(query);
 
-        console.log(queryString);
+        //console.log(queryString);
         $.get('/api/generalquery?query='+queryString,function(bundle){
             //if there was an error, then we'll get back an operation outcome...
             if (bundle.resourceType.toLowerCase()==='operationoutcome') {
@@ -63,36 +111,26 @@ var QuestionnaireListView = BaseView.extend({
                         err += issue.details + "\n";
                     })
                 }
-                alert(err)
+                alert(err);
             } else {
-
-
-                console.log(bundle);
-                //$('#pq_results').html(that.resultsTemplate(bundle));
-
-
-                //render the list of matching patients
-                $('#qlPatientQuestionnaires').html(that.listPatientQTemplate(bundle));
-
-
+                //render the list existing questionnaires. There are handlers that allow them to be displayed
+                $('#qlPatientQuestionnaires').html("<h4>Current Forms</h4>" + that.listPatientQTemplate(bundle));
             }
-
-
         });
-
-
-
     },
     selectPatient : function() {
+        //the user has entered a patient name. Find the matching patients on the server and render in a list.
+        //when a patient is selected, the handler at "patientselected" will display the current Q's for that person
+        $('#qlPatientQuestionnaires').html("");
         var that=this;
         var name = $('#qlSelectPatientName').val();
-console.log(name);
+        // console.log(name);
         //get the patient and update the list. This code probably belongs in mediator
         var query = {resource:'Patient',params : [{name:'name',value:name}]};
-        console.log(query)
+        //console.log(query)
         var queryString = JSON.stringify(query);
 
-        console.log(queryString);
+        //console.log(queryString);
         $.get('/api/generalquery?query='+queryString,function(bundle){
             //if there was an error, then we'll get back an operation outcome...
             if (bundle.resourceType.toLowerCase()==='operationoutcome') {
@@ -104,19 +142,10 @@ console.log(name);
                 }
                 alert(err)
             } else {
-
-
-                console.log(bundle);
-                //$('#pq_results').html(that.resultsTemplate(bundle));
-
-
                 //render the list of matching patients
+                that.matchingPatientsBundle = bundle;     //save the bundle with the matching patients for when one is selected
                 $('#qlPatientList').html(that.listPatientTemplate(bundle));
-
-
             }
-
-
         });
 
 
@@ -136,6 +165,8 @@ console.log(name);
         this.trigger('qlv:view',{id:id});
     },
     render : function() {
+        //initial render. Lays out the overall page (including template list and patient select)
+        //then displays all the templates from the server
         var that = this;
         console.log(this.model);
         this.getTemplate('questionnaireList',function(){
@@ -150,7 +181,7 @@ console.log(name);
                 } else {
                     ent.meta.name = ent.id.getLogicalID();
                 }
-            })
+            });
             that.$el.html(that.template(that.model));
         })
     }

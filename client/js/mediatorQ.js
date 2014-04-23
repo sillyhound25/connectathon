@@ -30,6 +30,9 @@ Backbone.myConstants.extensionDefn.answerFormat = {url:"http://hl7.org/fhir/ques
 Backbone.myConstants.extensionDefn.numCol = {url:"http://fhir.orionhealth.com/questionnaire#numcol",type:'valueInteger'};
 Backbone.myConstants.extensionDefn.mayRepeat = {url:"http://hl7.org/fhir/questionnaire-extensions#mayRepeat",type:'valueBoolean'};
 
+
+//Backbone.myConstants.templates = {};    //will be a bundle of templates
+
 var questionnaireSelectView = new QuestionnaireSelectView({el:'#qSelect'});
 var questionnaireListView = new QuestionnaireListView({el:'#qList'});
 var navView = new QuestionNavView({el:'#formNav'});
@@ -51,6 +54,7 @@ Backbone.on('Q:updated',function(vo){
     qDesignerView.redrawOutline();
 })
 
+//just want to redraw the template layout after a group or an answer has been modified (ie no new ones)
 Backbone.on('Q:redrawContent',function(vo){
     qDesignerView.redrawContent();
 })
@@ -128,22 +132,32 @@ Backbone.listenTo(questionnaireSelectView,'qlv:newQ',function(vo){
 });
 
 //user has selected a template to fill in...
+//this is a new form
 Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
-    var id = vo.id;
+    var questionnaireID = vo.questionnaireID;             //either the id of the template or the form (depending on isNew)
+    var patientID = vo.patientID;
+
+    console.log(questionnaireID,patientID);
+
+    var isNew = vo.isNew;       //true if this is a new form based on this template
     //console.log(id);
 
-    var uri = '/api/oneresource/Questionnaire/' + id.getLogicalID();
+    //get the selected questionnaire
+    var uri = '/api/oneresource/Questionnaire/' + questionnaireID.getLogicalID();
     //console.log(uri);
     $.get(uri,function(Q){
 
 
-        qFillinView.init({Q:Q,id:id});
+        qFillinView.init({Q:Q,questionnaireID:questionnaireID,patientID:patientID,isNew:isNew});
+
+        //console.log('render');
         qFillinView.render();
 
 
         var form = Q.group;     //the root element of the form
 
         //navView is the navigational view - the overall layout of the form to assist the user completing it...
+        //todo - move to a component of fillinview
         navView.model = Q;      //the navView has the questionnaire as a model
         navView.html = "";      //todo - should have a proper thing
         navView.html += "<h5>Document Navigation</h5>";
@@ -152,15 +166,17 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
         renderQ.showGroup(form,0);  //create the questionnaire form
         navView.html += htmlNav;
 
-       // $('#form').html(html);
         navView.render();
 
-       // qDesignerView.init({content:Q,id:uri});
-       // qDesignerView.render();
         Backbone.myFunctions.showMainTab('newFormTab');
     })
 
 
+
+})
+
+//adding a new form (based on a questionnaire
+Backbone.listenTo(qFillinView,'qfv:new',function(vo){
 
 })
 
@@ -219,6 +235,8 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     qDesignerView.render();
 
 });
+
+
 
 //at the moment we're getting all questionnaires and filtering here because Furore is not filtering on status...
 MediatorQ.getQuests = function(type,callback) {

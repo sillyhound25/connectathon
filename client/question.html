@@ -124,7 +124,13 @@
         <div id="qDesigner"></div>
 
     </div>
+
+    <div id='modalDialogDiv'></div>
+
 </div>
+
+
+
 
 <script>
     $(document).ready(function(){
@@ -213,23 +219,21 @@
         //generate a display for a codeable concept
         Handlebars.registerHelper('ccDisplay',function(cc){
             return FHIRHelper.ccDisplay(cc);
-
         });
 
         Handlebars.registerHelper('groupDisplay',function(grp){
             return FHIRHelper.groupDisplay(grp);
-
         });
 
         Handlebars.registerHelper('questionDisplay',function(grp){
             return FHIRHelper.questionDisplay(grp);
-
         });
 
         //show the templates to start with...
         MediatorQ.showWorking();
         MediatorQ.getQuests('template',function(bundle){
-            MediatorQ.hideWorking()
+            MediatorQ.hideWorking();
+            console.log(bundle)
             questionnaireListView.model = bundle;
             questionnaireListView.render();
         })
@@ -367,6 +371,27 @@
     </div>
 </script>
 
+
+
+<script id="generalModelDlg" type="text/x-handlebars-template">
+    <div class="modal fade" id="generalDlg">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span id="generalDlgTitle">General Dialog</span></h4>
+                </div>
+                <div class="modal-body">
+                    <div id='modal-content'></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span id="generalDlgSelect">Select</span></button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</script>
 
 <!-- Needs to be last...-->
 <script src="js/mediatorQ.js"></script>
