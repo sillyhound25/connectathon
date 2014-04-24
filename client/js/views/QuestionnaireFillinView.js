@@ -7,13 +7,13 @@ var QuestionnaireFillinView = BaseView.extend({
         "click #qfSave" : "save"
     },
     save : function() {
-        console.log('save',this.model);
-
+        //console.log('save',this.model);
+        var status = 'in progress'
         this.getGroup(this.model.group,this);     //this actually reads all the answers and appends to the Q...
-        console.log('save',this.model);
+        //console.log('save',this.model);
         if (this.isNew) {
             alert('will create a new form based on the template with id '+ this.id);
-            this.trigger('qfv:new',{patientID:this.patientID,questionnaire:this.model});
+            this.trigger('qfv:new',{patientID:this.patientID,questionnaire:this.model,status:status});
         } else {
             alert('Updating this form: id='+this.id)
         }
@@ -34,7 +34,7 @@ var QuestionnaireFillinView = BaseView.extend({
         this.patientID = vo.patientID;
 
         MediatorQ.assert(this.patientID !== null,'PatientID is null!');
-        console.log(vo);
+        //console.log(vo);
     },
     //root to walk the questionnaire tree and get the answers
     getGroup : function(grp,ctx) {
@@ -50,7 +50,7 @@ var QuestionnaireFillinView = BaseView.extend({
     },
     getQuestions : function(arQuest,ctx) {
 
-        _.each(arQuest,function(quest,inx){
+        _.each(arQuest,function(quest){
             if (quest.name && quest.name.coding && quest.name.coding.length > 0 && quest.name.coding[0].code) {
                 var resultKlass = 'data-' + quest.name.coding[0].code;
                 var results = $('.'+resultKlass);
@@ -62,7 +62,7 @@ var QuestionnaireFillinView = BaseView.extend({
             }
             if (quest.group) {
                 //this question also has groups attached
-                _.each(quest.group,function(questGroup,inx){
+                _.each(quest.group,function(questGroup){
                     ctx.getGroup(questGroup,ctx)
                 })
             }
@@ -89,4 +89,4 @@ var QuestionnaireFillinView = BaseView.extend({
         });
 
     }
-})
+});

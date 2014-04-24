@@ -38,7 +38,7 @@ var QuestionnaireListView = BaseView.extend({
 
         //list the templates in the modal select box...
         var listTemplates = '<ul class="list-unstyled">{{#each entry}}{{#if include}}<div>' +
-            '<input type="radio" name="qlTemplateNew" value="{{id}}"/>' +
+            '<input type="radio" name="qlTemplateNew" value="{{id}}"/> ' +
             '{{getQName this}}</div>{{/if}}</li>{{/each}}</ul>';
         this.listTemplates = Handlebars.compile(listTemplates);
 
@@ -65,7 +65,7 @@ var QuestionnaireListView = BaseView.extend({
         $('#generalDlgTitle').html('Please select the template to use');
 
         //this.model = the bundle of templates...
-        console.log(that.selectedPatientID);
+        //console.log(that.selectedPatientID);
         //and show the modal...
         $('#generalDlg').modal();
 
@@ -168,7 +168,7 @@ var QuestionnaireListView = BaseView.extend({
         //initial render. Lays out the overall page (including template list and patient select)
         //then displays all the templates from the server
         var that = this;
-        console.log(this.model);
+        //console.log(this.model);
         this.getTemplate('questionnaireList',function(){
             //will setup that.template as a handlebars template
             //model is a fhir bundle...

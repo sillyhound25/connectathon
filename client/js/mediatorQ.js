@@ -5,7 +5,7 @@
 
 
 String.prototype.getLogicalID = function (){
-    g = this.lastIndexOf('/');
+    var g = this.lastIndexOf('/');
     if (g > -1) {
         return this.substr(g+1,200)
     } else {
@@ -50,14 +50,14 @@ MediatorQ.assert = function( outcome, description ) {
 };
 
 //the questionairre has been updated in the designer...
-Backbone.on('Q:updated',function(vo){
+Backbone.on('Q:updated',function(){
     qDesignerView.redrawOutline();
-})
+});
 
 //just want to redraw the template layout after a group or an answer has been modified (ie no new ones)
-Backbone.on('Q:redrawContent',function(vo){
+Backbone.on('Q:redrawContent',function(){
     qDesignerView.redrawContent();
-})
+});
 
 //the user wishes to save a new Questionnaire
 Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
@@ -69,7 +69,7 @@ Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
     }
 
     //vlaidate reosurce. This strictly belongs somewhere else - ?model
-    var Q = vo.Q
+    var Q = vo.Q;
     //the proxy server will make the correct FHIR call based on the contents of the resource...
     var uri = '/api/'+vo.id.getLogicalID();
     MediatorQ.showWorking();
@@ -80,9 +80,9 @@ Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
             'content-type' : 'application/json',
             'content-location' : vo.historyId // - not version aware updates yet...
         },
-        success : function(data,status,xhr){
+        success : function(data){
             MediatorQ.hideWorking();
-            alert('Questionnaire updated')
+            alert('Questionnaire updated');
             //set the current version in the view. This is needed for version checking servers...
             if (data.headers) {
                 qDesignerView.setVersion(data.headers['content-location']);
@@ -90,9 +90,9 @@ Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
 
 
         },
-        error : function(xhr,status,err){
+        error : function(xhr){
             MediatorQ.hideWorking();
-            console.log(xhr.responseText)
+            console.log(xhr.responseText);
 
             try {
                 console.log(JSON.parse(xhr.responseText))
@@ -100,7 +100,7 @@ Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
                 console.log('invalid json');
             }
 
-            alert('There was an error - check the console')
+            alert('There was an error - check the console');
 
 
         }
@@ -115,15 +115,15 @@ Backbone.listenTo(questionnaireSelectView,'qSelect:select',function(vo){
     var type = vo.type;     //form or template
     MediatorQ.showWorking();
     MediatorQ.getQuests(type,function(bundle){
-        MediatorQ.hideWorking()
+        MediatorQ.hideWorking();
         questionnaireListView.model = bundle;
         questionnaireListView.render();
     })
 
-})
+});
 
 //user wishes to create a new Questionnaire
-Backbone.listenTo(questionnaireSelectView,'qlv:newQ',function(vo){
+Backbone.listenTo(questionnaireSelectView,'qlv:newQ',function(){
     qDesignerView.init();
 
     qDesignerView.render();
@@ -171,22 +171,55 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
         Backbone.myFunctions.showMainTab('newFormTab');
     })
 
-
-
-})
+});
 
 //adding a new form (based on a questionnaire
 Backbone.listenTo(qFillinView,'qfv:new',function(vo){
+    console.log(vo);
+    var questionnaire = vo.questionnaire;       //the completed questionnaire. It will be the template with some answers...
+    var patientID = vo.patientID;
 
-})
+    delete questionnaire.include;       //todo move this to a 'meta' property
+    delete questionnaire.author;        //as a new q copied from the template this will be the author of the Q
+    //questionnaire.subject = {reference : "Patient/"+patientID.getLogicalID()}
+    questionnaire.subject = {reference : patientID};
+    questionnaire.authored = moment().format();
+    questionnaire.status = vo.status;
+
+
+    var uri = '/api/';
+    $.ajax (uri,{
+        method : 'POST',
+        data : JSON.stringify(questionnaire),
+        headers : {
+            'content-type' : 'application/json'
+        },
+        success : function(data){
+            console.log(data);
+            alert('Questionnaire successfully saved');
+        },
+        error : function(xhr,status,err){
+            alert('There was an error saving the questionnaire. View the console.');
+
+
+            console.log(xhr.responseText,status,err);
+
+
+
+        }
+    })
+
+
+
+});
 
 //user has selected a template or form to view...
 Backbone.listenTo(questionnaireListView,'qlv:design',function(vo){
     var id = vo.id;     //form or template
     //alert(id);
 
-    var entry = _.findWhere(MediatorQ.allQuests.entry,{id:id})
-    console.log(entry);
+    var entry = _.findWhere(MediatorQ.allQuests.entry,{id:id});
+    //console.log(entry);
 
     //get the current url
     var hxId;
@@ -200,7 +233,7 @@ Backbone.listenTo(questionnaireListView,'qlv:design',function(vo){
     }
 
 
-    var Q = entry.content; //the questionnaire...
+    //var Q = entry.content; //the questionnaire...
 
     //qDesignerView.init(Q);
     qDesignerView.init(entry);
@@ -215,7 +248,7 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     var id = vo.id;     //form or template
 
 
-    var entry = _.findWhere(MediatorQ.allQuests.entry,{id:id})
+    var entry = _.findWhere(MediatorQ.allQuests.entry,{id:id});
     console.log(entry);
 
     html = "";
@@ -240,20 +273,20 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
 
 //at the moment we're getting all questionnaires and filtering here because Furore is not filtering on status...
 MediatorQ.getQuests = function(type,callback) {
-    var searchQuery = {resource:'Questionnaire',params:[]}
+    var searchQuery = {resource:'Questionnaire',params:[]};
     var uri = '/api/generalquery?query='+JSON.stringify(searchQuery);
     //var uri = './samples/soapQuestionnaire.xml';
-    var arStatus
+    var arStatus;
     if (type === 'template') {
         arStatus=['draft','published']
     } else {
-        arStatus=['in progress','completed','amended']
+        arStatus=['in progress','completed','amended'];
     }
 
 
 
     if (MediatorQ.allQuests) {
-        filterBundle(MediatorQ.allQuests,callback)
+        filterBundle(MediatorQ.allQuests,callback);
         //callback(MediatorQ.allQuests)
     } else {
         $.get(uri,function(bundle){
@@ -268,23 +301,27 @@ MediatorQ.getQuests = function(type,callback) {
 
         $.each(bundle.entry,function(inx,ent){
 
+            ent.include = (arStatus.indexOf(ent.content.status) > -1);
+            /*
             if (arStatus.indexOf(ent.content.status) > -1) {
                 ent.include=true
             } else {
                 ent.include=false
             }
-        })
+            */
+
+        });
 
         callback(bundle);
     }
 
 
-}
+};
 
 MediatorQ.showWorking = function() {
     $('#working').show();
-}
+};
 
 MediatorQ.hideWorking = function() {
     $('#working').hide();
-}
+};

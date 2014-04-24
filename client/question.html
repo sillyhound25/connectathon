@@ -256,7 +256,7 @@
 
                 <div class="col-sm-12 col-md-12">
                     {{#if code}}
-                    <textarea class="form-control data-{{code}}"></textarea>
+                    <textarea class="form-control data-{{code}}">{{value}}</textarea>
 
                     {{else}}
                     <input type='text' class="form-control" disabled="disabled"
@@ -269,30 +269,7 @@
 
 </script>
 
-<!--
 
-<script type="handlebars/template" id='questionTemplate1colDEP'>
-
-    <div class="col-sm-12 col-md-12">
-        <form role="form" class="form-horizontal">
-            <div class="form-group">
-                <label class="col-sm-2 col-md-2">{{display}}</label>
-                <div class="col-sm-10 col-md-10">
-                    {{#if code}}
-                    <input type='text' class="form-control data-{{code}}" value = '{{meta.id}}'
-                           placeholder="Enter the {{question.text}}"/>
-                    {{else}}
-                    <input type='text' class="form-control" disabled="disabled"
-                           placeholder="There is no question.name so data cannot be entered"/>
-                    {{/if}}
-                </div>
-            </div>
-        </form>
-    </div>
-
-</script>
-
--->
 
 <script type="handlebars/template" id='questionTemplate2col'>
 
@@ -302,7 +279,7 @@
                     <label class="col-sm-4 col-md-4">{{display}}</label>
                     <div class="col-sm-8 col-md-8">
                         {{#if code}}
-                        <input type='text' class="form-control data-{{code}}" value = '{{meta.id}}'
+                        <input type='text' class="form-control data-{{code}}" value = '{{value}}'
                                placeholder="Enter the {{question.text}}"/>
                         {{else}}
                         <input type='text' class="form-control" disabled="disabled"
@@ -323,7 +300,7 @@
                 <label class="col-sm-4 col-md-4">{{display}}</label>
                 <div class="col-sm-8 col-md-8">
                     {{#if code}}
-                    <input type='text' class="form-control data-{{code}}" value = '{{meta.id}}'
+                    <input type='text' class="form-control data-{{code}}" value = '{{value}}'
                            placeholder="Enter the {{question.text}}"/>
                     {{else}}
                     <input type='text' class="form-control" disabled="disabled"

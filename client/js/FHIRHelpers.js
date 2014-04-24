@@ -44,21 +44,27 @@ FHIRHelper.groupDisplay = function(group){
 
     if (!group) {
         display = "No Group defined";
-        return;
+        //return;
+    } else {
+        if (group.text) {
+            display = group.text;
+        }
+
+        if (group && group.header) {
+            display = group.header;
+        }
     }
 
-    if (group.text) {
-        display = group.text;
-    }
 
-    if (group && group.header) {
-        display = group.header;
-    }
 
     return display;
 };
 
 
+//generate a resource reference - todo not yet used
+FHIRHelper.createReference = function(type,url) {
+
+};
 
 //return an object with all known extensions in it. Others will be ignored...
 FHIRHelper.getAllExtensions = function(model) {
@@ -98,16 +104,14 @@ FHIRHelper.getAllExtensions = function(model) {
     }
     return vo;
 
-}
-
-
+};
 
 //remove an extension
 FHIRHelper.removeExtension = function(model,extensionDefn) {
     var url = extensionDefn.url;
-    var type = extensionDefn.type;
+    //var type = extensionDefn.type;
     var pos = -1;
-    var value;
+    //var value;
     if (model && model.extension) {
         _.each(model.extension,function(ext,inx) {
             if (ext.url === url){
@@ -118,13 +122,13 @@ FHIRHelper.removeExtension = function(model,extensionDefn) {
             model.extension.splice(pos,1);  //remove the extension
         }
     }
-}
+};
 
 //get the value of a particular extension
 FHIRHelper.getExtensionValue = function(model,extensionDefn) {
     var url = extensionDefn.url;
     var type = extensionDefn.type;
-    var value;
+    var value = null;
     if (model && model.extension) {
         _.each(model.extension,function(ext) {
             if (ext.url === url){
@@ -134,7 +138,7 @@ FHIRHelper.getExtensionValue = function(model,extensionDefn) {
         });
     }
     return value;
-}
+};
 
 //set an extension value on a model
 FHIRHelper.addExtension = function(model,extensionDefn,value) {
@@ -151,26 +155,30 @@ FHIRHelper.addExtension = function(model,extensionDefn,value) {
             }
         });
         if (! updated) {
-            var ext = {url:url};
-            ext[type] = value;
-            model.extension.push(ext)
+            var ext1 = {url:url};
+            ext1[type] = value;
+            model.extension.push(ext1)
         }
     } else {
         var ext = {url:url};
         ext[type] = value;
         model.extension = [(ext)];
     }
-}
+};
 
 
 FHIRHelper.getXML = function(obj) {
     //http://goessner.net/download/prj/jsonxml/
+    var str = "";
     if (obj) {
-        var json = obj;
-        var clone = jQuery.extend(true, {}, json);
+        //var json = obj;
+        var clone = jQuery.extend(true, {}, obj);
         delete clone.resourceType;
-        return (formatXml(json2xml(clone)));
+
+        str =  (formatXml(json2xml(clone)));
     }
+    return str;
+
     //https://gist.github.com/sente/1083506
     function formatXml(xml) {
         var formatted = '';
@@ -203,4 +211,4 @@ FHIRHelper.getXML = function(obj) {
         return formatted;
     }
 
-}
+};

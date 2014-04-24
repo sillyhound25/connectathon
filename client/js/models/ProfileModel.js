@@ -187,7 +187,7 @@ ProfileModel = Backbone.Model.extend({
                         'content-type' : 'application/json',
                         'content-location' : vid
                     },
-                    success : function(xhr,status){
+                    success : function(data,status,xhr){
                         options.success(xhr,status)
 
                     },
