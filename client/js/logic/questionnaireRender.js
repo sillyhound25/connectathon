@@ -17,7 +17,7 @@ renderQ.showGroup = function(grp,lvl) {
         var klass = 'formNav'+lvl;
 
         //todo - move this into the view...
-        var templateStr = "<div class=' <%= klass%>'><a class='mynav'><%= text%></a></div>"
+        var templateStr = "<div class=' <%= klass%>'><a class='mynav'><%= text%></a></div>";
         htmlNav += _.template(templateStr,{text:grp.header,klass:klass});//  "<div >"+grp.header+"</div>"
     }
 
@@ -30,12 +30,13 @@ renderQ.showGroup = function(grp,lvl) {
     var extensions = FHIRHelper.getAllExtensions(grp);
     extensions.numCol = extensions.numCol || 1;     //default is 1 col...
 
-    html += Backbone.myTemplates.groupTemplate({group: grp,level:displayLevel, mayRepeat : extensions.mayRepeat});
+
+    html += Backbone['myTemplates'].groupTemplate({group: grp,level:displayLevel, mayRepeat : extensions.mayRepeat});
 
 
 
     if (grp.question) {
-        html += "<row>"
+        html += "<row>";
         _.each(grp.question,function(quest,inx){
             var id='q-'+lvl+'-'+inx;
             renderQ.showQuestion(quest,id,extensions.numCol);
@@ -57,7 +58,7 @@ renderQ.showGroup = function(grp,lvl) {
 
             }
 
-        })
+        });
         html += "</row>";
     }
 
@@ -67,8 +68,8 @@ renderQ.showGroup = function(grp,lvl) {
             renderQ.showGroup(grp1,lvl);
         })
     }
-    return;// {form: html,nav : htmlNav};
-}
+    //return;// {form: html,nav : htmlNav};
+};
 
 //show a single question (and possibly an answer)
 //numCol is the number of columns...
@@ -79,23 +80,26 @@ renderQ.showQuestion = function(quest,id,numCol) {
         code = quest.name.coding[0].code;
     }
 
-    var display = FHIRHelper.questionDisplay(quest)
+    var display = FHIRHelper.questionDisplay(quest);
 
     //FHIRHelper.ccDisplay
     //choose the correct template based on the number of columns...
     var templateName = "questionTemplate" + numCol + "col";
 
-    //console.log(templateName)
+    console.log(renderQ.readOnly);
 
 
     //this is the value associated with this question. Will need to be expanded to support different answer types...
     var value = quest.answerString;
 
-    html +=  Backbone.myTemplates[templateName](
-        {question: quest,id:id,code:code,display:display,value:value,readOnly:renderQ.readOnly});
+    var readOnly = renderQ.readOnly;
 
 
+    //console.log(Backbone.myTemplates[templateName]);
+    var bbTemplates = Backbone['myTemplates'];
 
+    html +=  bbTemplates[templateName](
+        {question: quest,id:id,code:code,display:display,value:value,readOnly: readOnly});
 
-}
+};
 

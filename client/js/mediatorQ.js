@@ -41,7 +41,6 @@ var qFillinView = new QuestionnaireFillinView({el:'#form'});
 
 var qDesignerView = new QuestionnaireDesignerView({el:'#qDesigner'});
 
-
 //a simple assertion checker (based on John Resigs one) that shows a message if the outcome is false
 MediatorQ.assert = function( outcome, description ) {
     if (!outcome) {
@@ -132,15 +131,23 @@ Backbone.listenTo(questionnaireSelectView,'qlv:newQ',function(){
 });
 
 //user has selected a template to fill in...
-//this is a new form
+//this could be a new form, or editing an existing
 Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
     var questionnaireID = vo.questionnaireID;             //either the id of the template or the form (depending on isNew)
     var patientID = vo.patientID;
-
-    console.log(questionnaireID,patientID);
-
     var isNew = vo.isNew;       //true if this is a new form based on this template
-    //console.log(id);
+    if (! questionnaireID) {
+        alert('questionnaireID is null. Cannot create template');
+        return;
+    }
+    if (! patientID) {
+        alert('patientID is null. Cannot create template');
+        return;
+    }
+    console.log(questionnaireID,patientID,isNew);
+
+
+
 
     //get the selected questionnaire
     var uri = '/api/oneresource/Questionnaire/' + questionnaireID.getLogicalID();
@@ -148,6 +155,9 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
     $.get(uri,function(Q){
 
 
+        //pass in a clone to avoid reference type errors...
+        //var clone = {};
+        //$.extend(true,clone,Q);
         qFillinView.init({Q:Q,questionnaireID:questionnaireID,patientID:patientID,isNew:isNew});
 
         //console.log('render');
@@ -155,19 +165,22 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
         qFillinView.render();
 
 
-        var form = Q.group;     //the root element of the form
+        //var form = Q.group;     //the root element of the form
 
         //navView is the navigational view - the overall layout of the form to assist the user completing it...
         //todo - move to a component of fillinview
+
+        navView.render();
+
+
         navView.model = Q;      //the navView has the questionnaire as a model
         navView.html = "";      //todo - should have a proper thing
         navView.html += "<h5>Document Navigation</h5>";
 
         //sets globals html & htmlNav - todo - there will be a  better way...
-        renderQ.showGroup(form,0);  //create the questionnaire form
+        //renderQ.showGroup(form,0);  //create the questionnaire form
         navView.html += htmlNav;
 
-        navView.render();
 
         Backbone.myFunctions.showMainTab('newFormTab');
     })
@@ -175,25 +188,54 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
 });
 
 //adding a new form (based on a questionnaire
-Backbone.listenTo(qFillinView,'qfv:new',function(vo){
+Backbone.listenTo(qFillinView,'qfv:update',function(vo){
     console.log(vo);
     var questionnaire = vo.questionnaire;       //the completed questionnaire. It will be the template with some answers...
+    var questionnaireID = vo.questionnaireID;
     var patientID = vo.patientID;
+
+    if (! questionnaireID) {
+        //note that even when creating a new Q, we pass in the ID of the template that it is based on...
+        alert('questionnaireID is null. Cannot save');
+        return;
+    }
+    if (! patientID) {
+        alert('patientID is null. Cannot save');
+        return;
+    }
+
+    var isNew = vo.isNew;
+    var uri = '/api/';
+    var vid = "";       //the version ID. If an update  then this needs to be set for version aware updating
+
+    var http_method = 'PUT';        //default to a PUT (ie an update)
+
+    if (isNew) {
+        //if it's new then the http method is a POST
+        http_method = 'POST';
+    } else {
+        //otherwise, leave it as a PUT and add the resource ID
+        uri += questionnaireID.getLogicalID();
+    }
+
+    console.log(http_method,uri,questionnaire);
+
+    //return;
 
     delete questionnaire.include;       //todo move this to a 'meta' property
     delete questionnaire.author;        //as a new q copied from the template this will be the author of the Q
-    //questionnaire.subject = {reference : "Patient/"+patientID.getLogicalID()}
+
     questionnaire.subject = {reference : patientID};
     questionnaire.authored = moment().format();
     questionnaire.status = vo.status;
 
 
-    var uri = '/api/';
     $.ajax (uri,{
-        method : 'POST',
+        method : http_method,
         data : JSON.stringify(questionnaire),
         headers : {
-            'content-type' : 'application/json'
+            'content-type' : 'application/json',
+            'content-location' : vid
         },
         success : function(data){
             console.log(data);
@@ -209,12 +251,9 @@ Backbone.listenTo(qFillinView,'qfv:new',function(vo){
 
         }
     })
-
-
-
 });
 
-//user has selected a template or form to view...
+//user has selected a template or form to design...
 Backbone.listenTo(questionnaireListView,'qlv:design',function(vo){
     var id = vo.id;     //form or template
     //alert(id);
@@ -250,7 +289,10 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     var entry = _.findWhere(MediatorQ.allQuests.entry,{id:id});
     //console.log(entry);
 
-    renderQ.readOnly = true;    //will cause controls to be rendered as text...
+    //todo - for some reason, as soon as this is true the templates will always receive it as true
+    //I cannot figure this out!
+
+    //renderQ.readOnly = true;    //will cause controls to be rendered as text...
     html = "";
     renderQ.showGroup(entry.content.group,0);  //create the questionnaire form
 

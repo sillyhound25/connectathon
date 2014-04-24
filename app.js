@@ -230,11 +230,11 @@ app.get('/api/conformance', function(req, res){
     })
 });
 
-//update a resource (the resource type is inside teh resource
+//update a resource (the resource type is inside the resource
 app.put('/api/:id', function(req, res){
     var resourceID = req.params.id;
     var resource = req.body;
-
+    console.log('PUT to ' + resourceID)
     var vid = req.headers['content-location'];
 //console.log(req.headers);
     putToFHIRServer(resource,resourceID,vid,function(resp){

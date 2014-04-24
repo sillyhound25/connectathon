@@ -268,7 +268,6 @@
 
 
 <script type="handlebars/template" id='questionTemplate1col'>
-
     <div class="col-sm-12 col-md-12">
         {{> qitem}}
     </div>
@@ -308,6 +307,7 @@
 
 <script type="handlebars/template" id='questionTemplate3col'>
     <div class="col-sm-4 col-md-4">
+
         {{> qitem}}
     </div>
 </script>
@@ -318,7 +318,7 @@
 <script type="handlebars/template" id='itemTemplate-partial'>
     <form role="form" class="form-horizontal">
         <div class="form-group">
-            <label class="col-sm-4 col-md-4">{{display}} {{readOnly}}</label>
+            <label class="col-sm-4 col-md-4">{{display}} </label>
             <div class="col-sm-8 col-md-8">
                 {{#if readOnly}}
 

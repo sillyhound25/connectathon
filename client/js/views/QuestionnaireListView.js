@@ -45,7 +45,7 @@ var QuestionnaireListView = BaseView.extend({
     },
     events : {
         "click .viewQ" : "view",
-        "click .fillin" : "fillin",
+        //"click .fillin" : "fillin",
         "click .designQSource" : "design",
         "click #qlSelectPatient" : "selectPatient",
         "click .qlOnePatient" : "patientselected",
@@ -56,7 +56,7 @@ var QuestionnaireListView = BaseView.extend({
     edit : function() {
         //an existing form is selected for editing
         console.log(this.currentFormID);
-        this.trigger('qlv:fillin',{questionnaireID:this.currentFormID});
+        this.trigger('qlv:fillin',{questionnaireID:this.currentFormID,patientID : this.selectedPatientID });
 
         //this.trigger('qlv:edit',{questionnaireID:this.currentFormID});
 
@@ -169,7 +169,7 @@ var QuestionnaireListView = BaseView.extend({
         that.trigger("qlv:design",{id:id});
     },
 
-    fillin : function(ev) {
+    fillinDEP : function(ev) {
         //the user wants to fill in a form...
         var id = ev.currentTarget.getAttribute('data-id');
         this.trigger('qlv:fillin',{id:id});
