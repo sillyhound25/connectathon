@@ -50,7 +50,16 @@ var QuestionnaireListView = BaseView.extend({
         "click #qlSelectPatient" : "selectPatient",
         "click .qlOnePatient" : "patientselected",
         "click .qlPatientQ" : "QSelected",
-         "click #qlNewQ" : "newForm"
+        "click #qlNewQ" : "newForm",
+        "click #qlEdit" : "edit"
+    },
+    edit : function() {
+        //an existing form is selected for editing
+        console.log(this.currentFormID);
+        this.trigger('qlv:fillin',{questionnaireID:this.currentFormID});
+
+        //this.trigger('qlv:edit',{questionnaireID:this.currentFormID});
+
     },
     newForm : function() {
         //the user wants to create a new form. Display a list of templates, and create a handler
@@ -83,9 +92,13 @@ var QuestionnaireListView = BaseView.extend({
     QSelected : function(ev) {
         //a single questionnaire has been selected for viewing.
 
+
         console.log(ev.currentTarget);
         var id = $(ev.currentTarget).attr('data-id');
+        this.currentFormID = id;          //save the id of the form so it is available for the edit (see above)
         this.trigger('qlv:view',{id:id});
+
+
     },
     patientselected : function(ev) {
         //a patient has been selected from the list. Get their completed questionnaires
@@ -157,6 +170,7 @@ var QuestionnaireListView = BaseView.extend({
     },
 
     fillin : function(ev) {
+        //the user wants to fill in a form...
         var id = ev.currentTarget.getAttribute('data-id');
         this.trigger('qlv:fillin',{id:id});
     },

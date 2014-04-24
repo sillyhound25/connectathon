@@ -1,12 +1,12 @@
 
-
-
 <div class="row">
     <div class="col-sm-4 col-md-4">
 
         <ul class="nav nav-tabs">
             <li class="active"><a href="#qlTemplateTab" data-toggle="tab">Templates</a></li>
-            <li><a href="#qlFormTab" data-toggle="tab">Patient Forms</a></li>
+            <li>
+                <a href="#qlFormTab" data-toggle="tab">Patient Forms</a>
+            </li>
         </ul>
 
         <div class="tab-content" >
@@ -36,8 +36,22 @@
 
             <div class="tab-pane" id="qlFormTab">
                 <br />
-                Select Patient <input type='text' id='qlSelectPatientName' value='roel'/>
-                <button class="btn btn-primary" id='qlSelectPatient'>Select</button>
+
+                <div class="row">
+                    <div class="col-sm-4 col-md-4">
+                        Select Patient
+                    </div>
+                    <div class="col-sm-6 col-md-6">
+                        <input type='text' class="form-control" id='qlSelectPatientName' value='roel'/>
+                    </div>
+                    <div class="col-sm-2 col-md-2">
+                        <button class="btn btn-primary" id='qlSelectPatient'>Select</button>
+                    </div>
+
+                </div>
+
+
+
                 <div class="row">
                     <div class="col-md-4 col-sm-4">
                         <div id='qlPatientList'></div>
@@ -57,6 +71,30 @@
     <div class="col-sm-8 col-md-8">
 
 
-        <div id="displayQ"></div>
+        <div class="row">
+            <div class="col-sm-12 col-md-12">
+
+                <div class="panel panel-default" id="qlHeader" style="display: none">
+                    <div class="panel-body">
+                        <span id="qlShowID"></span>
+                        <span>
+                            <button class="btn btn-success pull-right" id='qlEdit'>Edit</button>
+                        </span>
+                        <div id="qlShowDate"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12 col-md-12">
+                <div style="border-left: 1px solid #ccc; padding: 5px">
+                    <div id="displayQ"></div>
+                </div>
+            </div>
+        </div>
+
+
+
     </div>
 </div>

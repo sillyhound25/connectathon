@@ -91,7 +91,8 @@ renderQ.showQuestion = function(quest,id,numCol) {
     //this is the value associated with this question. Will need to be expanded to support different answer types...
     var value = quest.answerString;
 
-    html +=  Backbone.myTemplates[templateName]({question: quest,id:id,code:code,display:display,value:value});
+    html +=  Backbone.myTemplates[templateName](
+        {question: quest,id:id,code:code,display:display,value:value,readOnly:renderQ.readOnly});
 
 
 

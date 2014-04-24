@@ -151,6 +151,7 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
         qFillinView.init({Q:Q,questionnaireID:questionnaireID,patientID:patientID,isNew:isNew});
 
         //console.log('render');
+        renderQ.readOnly = false;
         qFillinView.render();
 
 
@@ -246,11 +247,10 @@ Backbone.listenTo(questionnaireListView,'qlv:design',function(vo){
 //user has selected a template or form to view...
 Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     var id = vo.id;     //form or template
-
-
     var entry = _.findWhere(MediatorQ.allQuests.entry,{id:id});
-    console.log(entry);
+    //console.log(entry);
 
+    renderQ.readOnly = true;    //will cause controls to be rendered as text...
     html = "";
     renderQ.showGroup(entry.content.group,0);  //create the questionnaire form
 
@@ -259,15 +259,27 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
         html = "Not enough content to preview";
     }
 
+    //set the banner above the viewer
+    $('#qlHeader').show();          //display the header...
+    $('#qlShowID').html(id);
+    $('#qlShowDate').html(moment(entry.content.authored).format("dddd, MMMM Do YYYY, h:mm:ss a"));
+
+    //render the Q in the preview area...
     $('#displayQ').html(html);
-    $('textarea').autosize();
+        // $('textarea').autosize();    not needed as not editing...
 
 
-    qDesignerView.init(entry);
+    //??? is it necessary to init the designer???
+    //qDesignerView.init(entry);
     //qDesignerView.init({content:entry,id:id});
-    qDesignerView.render();
+   // qDesignerView.render();
 
 });
+
+//user has selected a template or form to view...
+//Backbone.listenTo(questionnaireListView,'qlv:edit',function(vo){
+  //  console.log(vo);
+//});
 
 
 

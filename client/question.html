@@ -67,6 +67,25 @@
             margin-left: 10px;
         }
 
+        .qReadOnly {
+
+            display: block;
+            padding: 8.5px;
+            margin: 0 0 9px;
+            font-size: 12.025px;
+            line-height: 18px;
+            word-break: break-all;
+            word-wrap: break-word;
+            white-space: pre;
+            white-space: pre-wrap;
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            -webkit-border-radius: 4px;
+               -moz-border-radius: 4px;
+                    border-radius: 4px;
+        }
+
     </style>
 
 </head>
@@ -210,6 +229,8 @@
 
         */
 
+        Handlebars.registerPartial("qitem", $("#itemTemplate-partial").html());
+
         Handlebars.registerHelper('logicalID',function(str){
             var ar = str.split('/');
             return ar[ar.length-1];
@@ -249,22 +270,7 @@
 <script type="handlebars/template" id='questionTemplate1col'>
 
     <div class="col-sm-12 col-md-12">
-        <div>{{display}}</div>
-
-        <form role="form" class="form-horizontal">
-            <div class="form-group">
-
-                <div class="col-sm-12 col-md-12">
-                    {{#if code}}
-                    <textarea class="form-control data-{{code}}">{{value}}</textarea>
-
-                    {{else}}
-                    <input type='text' class="form-control" disabled="disabled"
-                           placeholder="There is no question.name so data cannot be entered"/>
-                    {{/if}}
-                </div>
-            </div>
-        </form>
+        {{> qitem}}
     </div>
 
 </script>
@@ -274,25 +280,12 @@
 <script type="handlebars/template" id='questionTemplate2col'>
 
         <div class="col-sm-6 col-md-6">
-            <form role="form" class="form-horizontal">
-                <div class="form-group">
-                    <label class="col-sm-4 col-md-4">{{display}}</label>
-                    <div class="col-sm-8 col-md-8">
-                        {{#if code}}
-                        <input type='text' class="form-control data-{{code}}" value = '{{value}}'
-                               placeholder="Enter the {{question.text}}"/>
-                        {{else}}
-                        <input type='text' class="form-control" disabled="disabled"
-                               placeholder="There is no question.name so data cannot be entered"/>
-                        {{/if}}
-                    </div>
-                </div>
-            </form>
+            {{> qitem}}
         </div>
 
 </script>
 
-<script type="handlebars/template" id='questionTemplate3col'>
+<script type="handlebars/template" id='questionTemplate3colDEP'>
 
     <div class="col-sm-4 col-md-4">
         <form role="form" class="form-horizontal">
@@ -310,6 +303,40 @@
             </div>
         </form>
     </div>
+
+</script>
+
+<script type="handlebars/template" id='questionTemplate3col'>
+    <div class="col-sm-4 col-md-4">
+        {{> qitem}}
+    </div>
+</script>
+
+
+
+
+<script type="handlebars/template" id='itemTemplate-partial'>
+    <form role="form" class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-4 col-md-4">{{display}} {{readOnly}}</label>
+            <div class="col-sm-8 col-md-8">
+                {{#if readOnly}}
+
+                    <div class="qReadOnly"> {{value}}&nbsp;</div>
+                {{else}}
+
+                    {{#if code}}
+                    <input type='text' class="form-control data-{{code}}" value = '{{value}}'
+                           placeholder="Enter the {{question.text}}"/>
+                    {{else}}
+                    <input type='text' class="form-control" disabled="disabled"
+                           placeholder="There is no question.name so data cannot be entered"/>
+                    {{/if}}
+                {{/if}}
+            </div>
+        </div>
+    </form>
+
 
 </script>
 

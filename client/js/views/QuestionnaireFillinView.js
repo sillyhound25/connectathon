@@ -69,6 +69,7 @@ var QuestionnaireFillinView = BaseView.extend({
         })
     },
     render : function(){
+        console.log(renderQ)
         var that=this;
         this.getTemplate('questionnaireFillinContainer',function(){
 
@@ -80,12 +81,11 @@ var QuestionnaireFillinView = BaseView.extend({
                 $('#qfHeaderText').html("This will update the partially completed form at "+that.questionnaireID);
             }
 
-
-
             //will establish html and htmlNav
+            renderQ.readOnly = false;
             renderQ.showGroup(that.model.group,0);  //create the questionnaire form
             $('#qfMain').html(html);
-            //this.$el.html(html);
+
         });
 
     }
