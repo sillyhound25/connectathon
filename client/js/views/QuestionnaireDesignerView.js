@@ -74,7 +74,7 @@ var QuestionnaireDesignerView = BaseView.extend({
             //moving to the preview mode - render the form...
             if (this.model.group && (this.model.group.group || this.model.group.question)) {
                 //todo - the renderer uses the global html & htmlNav. There must be a better way...
-                html = "";
+                //html = "";
                 renderQ.showGroup(this.model.group,0);  //create the questionnaire outline
                 $('#qdPreviewDiv').html(html);
 

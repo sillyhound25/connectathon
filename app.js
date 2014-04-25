@@ -1,8 +1,4 @@
 
-/**
- * Module dependencies.
- */
-
 var express = require('express');
 var request = require('request');   //https://github.com/mikeal/request
 var moment = require('moment');
@@ -35,6 +31,8 @@ var pandasService = require('./server/pandasService.js');
 //var FHIRServerUrl = 'http://fhir.healthintersections.com.au/open/';
 // Configuration
 
+var FHIRServerUrl;
+
 //load the config file.
 var config;
 
@@ -46,7 +44,7 @@ fs.readFile('config.json',function(err,contents){
         FHIRServerUrl = config.FHIRServerUrl;
         console.log('Setting server URL to '+FHIRServerUrl);
     }
-})
+});
 
 
 app.configure(function(){
@@ -84,8 +82,8 @@ app.get('/pandas/makeClaimsJson', function(req, res) {
 });
 
 app.get('/pandas/patientFlags/patient/:patid?', function(req, res) {
-    var patid = req.params['patid']
-    console.log(patid)
+    var patid = req.params['patid'];
+    console.log(patid);
     pandasService.getPandasPatientRiskFlags(patid,function(data){
         res.json(data);
     })
@@ -99,9 +97,6 @@ app.get('/pandas/patientFlags/time/:time?', function(req, res) {
     })
 
 });
-
-
-
 
 //----------------------------------
 
@@ -123,17 +118,17 @@ app.get('/api/oneresource/:type/:id', function(req, res) {
     //console.log(url);
     performQueryAgainstFHIRServer(url,null,function(resp,statusCode){
         res.json(resp,statusCode);
-    })
-})
+    });
+});
 
 //delete a single resource...
 app.del('/api/:type/:id', function(req, res) {
-    url = req.params.type + "/" + req.params.id;
+    var url = req.params.type + "/" + req.params.id;
     console.log('del ' + url);
     performDeleteAgainstFHIRServer(url,null,function(resp,statusCode){
         res.json(resp,statusCode);
-    })
-})
+    });
+});
 
 
 //perform a query against a fhir server
@@ -149,16 +144,16 @@ app.get('/api/generalquery', function(req, res){
     var url = "";
     _.each(query.params,function(param){
         url += "&" + param.name + '=' + param.value ;
-    })
+    });
 
 
     url = query.resource + '?'+ url.slice(1);
-    console.log('general query ' + url)
+    console.log('general query ' + url);
 
 
     performQueryAgainstFHIRServer(url,null,function(resp){
         res.json(resp,resp.statusCode);
-    })
+    });
 
 });
 
@@ -167,11 +162,11 @@ app.get('/api/generalquery', function(req, res){
 app.get('/api/coreResourceTestParams', function(req, res){
     var params = {};
     params.patient = [];
-    params.patient.push({code:'fname',display:'First Name',default:'John'})
-    params.patient.push({code:'lname',display:'Last Name',default:'Cardinal'})
-    params.patient.push({code:'identifier',display:'Identifier',default:'300000165',lookupPatient:true})
+    params.patient.push({code:'fname',display:'First Name',default:'John'});
+    params.patient.push({code:'lname',display:'Last Name',default:'Cardinal'});
+    params.patient.push({code:'identifier',display:'Identifier',default:'300000165',lookupPatient:true});
     params.practitioner = [];
-    params.practitioner.push({code:'name',display:'Full Name',default:'Marcus Welby'})
+    params.practitioner.push({code:'name',display:'Full Name',default:'Marcus Welby'});
     res.json(params);
 });
 
@@ -234,7 +229,7 @@ app.get('/api/conformance', function(req, res){
 app.put('/api/:id', function(req, res){
     var resourceID = req.params.id;
     var resource = req.body;
-    console.log('PUT to ' + resourceID)
+    console.log('PUT to ' + resourceID);
     var vid = req.headers['content-location'];
 //console.log(req.headers);
     putToFHIRServer(resource,resourceID,vid,function(resp){
@@ -273,8 +268,8 @@ app.get('/api/valueset/id/:id', function(req, res){
     var query = 'ValueSet/'+ ID;
     performQueryAgainstFHIRServer(query,null,function(resp){
         res.json(resp,resp.statusCode);
-    })
-})
+    });
+});
 
 //the resource name is in the resource. todo - change
 app.post('/api', function(req, res){
@@ -333,7 +328,7 @@ app.get('/api/valueset/:publisher', function(req, res){
 
     });
 
-})
+});
 
 //gets all the resources for a patient...
 app.get('/api/patient/:patientID', function(req, res){
@@ -345,7 +340,7 @@ app.get('/api/patient/:patientID', function(req, res){
         res.json(resp);
     })
 
-})
+});
 
 function logResource(resource,callback){
     var fileName = "./resourceBackup/"+resource.resourceType+ '-' + new Date().getTime() + '.json';
@@ -357,6 +352,7 @@ function logResource(resource,callback){
         }
     });
 }
+
 //log a bundle
 function logBundle(bundle,name,callback){
     var fileName = "./bundleBackup/"+name+ '-' + new Date().getTime() + '.json';
@@ -428,7 +424,7 @@ function postToFHIRServer(resource,callback) {
         },
         body : JSON.stringify(resource),
         uri : FHIRServerUrl + resourceType
-    }
+    };
 
     //console.log(JSON.stringify(options));
 
@@ -462,7 +458,7 @@ function putToFHIRServer(resource,id,vid,callback) {
         },
         body : JSON.stringify(resource),
         uri : FHIRServerUrl + resourceType + "/" + id
-    }
+    };
 
     //console.log(options);
 
@@ -474,7 +470,7 @@ function putToFHIRServer(resource,id,vid,callback) {
         resp.headers = response.headers;
         resp.error = error;
 
-        console.log(resp)
+        console.log(resp);
         if (error){
             console.log(body);
         }
@@ -500,7 +496,8 @@ function performDeleteAgainstFHIRServer(query,server,callback){
         },
         uri : fhirServer + query,
         timeout : 10000
-    }
+    };
+
     request(options,function(error,response,body){
 
         if (response.statusCode != 204) {
@@ -508,7 +505,7 @@ function performDeleteAgainstFHIRServer(query,server,callback){
 
         }
 
-        var json = {}
+        var json = {};
         try {
             json = JSON.parse(body)
         } catch (ex) {
@@ -535,7 +532,7 @@ function performQueryAgainstFHIRServer(query,server,callback){
         },
         uri : fhirServer + query,
         timeout : 10000
-    }
+    };
 
 
     //console.log(options);
@@ -562,7 +559,7 @@ function performQueryAgainstFHIRServer(query,server,callback){
            // throw 'error';
         }
 
-        var json = {}
+        var json = {};
         try {
             json = JSON.parse(body)
         } catch (ex) {
@@ -573,7 +570,7 @@ function performQueryAgainstFHIRServer(query,server,callback){
 
     })
 }
-
+/*
 function performQueryAgainstFHIRServerXML(query,callback){
     var options = {
         method:'GET',
@@ -581,9 +578,7 @@ function performQueryAgainstFHIRServerXML(query,callback){
             "content-type" : 'application/xml+fhir'
         },
         uri : FHIRServerUrl + query
-    }
-
-
+    };
 
     request(options,function(error,response,body){
 
@@ -593,11 +588,12 @@ function performQueryAgainstFHIRServerXML(query,callback){
         }
         callback(body,response.statusCode);
 
-    })
+    });
 }
+*/
 
 function getPatientDataFromFHIRServer(patientID,callback){
-    var that=this;
+    //var that=this;
     var allResp = [];
 
     async.parallel([
@@ -657,8 +653,8 @@ function getPatientDataFromFHIRServer(patientID,callback){
     ],
     function(){
         callback(allResp);
-    })
-
+    });
+/*
     function getOptionsXXX(uri)  {
         var options = {
             method:'GET',
@@ -669,18 +665,19 @@ function getPatientDataFromFHIRServer(patientID,callback){
         }
         return options;
     }
+    */
 
-};
+}
 
 function getOptions(uri)  {
-    var options = {
+    return {
         method:'GET',
         headers : {
             "Accept" : 'application/json+fhir'
         },
         uri : uri
-    }
-    return options;
+    };
+    //return options;
 }
 
 function postBundleToFHIRServer(bundle,callback) {
@@ -691,7 +688,8 @@ function postBundleToFHIRServer(bundle,callback) {
         },
         body : JSON.stringify(bundle),
         uri : FHIRServerUrl
-    }
+    };
+
     //console.log(options);
     request(options,function(error,response,body){
         //console.log('bundle post')

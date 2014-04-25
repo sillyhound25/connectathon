@@ -63,7 +63,7 @@ var QuestionnaireListView = BaseView.extend({
     },
     edit : function() {
         //an existing form is selected for editing
-        console.log(this.currentFormID);
+        //console.log(this.currentFormID);
         this.trigger('qlv:fillin',{questionnaireID:this.currentFormID,patientID : this.selectedPatientID });
 
         //this.trigger('qlv:edit',{questionnaireID:this.currentFormID});

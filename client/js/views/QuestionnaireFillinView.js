@@ -15,7 +15,7 @@ var QuestionnaireFillinView = BaseView.extend({
 
         console.log('repeat '+groupid);
         //locate the view representing this mayRepeat group...
-        var view = renderQ.mayRepeatViews[groupid];
+        var view = this.mayRepeatViews[groupid];
 
         view.render();
 
@@ -103,7 +103,7 @@ var QuestionnaireFillinView = BaseView.extend({
         })
     },
     render : function(){
-        console.log(renderQ);
+        //console.log(renderQ);
         var that=this;
         this.getTemplate('questionnaireFillinContainer',function(){
 
@@ -118,19 +118,23 @@ var QuestionnaireFillinView = BaseView.extend({
             //will establish html and htmlNav
             //var readOnly = renderQ.readOnly;
             //renderQ.readOnly = false;
-            html = "";
-            renderQ.showGroup(that.model.group,0);  //create the questionnaire form
+            //html = "";
+            var ctx = {};
+            renderQ.showGroup(that.model.group,0,ctx);  //create the questionnaire form
+            that.mayRepeatViews = {};
 
-            $('#qfMain').html(html);
+            $.extend(true,that.mayRepeatViews,ctx.mayRepeatViews);
+
+            $('#qfMain').html(ctx.html);
 
             //iterate through the 'mayRepeats' and set the container. We have to do this after the fillinView has rendered.
             //todo This is not quite right - the container needs to be after any previous repeats...
-            $.each(renderQ.mayRepeatViews,function(inx,view) {
+            $.each(that.mayRepeatViews,function(inx,view) {
                 var el = $('#'+ view.groupId);
-                console.log(el.html());
+                //console.log(el.html());
                 view.setElement(el);
                 //view.setElement(view.groupId);
-                console.log(view.groupId)
+                //console.log(view.groupId)
             });
 
             //console.log(renderQ.mayRepeatViews);

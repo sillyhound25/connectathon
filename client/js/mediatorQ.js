@@ -177,7 +177,7 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
 
         //sets globals html & htmlNav - todo - there will be a  better way...
         //renderQ.showGroup(form,0);  //create the questionnaire form
-        navView.html += htmlNav;
+       // navView.html += htmlNav;
         navView.render();
 
         Backbone.myFunctions.showMainTab('newFormTab');
@@ -291,12 +291,14 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     //I cannot figure this out!
 
     //renderQ.readOnly = true;    //will cause controls to be rendered as text...
-    html = "";
-    renderQ.showGroup(entry.content.group,0);  //create the questionnaire form
+    //html = "";
+    var ctx = {};
+    renderQ.showGroup(entry.content.group,0,ctx);  //create the questionnaire form
 
+    console.log(ctx);
 
-    if (html === "") {
-        html = "Not enough content to preview";
+    if (ctx.html === "") {
+        ctx.html = "Not enough content to preview";
     }
 
     //set the banner above the viewer
@@ -305,7 +307,8 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     $('#qlShowDate').html(moment(entry.content.authored).format("dddd, MMMM Do YYYY, h:mm:ss a"));
 
     //render the Q in the preview area...
-    $('#displayQ').html(html);
+    //$('#displayQ').html(html);
+    $('#displayQ').html(ctx.html);
         // $('textarea').autosize();    not needed as not editing...
 
 

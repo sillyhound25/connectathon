@@ -187,49 +187,6 @@
         Backbone.myTemplates.groupTemplate = Handlebars.compile($('#groupTemplate').html())
         Backbone.myTemplates.saveButtonTemplate = Handlebars.compile($('#saveButtonTemplate').html())
 
-        //renderQ.Z = Z;  //renderQ defined in questionnaireRender.js
-
-        //todo - questionnaireSelectView is redundant I think...
-        //questionnaireSelectView.render();
-
-/* - don't remove just yet...
-        var uri = '/api/oneresource/Questionnaire/ct6-soap1';
-        //var uri = './samples/soapQuestionnaire.xml';
-        $.get(uri,function(Q){
-            //console.log(Q)
-            var form = Q.group;     //the root element of the form
-
-            //navView.html
-            navView.model = Q;      //the navView has the questionnaire as a model
-            navView.html = "";      //todo - should have a proper thing
-            //navView.html += Z.templates.saveButtonTemplate();   //render the save button
-
-            navView.html += "<h5>Document Navigation</h5>";
-
-            //renderQ.vo = {html:"",htmlNav:""}
-            renderQ.Z = Z;
-
-            //var htmlx = "";
-
-            //sets globals html & htmlNav - todo - there will be a  better way...
-            renderQ.showGroup(form,0);  //create the questionnaire form
-
-            //console.log(h);
-
-            //var vo = showGroup(form,0);  //create the questionnaire form
-            //var html1 = renderQ.vo.form;
-            navView.html += htmlNav;
-
-            $('#form').html(html);
-            navView.render();
-
-            qDesignerView.init({content:Q,id:uri});
-            qDesignerView.render();
-        })
-
-
-        */
-
         Handlebars.registerPartial("qitem", $("#itemTemplate-partial").html());
 
         Handlebars.registerHelper('logicalID',function(str){
@@ -255,12 +212,10 @@
         MediatorQ.showWorking();
         MediatorQ.getQuests('template',function(bundle){
             MediatorQ.hideWorking();
-            console.log(bundle)
+            //console.log(bundle)
             questionnaireListView.model = bundle;
             questionnaireListView.render();
         })
-
-
     });
 
 
@@ -272,17 +227,14 @@
     <div class="col-sm-12 col-md-12">
         {{> qitem}}
     </div>
-
 </script>
 
 
 
 <script type="handlebars/template" id='questionTemplate2col'>
-
-        <div class="col-sm-6 col-md-6">
-            {{> qitem}}
-        </div>
-
+    <div class="col-sm-6 col-md-6">
+        {{> qitem}}
+    </div>
 </script>
 
 <script type="handlebars/template" id='questionTemplate3colDEP'>
@@ -308,7 +260,6 @@
 
 <script type="handlebars/template" id='questionTemplate3col'>
     <div class="col-sm-4 col-md-4">
-
         {{> qitem}}
     </div>
 </script>
@@ -343,16 +294,18 @@
 
 
 <script type="handlebars/template" id='groupTemplate'>
-    <div class="row" id="{{groupId}}">
-        <div class="col-sm-12 col-md-12">
-            <div class="header{{level}}" title="{{group.text}}">{{group.header}}
-                {{#if mayRepeat}}
-                    <div class="pull-right">
-                        <a href='#' style="margin:8px">
-                            <i class="glyphicon glyphicon-plus-sign mayRepeat" data-groupid="{{groupId}}"></i>
-                        </a>
-                    </div>
-                {{/if}}
+    <div id="{{groupIdXXXX}}">
+        <div class="row">
+            <div class="col-sm-12 col-md-12">
+                <div class="header{{level}}" title="{{group.text}}">{{group.header}}
+                    {{#if mayRepeat}}
+                        <div class="pull-right">
+                            <a href='#' style="margin:8px">
+                                <i class="glyphicon glyphicon-plus-sign mayRepeat" data-groupid="{{groupId}}"></i>
+                            </a>
+                        </div>
+                    {{/if}}
+                </div>
             </div>
         </div>
     </div>
