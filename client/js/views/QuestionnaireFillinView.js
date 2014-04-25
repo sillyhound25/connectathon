@@ -4,11 +4,26 @@
 
 var QuestionnaireFillinView = BaseView.extend({
     events : {
-        "click #qfSave" : "save"
+        "click #qfSave" : "save",
+             "click .mayRepeat" : 'mayRepeat'
+    },
+    mayRepeat : function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        var groupid = ev.currentTarget.getAttribute('data-groupid');
+
+        console.log('repeat '+groupid);
+        //locate the view representing this mayRepeat group...
+        var view = renderQ.mayRepeatViews[groupid];
+
+        view.render();
+
+
     },
     save : function() {
         //console.log('save',this.model);
-        var status = 'in progress'
+        var status = 'in progress';
         this.getGroup(this.model.group,this);     //this actually reads all the answers and appends to the Q...
         console.log(this.model);
         //console.log('save',this.model);
@@ -70,23 +85,7 @@ var QuestionnaireFillinView = BaseView.extend({
                 //the backing model as well as the html controls and the name will always be unique. Stick with a class
                 //rather than a group though, as the top lavel page may have multiple instances of this template...
                 var results = ctx.$el.find('.'+resultKlass);
-/*
 
-                ctx.$el.find('.'+resultKlass).each(function(inx,el){
-                    console.log(inx,el);
-                    console.log($(el).val());
-                })
-
-
-                console.log(results)
-                $.each(results,function(inx,el){
-                    //console.log(el.val())
-                })
-                */
-
-               // ctx.$el.find('.'+resultKlass).each(inx,el) {
-
-                //}
                 var v = results.val();  //think this is OK for all controls...
                 if (v) {
                     console.log(quest.name.coding[0].code,v);
@@ -104,7 +103,7 @@ var QuestionnaireFillinView = BaseView.extend({
         })
     },
     render : function(){
-        console.log(renderQ)
+        console.log(renderQ);
         var that=this;
         this.getTemplate('questionnaireFillinContainer',function(){
 
@@ -122,9 +121,21 @@ var QuestionnaireFillinView = BaseView.extend({
             html = "";
             renderQ.showGroup(that.model.group,0);  //create the questionnaire form
 
-            console.log(html);
-
             $('#qfMain').html(html);
+
+            //iterate through the 'mayRepeats' and set the container. We have to do this after the fillinView has rendered.
+            //todo This is not quite right - the container needs to be after any previous repeats...
+            $.each(renderQ.mayRepeatViews,function(inx,view) {
+                var el = $('#'+ view.groupId);
+                console.log(el.html());
+                view.setElement(el);
+                //view.setElement(view.groupId);
+                console.log(view.groupId)
+            });
+
+            //console.log(renderQ.mayRepeatViews);
+
+
 
         });
 

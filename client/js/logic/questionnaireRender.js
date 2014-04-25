@@ -1,22 +1,31 @@
 
 //these have to be globals for the recursive algorithm to work. todo would like to fix this...
-var renderQ = {},
+var renderQ = {mayRepeatViews : {},ctr : 1},
     html = "",
-    htmlNav = "";
+    htmlNav = ""
+
+    ;    //collection of views manageing repeats
 
 
 //show a group
 renderQ.showGroup = function(grp,lvl) {
+
+
     if (! grp) {
         //legal to have no group..
         alert('Group is null');
         return;
     }
 
+    if (lvl === 0){
+        renderQ.mayRepeatViews = {} ;  //empty the collection of mayrepeat views...
+    }
+
     if (grp.header) {
         var klass = 'formNav'+lvl;
 
-        //todo - move this into the view...
+        //todo - ? move this into the view...
+
         var templateStr = "<div class=' <%= klass%>'><a class='mynav'><%= text%></a></div>";
         htmlNav += _.template(templateStr,{text:grp.header,klass:klass});//  "<div >"+grp.header+"</div>"
     }
@@ -30,9 +39,24 @@ renderQ.showGroup = function(grp,lvl) {
     var extensions = FHIRHelper.getAllExtensions(grp);
     extensions.numCol = extensions.numCol || 1;     //default is 1 col...
 
+    //only the 'original' mayRepeat group has all the design artefacts...
+    //var mrID = renderQ.ctr++;      //get the next counter
+    var groupId = "";
+    if (extensions.mayRepeat) {
+        var mrView = new QuestionnaireMRView();         //a view that will manage the repeating group
+        var bbTemplates = Backbone['myTemplates'];
+        mrView.template = bbTemplates["questionTemplate" + extensions.numCol + "col"];
+        groupId = 'groupMR' + renderQ.ctr++;      //get the next counter and increment
+        mrView.groupId = groupId;
+        mrView.group = grp;
 
-    html += Backbone['myTemplates'].groupTemplate({group: grp,level:displayLevel, mayRepeat : extensions.mayRepeat});
+        renderQ.mayRepeatViews[groupId] = mrView;
 
+    }
+
+
+    html += Backbone['myTemplates'].groupTemplate({group: grp,level:displayLevel,
+        mayRepeat : extensions.mayRepeat,groupId : groupId});
 
 
     if (grp.question) {

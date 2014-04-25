@@ -76,8 +76,8 @@ Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
         method : 'PUT',
         data : JSON.stringify(Q),
         headers : {
-            'content-type' : 'application/json',
-            'content-location' : vo.historyId // - not version aware updates yet...
+            'content-type' : 'application/json'
+            //'content-location' : vo.historyId // - not version aware updates yet...
         },
         success : function(data){
             MediatorQ.hideWorking();
@@ -147,8 +147,6 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
     console.log(questionnaireID,patientID,isNew);
 
 
-
-
     //get the selected questionnaire
     var uri = '/api/oneresource/Questionnaire/' + questionnaireID.getLogicalID();
     //console.log(uri);
@@ -170,7 +168,7 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
         //navView is the navigational view - the overall layout of the form to assist the user completing it...
         //todo - move to a component of fillinview
 
-        navView.render();
+
 
 
         navView.model = Q;      //the navView has the questionnaire as a model
@@ -180,7 +178,7 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
         //sets globals html & htmlNav - todo - there will be a  better way...
         //renderQ.showGroup(form,0);  //create the questionnaire form
         navView.html += htmlNav;
-
+        navView.render();
 
         Backbone.myFunctions.showMainTab('newFormTab');
     })

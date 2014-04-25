@@ -25,14 +25,22 @@ var QuestionnaireListView = BaseView.extend({
             }
         });
 
+
+        //get a short questionnaire date -
+        Handlebars.registerHelper('getQDate',function(entry){
+            return moment(entry.content.authored).format('HH:MM');
+
+        });
+
+
         //a short template to render a list of patients...
         var listPat = '<ul class="list-unstyled">{{#each entry}}<li>' +
             '<a href="#" class="qlOnePatient" data-id="{{id}}">{{getPName this}}</a></li>{{/each}}</ul>';
         this.listPatientTemplate = Handlebars.compile(listPat);
 
-        //a short template to render a list of questionnaires...
+        //a short template to render a list of questionnaires for a patient...
         var listQ = '<ul class="list-unstyled">{{#each entry}}<li>' +
-            '<a href="#" class="qlPatientQ" data-id="{{id}}">{{getQName this}}</a></li>{{/each}}</ul>';
+            '<a href="#" class="qlPatientQ" data-id="{{id}}">{{getQName this}} ({{getQDate this}})</a></li>{{/each}}</ul>';
         listQ += "<div><button class='btn btn-success pull-right' id='qlNewQ'>New Form</button> </div>";
         this.listPatientQTemplate = Handlebars.compile(listQ);
 
