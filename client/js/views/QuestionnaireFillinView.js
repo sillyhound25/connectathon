@@ -5,17 +5,22 @@
 var QuestionnaireFillinView = BaseView.extend({
     events : {
         "click #qfSave" : "save",
-             "click .mayRepeat" : 'mayRepeat'
+        "click .mayRepeat" : 'mayRepeat'
     },
     mayRepeat : function(ev){
+        //the user wants to repeat a group...
         ev.preventDefault();
         ev.stopPropagation();
+        //get the id of the group to repeat...
 
         var groupid = ev.currentTarget.getAttribute('data-groupid');
 
         console.log('repeat '+groupid);
         //locate the view representing this mayRepeat group...
         var view = this.mayRepeatViews[groupid];
+
+        //set the form context
+        view.setContext({questionViews:this.questionViews});
 
         view.render();
 
@@ -24,7 +29,9 @@ var QuestionnaireFillinView = BaseView.extend({
     save : function() {
         //console.log('save',this.model);
         var status = 'in progress';
-        this.getGroup(this.model.group,this);     //this actually reads all the answers and appends to the Q...
+        //this.getGroup(this.model.group,this);     //this actually reads all the answers and appends to the Q...
+        this.altGetAnswers();
+
         console.log(this.model);
         //console.log('save',this.model);
         if (this.isNew) {
@@ -59,6 +66,21 @@ var QuestionnaireFillinView = BaseView.extend({
         MediatorQ.assert(this.questionnaireID != null,'questionnaireID is null!');
         MediatorQ.assert(this.patientID != null,'PatientID is null!');
         //console.log(vo);
+    },
+    altGetAnswers : function() {
+        //an alternate way of getting the answers that walking the questionnaire
+        $.each(this.questionViews,function(inx,qView) {
+            var ID = qView.questID;     //the ID that was assigned to the control at creation time
+            var quest = qView.model;    //the node in the questionnaire object
+            var v = $('#'+ID).val();
+            if (v) {
+                console.log(quest.name.coding[0].code,v);
+                //todo - check for answerFormat
+                quest.answerString = v;
+            }
+
+        });
+
     },
     //root to walk the questionnaire tree and get the answers
     getGroup : function(grp,ctx) {
@@ -107,7 +129,6 @@ var QuestionnaireFillinView = BaseView.extend({
         var that=this;
         this.getTemplate('questionnaireFillinContainer',function(){
 
-
             that.$el.html(that.template());
             if (that.isNew) {
                 $('#qfHeaderText').html("This will create a new form based on the template at: "+that.questionnaireID)
@@ -115,15 +136,15 @@ var QuestionnaireFillinView = BaseView.extend({
                 $('#qfHeaderText').html("This will update the partially completed form at "+that.questionnaireID);
             }
 
-            //will establish html and htmlNav
-            //var readOnly = renderQ.readOnly;
-            //renderQ.readOnly = false;
-            //html = "";
-            var ctx = {};
+            var ctx = {};       //the context object...
             renderQ.showGroup(that.model.group,0,ctx);  //create the questionnaire form
-            that.mayRepeatViews = {};
 
+            //create clones of the view objects. This is in case the renderer runs again and re-creates the view objects.
+            that.mayRepeatViews = {};
             $.extend(true,that.mayRepeatViews,ctx.mayRepeatViews);
+
+            that.questionViews = {};
+            $.extend(true,that.questionViews,ctx.questionViews);
 
             $('#qfMain').html(ctx.html);
 
@@ -135,6 +156,17 @@ var QuestionnaireFillinView = BaseView.extend({
                 view.setElement(el);
                 //view.setElement(view.groupId);
                 //console.log(view.groupId)
+            });
+
+            //now associate the individual question views with their DOM element.
+            //todo an enhancement might be to build a render tree rather than building HTML manually
+
+            //ctx.questionViews[qID] = qView;
+
+            $.each(that.questionViews,function(inx,qView) {
+                var qEl = $('#'+ qView.questID);
+                qView.setElement(qEl);
+
             });
 
             //console.log(renderQ.mayRepeatViews);

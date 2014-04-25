@@ -58,6 +58,19 @@ app.configure(function(){
 var GlobalOptions = {showRequestURI:true};
 
 
+var MongoClient = require('mongodb').MongoClient
+    , Server = require('mongodb').Server;
+
+var mongoDbCon;
+
+MongoClient.connect("mongodb://localhost:27017/fhirLog", function(err, mongoDb) {
+    if(!err) {
+        console.log("Connection to fhirLog established");
+        mongoDbCon = mongoDb;
+    }
+});
+
+
 //----------- pandas routines ----------------------
 app.get('/pandas/makeMedsJson', function(req, res) {
     pandasService.getPandasSample(function(data){
@@ -442,7 +455,15 @@ function postToFHIRServer(resource,callback) {
         resp.body = body;
         resp.headers = response.headers;
         resp.error = error;
-        callback(resp);
+        resp.options = options;
+        resp.time = new Date();
+
+        var collection = mongoDbCon.collection('POSTLog');
+        collection.insert(resp, {w:1}, function(err, result) {
+            callback(resp);
+        });
+
+        //callback(resp);
     })
 }
 
@@ -469,15 +490,24 @@ function putToFHIRServer(resource,id,vid,callback) {
         resp.body = body;
         resp.headers = response.headers;
         resp.error = error;
+        resp.options = options;
+        resp.time = new Date();
 
-        console.log(resp);
+        //console.log(resp);
         if (error){
             console.log(body);
         }
 
         //console.log(resp);
 
-        callback(resp);
+
+        var collection = mongoDbCon.collection('PUTLog');
+        collection.insert(resp, {w:1}, function(err, result) {
+            callback(resp);
+        });
+
+
+
     })
 }
 
@@ -566,7 +596,24 @@ function performQueryAgainstFHIRServer(query,server,callback){
             json = {'error': body}
         }
 
-        callback(json,response.statusCode);
+
+
+        var resp = {};
+        resp.id = response.headers.location;
+        resp.statusCode = response.statusCode;
+        resp.body = body;
+        resp.headers = response.headers;
+        resp.error = error;
+        resp.options = options;
+        resp.time = new Date();
+
+
+        var collection = mongoDbCon.collection('GETLog');
+        collection.insert(resp, {w:1}, function(err, result) {
+            callback(json,response.statusCode);
+        });
+
+        //callback(json,response.statusCode);
 
     })
 }

@@ -23,7 +23,7 @@
     <script src="js/views/QuestionnaireDesignerHeaderView.js"></script>
     <script src="js/views/QuestionnaireFillinView.js"></script>
     <script src="js/views/QuestionnaireMRGroupView.js"></script>
-
+    <script src="js/views/QuestionnaireQuestionView.js"></script>
     <script src="js/logic/questionnaireRender.js"></script>
 
     <script src="js/FHIRHelpers.js"></script>
@@ -277,13 +277,9 @@
                     <div class="qReadOnly"> {{value}}&nbsp;</div>
                 {{else}}
 
-                    {{#if code}}
-                    <input type='text' class="form-control data-{{code}}" value = '{{value}}'
+                    <input type='text' class="form-control data-{{code}} {{displayClass}}" value = '{{value}}' id='{{questID}}'
                            placeholder="Enter the {{question.text}}"/>
-                    {{else}}
-                    <input type='text' class="form-control" disabled="disabled"
-                           placeholder="There is no question.name so data cannot be entered"/>
-                    {{/if}}
+
                 {{/if}}
             </div>
         </div>

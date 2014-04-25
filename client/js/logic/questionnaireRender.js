@@ -1,6 +1,6 @@
 
 //these have to be globals for the recursive algorithm to work. todo would like to fix this...
-var renderQ = {mayRepeatViews : {},ctr : 1};    //collection of views manageing repeats
+var renderQ = {mayRepeatViews : {}};    //collection of views manageing repeats
 
 
 //show a group
@@ -15,6 +15,7 @@ renderQ.showGroup = function(grp,lvl,ctx,parent) {
     //this is the 'top level' of the recursion...
     if (lvl === 0){
         ctx.mayRepeatViews = {} ;  //empty the collection of mayrepeat views...
+        ctx.questionViews = {}; //the individual question views. todo may refactor to add a group view and build a tree of related views that can render directly rather than creating html directly here...
         ctx.html = "";
         ctx.navHTML = "";
     }
@@ -43,7 +44,7 @@ renderQ.showGroup = function(grp,lvl,ctx,parent) {
         var mrView = new QuestionnaireMRView();         //a view that will manage the repeating group
         var bbTemplates = Backbone['myTemplates'];
         mrView.template = bbTemplates["questionTemplate" + extensions.numCol + "col"];
-        groupId = 'groupMR' + renderQ.ctr++;      //get the next counter and increment
+        groupId = 'groupMR' + Backbone.myFunctions.getNextCounter(); //renderQ.ctr++;      //get the next counter and increment
         mrView.groupId = groupId;
         mrView.group = grp;
         mrView.level = lvl;
@@ -111,10 +112,22 @@ renderQ.showQuestion = function(quest,id,numCol,ctx) {
 
 
     var bbTemplates = Backbone['myTemplates'];
-    ctx.html +=  bbTemplates[templateName](
-        {question: quest,id:id,code:code,display:display,value:value,readOnly: readOnly});
+    var qTemplate = bbTemplates[templateName];
 
+    var qView = new QuestionnaireQuestionView();
+    //var qID= 'questID' + renderQ.questCtr++;      //get the next counter and increment
+    var qID= 'questID' + Backbone.myFunctions.getNextCounter();
+    qView.questID = qID;
+    qView.model = quest;
+    qView.template = qTemplate;
+    ctx.questionViews[qID] = qView;
 
+    ctx.html +=  qTemplate(
+        {question: quest,id:id,code:code,display:display,value:value,readOnly: readOnly,
+            questID:qID,displayClass:qView.getDisplayClass()});
+
+   // ctx.html +=  bbTemplates[templateName](
+     //   {question: quest,id:id,code:code,display:display,value:value,readOnly: readOnly});
 
 };
 

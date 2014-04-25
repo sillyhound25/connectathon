@@ -17,6 +17,8 @@ var MediatorQ={};
 
 Backbone.myFunctions = {};
 
+
+
 Backbone.myConstants = {};
 
 //default namespaces. todo: dynamically allow these to be added to...
@@ -30,6 +32,13 @@ Backbone.myConstants.extensionDefn.answerFormat = {url:"http://hl7.org/fhir/ques
 Backbone.myConstants.extensionDefn.numCol = {url:"http://fhir.orionhealth.com/questionnaire#numcol",type:'valueInteger'};
 Backbone.myConstants.extensionDefn.mayRepeat = {url:"http://hl7.org/fhir/questionnaire-extensions#mayRepeat",type:'valueBoolean'};
 
+
+Backbone.myConstants.currentCounter = 0;
+
+//a function to return an incrementing counter. Used to generate unique ID's in the forms...
+Backbone.myFunctions.getNextCounter = function() {
+    return Backbone.myConstants.currentCounter++
+}
 
 //Backbone.myConstants.templates = {};    //will be a bundle of templates
 
