@@ -2,6 +2,8 @@
  *  helpers for FHIR
  */
 
+    /* global Backbone, _ , jQuery, json2xml */
+
 var FHIRHelper = {};
 
 Backbone.FHIRHelper = FHIRHelper;       //so helpers can be accessed anywhere..
@@ -10,12 +12,12 @@ Backbone.FHIRHelper = FHIRHelper;       //so helpers can be accessed anywhere..
 FHIRHelper.ccDisplay = function(cc){
     var display = "";
     if (cc){
-        if (cc.text) {display = cc.text}
+        if (cc.text) {display = cc.text;}
     } else if (cc.coding){
         if (cc.coding[0].display) {
-            display = cc.coding[0].display
+            display = cc.coding[0].display;
         } else {
-            display = cc.coding[0].code
+            display = cc.coding[0].code;
         }
     }
     return display;
@@ -75,10 +77,10 @@ FHIRHelper.getAllExtensions = function(model) {
             _.each(Backbone.myConstants.extensionDefn,function(extDefn,key){
                 //console.log(extDefn)
                 if (ext.url === extDefn.url) {
-                    vo[key] = ext[extDefn.type]
+                    vo[key] = ext[extDefn.type];
                 }
 
-            })
+            });
 
         });
 /*
@@ -157,7 +159,7 @@ FHIRHelper.addExtension = function(model,extensionDefn,value) {
         if (! updated) {
             var ext1 = {url:url};
             ext1[type] = value;
-            model.extension.push(ext1)
+            model.extension.push(ext1);
         }
     } else {
         var ext = {url:url};
@@ -190,7 +192,7 @@ FHIRHelper.getXML = function(obj) {
             if (node.match( /.+<\/\w[^>]*>$/ )) {
                 indent = 0;
             } else if (node.match( /^<\/\w/ )) {
-                if (pad != 0) {
+                if (pad !== 0) {    //<<<< was !=  - jshint complained
                     pad -= 1;
                 }
             } else if (node.match( /^<\w[^>]*[^\/]>.*$/ )) {

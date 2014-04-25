@@ -1,4 +1,8 @@
 
+
+/* global alert, _, $, FHIRHelper, Backbone, QuestionnaireMRView, QuestionnaireQuestionView  */
+
+
 //these have to be globals for the recursive algorithm to work. todo would like to fix this...
 var renderQ = {mayRepeatViews : {}};    //collection of views manageing repeats
 
@@ -17,12 +21,12 @@ renderQ.showGroup = function(grp,lvl,ctx,parent) {
         ctx.mayRepeatViews = {} ;  //empty the collection of mayrepeat views...
         ctx.questionViews = {}; //the individual question views. todo may refactor to add a group view and build a tree of related views that can render directly rather than creating html directly here...
         ctx.html = "";
-        ctx.navHTML = "";
+        ctx.navHTML = "<h5>Form Layout</h5>";
     }
 
     if (grp.header) {
         var klass = 'formNav'+lvl;
-        var templateStr = "<div class=' <%= klass%>'><a class='mynav'><%= text%></a></div>";
+        var templateStr = "<div class=' <%= klass%>'><a href='#' class='mynav'><%= text%></a></div>";
         ctx.navHTML += _.template(templateStr,{text:grp.header,klass:klass});//  "<div >"+grp.header+"</div>"
     }
 
@@ -42,7 +46,7 @@ renderQ.showGroup = function(grp,lvl,ctx,parent) {
     //if the group can repeat, then create a view object that will render the repeat...
     if (extensions.mayRepeat) {
         var mrView = new QuestionnaireMRView();         //a view that will manage the repeating group
-        var bbTemplates = Backbone['myTemplates'];
+        var bbTemplates = Backbone.myTemplates;
         mrView.template = bbTemplates["questionTemplate" + extensions.numCol + "col"];
         groupId = 'groupMR' + Backbone.myFunctions.getNextCounter(); //renderQ.ctr++;      //get the next counter and increment
         mrView.groupId = groupId;
@@ -52,7 +56,7 @@ renderQ.showGroup = function(grp,lvl,ctx,parent) {
         ctx.mayRepeatViews[groupId] = mrView;
     }
 
-    ctx.html += Backbone['myTemplates'].groupTemplate({group: grp,level:displayLevel,
+    ctx.html += Backbone.myTemplates.groupTemplate({group: grp,level:displayLevel,
         mayRepeat : extensions.mayRepeat,groupId : groupId});
 
     if (grp.question) {
@@ -71,7 +75,7 @@ renderQ.showGroup = function(grp,lvl,ctx,parent) {
                 _.each(quest.group,function(questGrp){
                     lvl ++;
                     renderQ.showGroup(questGrp,lvl,ctx,quest);
-                })
+                });
             }
         });
         ctx.html += "</row>";
@@ -82,7 +86,7 @@ renderQ.showGroup = function(grp,lvl,ctx,parent) {
         lvl++;
         _.each(grp.group,function(grp1){
             renderQ.showGroup(grp1,lvl,ctx,grp);
-        })
+        });
     }
 
     //insert a marker div for where to insert the repeat
@@ -95,12 +99,12 @@ renderQ.showGroup = function(grp,lvl,ctx,parent) {
 //show a single question (and possibly an answer)
 //numCol is the number of columns...
 renderQ.showQuestion = function(quest,id,numCol,ctx) {
-
+/*
     var code;
     if (quest.name && quest.name.coding && quest.name.coding.length > 0 && quest.name.coding[0].code) {
         code = quest.name.coding[0].code;
     }
-
+*/
     var display = FHIRHelper.questionDisplay(quest);
     //choose the correct template based on the number of columns...
     var templateName = "questionTemplate" + numCol + "col";
@@ -111,7 +115,7 @@ renderQ.showQuestion = function(quest,id,numCol,ctx) {
     var readOnly = renderQ.readOnly;
 
 
-    var bbTemplates = Backbone['myTemplates'];
+    var bbTemplates = Backbone.myTemplates;
     var qTemplate = bbTemplates[templateName];
 
     var qView = new QuestionnaireQuestionView();

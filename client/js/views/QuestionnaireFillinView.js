@@ -2,6 +2,7 @@
  * The view that manages a form being completed.
  */
 
+/* global BaseView, console, confirm, MediatorQ, $, _, renderQ, QuestionnaireNavView*/
 var QuestionnaireFillinView = BaseView.extend({
     events : {
         "click #qfSave" : "save",
@@ -63,9 +64,12 @@ var QuestionnaireFillinView = BaseView.extend({
         this.questionnaireID = vo.questionnaireID;
         this.patientID = vo.patientID;
 
+        /*jshint unused:true, eqnull:true */
         MediatorQ.assert(this.questionnaireID != null,'questionnaireID is null!');
         MediatorQ.assert(this.patientID != null,'PatientID is null!');
         //console.log(vo);
+        this.navView = new QuestionnaireNavView();
+
     },
     altGetAnswers : function() {
         //an alternate way of getting the answers that walking the questionnaire
@@ -85,13 +89,13 @@ var QuestionnaireFillinView = BaseView.extend({
     //root to walk the questionnaire tree and get the answers
     getGroup : function(grp,ctx) {
         if (grp.question){
-            ctx.getQuestions(grp.question,ctx)
+            ctx.getQuestions(grp.question,ctx);
         }
 
         if (grp.group) {
             $.each(grp.group,function(grpInx,childGroup){
-                ctx.getGroup(childGroup,ctx)
-            })
+                ctx.getGroup(childGroup,ctx);
+            });
         }
     },
     getQuestions : function(arQuest,ctx) {
@@ -119,10 +123,10 @@ var QuestionnaireFillinView = BaseView.extend({
             if (quest.group) {
                 //this question also has groups attached
                 _.each(quest.group,function(questGroup){
-                    ctx.getGroup(questGroup,ctx)
-                })
+                    ctx.getGroup(questGroup,ctx);
+                });
             }
-        })
+        });
     },
     render : function(){
         //console.log(renderQ);
@@ -131,13 +135,22 @@ var QuestionnaireFillinView = BaseView.extend({
 
             that.$el.html(that.template());
             if (that.isNew) {
-                $('#qfHeaderText').html("This will create a new form based on the template at: "+that.questionnaireID)
+                $('#qfHeaderText').html("This will create a new form based on the template at: "+that.questionnaireID);
             } else {
                 $('#qfHeaderText').html("This will update the partially completed form at "+that.questionnaireID);
             }
 
+
+
+
+
             var ctx = {};       //the context object...
             renderQ.showGroup(that.model.group,0,ctx);  //create the questionnaire form
+
+            //setup the nav control...
+            that.navView.setElement($('#qfNavBar'));
+            that.navView.html = ctx.navHTML;
+            that.navView.render();
 
             //create clones of the view objects. This is in case the renderer runs again and re-creates the view objects.
             that.mayRepeatViews = {};
@@ -152,16 +165,12 @@ var QuestionnaireFillinView = BaseView.extend({
             //todo This is not quite right - the container needs to be after any previous repeats...
             $.each(that.mayRepeatViews,function(inx,view) {
                 var el = $('#'+ view.groupId);
-                //console.log(el.html());
                 view.setElement(el);
-                //view.setElement(view.groupId);
-                //console.log(view.groupId)
             });
 
             //now associate the individual question views with their DOM element.
             //todo an enhancement might be to build a render tree rather than building HTML manually
 
-            //ctx.questionViews[qID] = qView;
 
             $.each(that.questionViews,function(inx,qView) {
                 var qEl = $('#'+ qView.questID);

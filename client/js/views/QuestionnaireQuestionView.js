@@ -23,7 +23,7 @@ var QuestionnaireQuestionView = BaseView.extend({
         return this.textTemplate(vo);
 
     },
-    
+
     getDisplayClass : function() {
         //the display class when rendering a form
         var quest = this.model;

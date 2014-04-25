@@ -3,11 +3,13 @@
  * separate from the profile editing so that they can be split apart easily...
  */
 
-
+/* global alert, _, $, FHIRHelper, Backbone, QuestionnaireMRView, QuestionnaireQuestionView,console,renderQ  */
+/* global QuestionnaireDesignerView, QuestionnaireFillinView, QuestionNavView, QuestionnaireSelectView */
+/* global QuestionnaireListView, moment  */
 String.prototype.getLogicalID = function (){
     var g = this.lastIndexOf('/');
     if (g > -1) {
-        return this.substr(g+1,200)
+        return this.substr(g+1,200);
     } else {
         return this.toString();
     }
@@ -37,14 +39,12 @@ Backbone.myConstants.currentCounter = 0;
 
 //a function to return an incrementing counter. Used to generate unique ID's in the forms...
 Backbone.myFunctions.getNextCounter = function() {
-    return Backbone.myConstants.currentCounter++
-}
-
-//Backbone.myConstants.templates = {};    //will be a bundle of templates
+    return Backbone.myConstants.currentCounter++;
+};
 
 var questionnaireSelectView = new QuestionnaireSelectView({el:'#qSelect'});
 var questionnaireListView = new QuestionnaireListView({el:'#qList'});
-var navView = new QuestionNavView({el:'#formNav'});
+//var navView = new QuestionNavView({el:'#formNav'});
 
 var qFillinView = new QuestionnaireFillinView({el:'#form'});
 
@@ -103,7 +103,7 @@ Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
             console.log(xhr.responseText);
 
             try {
-                console.log(JSON.parse(xhr.responseText))
+                console.log(JSON.parse(xhr.responseText));
             } catch (e) {
                 console.log('invalid json');
             }
@@ -112,7 +112,7 @@ Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
 
 
         }
-    })
+    });
 
 
 });
@@ -126,7 +126,7 @@ Backbone.listenTo(questionnaireSelectView,'qSelect:select',function(vo){
         MediatorQ.hideWorking();
         questionnaireListView.model = bundle;
         questionnaireListView.render();
-    })
+    });
 
 });
 
@@ -158,39 +158,27 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
 
     //get the selected questionnaire
     var uri = '/api/oneresource/Questionnaire/' + questionnaireID.getLogicalID();
-    //console.log(uri);
     $.get(uri,function(Q){
 
-
-        //pass in a clone to avoid reference type errors...
-        //var clone = {};
-        //$.extend(true,clone,Q);
         qFillinView.init({Q:Q,questionnaireID:questionnaireID,patientID:patientID,isNew:isNew});
 
-        //console.log('render');
         renderQ.readOnly = false;
         qFillinView.render();
 
-
+/*
         //var form = Q.group;     //the root element of the form
 
         //navView is the navigational view - the overall layout of the form to assist the user completing it...
         //todo - move to a component of fillinview
 
-
-
-
         navView.model = Q;      //the navView has the questionnaire as a model
         navView.html = "";      //todo - should have a proper thing
         navView.html += "<h5>Document Navigation</h5>";
 
-        //sets globals html & htmlNav - todo - there will be a  better way...
-        //renderQ.showGroup(form,0);  //create the questionnaire form
-       // navView.html += htmlNav;
         navView.render();
-
+*/
         Backbone.myFunctions.showMainTab('newFormTab');
-    })
+    });
 
 });
 
@@ -257,16 +245,14 @@ Backbone.listenTo(qFillinView,'qfv:update',function(vo){
 
 
         }
-    })
+    });
 });
 
 //user has selected a template or form to design...
 Backbone.listenTo(questionnaireListView,'qlv:design',function(vo){
     var id = vo.id;     //form or template
-    //alert(id);
-
     var entry = _.findWhere(MediatorQ.allQuests.entry,{id:id});
-    //console.log(entry);
+
 
     //get the current url
     var hxId;
@@ -276,15 +262,10 @@ Backbone.listenTo(questionnaireListView,'qlv:design',function(vo){
                 hxId = lnk.href;
                 console.log(hxId);
             }
-        })
+        });
     }
 
-
-    //var Q = entry.content; //the questionnaire...
-
-    //qDesignerView.init(Q);
     qDesignerView.init(entry);
-    //qDesignerView.init({content:entry,id:id});
     qDesignerView.render();
     Backbone.myFunctions.showMainTab("designerTab");
 
@@ -294,7 +275,6 @@ Backbone.listenTo(questionnaireListView,'qlv:design',function(vo){
 Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     var id = vo.id;     //form or template
     var entry = _.findWhere(MediatorQ.allQuests.entry,{id:id});
-    //console.log(entry);
 
     //todo - for some reason, as soon as this is true the templates will always receive it as true
     //I cannot figure this out!
@@ -304,7 +284,7 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     var ctx = {};
     renderQ.showGroup(entry.content.group,0,ctx);  //create the questionnaire form
 
-    console.log(ctx);
+    //console.log(ctx);
 
     if (ctx.html === "") {
         ctx.html = "Not enough content to preview";
@@ -316,22 +296,10 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     $('#qlShowDate').html(moment(entry.content.authored).format("dddd, MMMM Do YYYY, h:mm:ss a"));
 
     //render the Q in the preview area...
-    //$('#displayQ').html(html);
     $('#displayQ').html(ctx.html);
-        // $('textarea').autosize();    not needed as not editing...
 
-
-    //??? is it necessary to init the designer???
-    //qDesignerView.init(entry);
-    //qDesignerView.init({content:entry,id:id});
-   // qDesignerView.render();
 
 });
-
-//user has selected a template or form to view...
-//Backbone.listenTo(questionnaireListView,'qlv:edit',function(vo){
-  //  console.log(vo);
-//});
 
 
 
@@ -342,7 +310,7 @@ MediatorQ.getQuests = function(type,callback) {
     //var uri = './samples/soapQuestionnaire.xml';
     var arStatus;
     if (type === 'template') {
-        arStatus=['draft','published']
+        arStatus=['draft','published'];
     } else {
         arStatus=['in progress','completed','amended'];
     }
@@ -356,7 +324,7 @@ MediatorQ.getQuests = function(type,callback) {
         $.get(uri,function(bundle){
             //at the moment, the query
             MediatorQ.allQuests = bundle;
-            filterBundle(MediatorQ.allQuests,callback)
+            filterBundle(MediatorQ.allQuests,callback);
         });
     }
 

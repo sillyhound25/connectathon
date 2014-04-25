@@ -4,6 +4,8 @@
  *   - Allows the user to select a patient, view their Q's and create a new form (based on a template)
  */
 
+/*global Backbone, BaseView, Handlebars, moment, $, alert, _ */
+
 var QuestionnaireListView = BaseView.extend({
     initialize : function( ) {
 
@@ -94,14 +96,14 @@ var QuestionnaireListView = BaseView.extend({
             //will cause the selected template to be displayed by fillin
             that.trigger('qlv:fillin',{questionnaireID:qID,patientID:that.selectedPatientID,isNew:true});
 
-        })
+        });
 
     },
     QSelected : function(ev) {
         //a single questionnaire has been selected for viewing.
 
 
-        console.log(ev.currentTarget);
+        //console.log(ev.currentTarget);
         var id = $(ev.currentTarget).attr('data-id');
         this.currentFormID = id;          //save the id of the form so it is available for the edit (see above)
         this.trigger('qlv:view',{id:id});
@@ -130,7 +132,7 @@ var QuestionnaireListView = BaseView.extend({
                 if (bundle.issue && bundle.issue.length > 0) {
                     bundle.issue.forEach(function(issue){
                         err += issue.details + "\n";
-                    })
+                    });
                 }
                 alert(err);
             } else {
@@ -159,9 +161,9 @@ var QuestionnaireListView = BaseView.extend({
                 if (bundle.issue && bundle.issue.length > 0) {
                     bundle.issue.forEach(function(issue){
                         err += issue.details + "\n";
-                    })
+                    });
                 }
-                alert(err)
+                alert(err);
             } else {
                 //render the list of matching patients
                 that.matchingPatientsBundle = bundle;     //save the bundle with the matching patients for when one is selected
@@ -199,7 +201,7 @@ var QuestionnaireListView = BaseView.extend({
                 ent.meta = {};
                 if (ent.content.name) {
                     //console.log(ent.content.name);
-                    ent.meta.name = FHIRHelper.ccDisplay(ent.content.name)
+                    ent.meta.name = Backbone.FHIRHelper.ccDisplay(ent.content.name);
                 } else {
                     ent.meta.name = ent.id.getLogicalID();
                 }
