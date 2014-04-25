@@ -122,9 +122,12 @@ renderQ.showQuestion = function(quest,id,numCol,ctx) {
     qView.template = qTemplate;
     ctx.questionViews[qID] = qView;
 
+    //ctx.html +=  qTemplate(
+      //  {question: quest,id:id,code:code,display:display,value:value,readOnly: readOnly,
+       //     questID:qID,displayClass:qView.getDisplayClass(),html:qView.getHTML()});
+
     ctx.html +=  qTemplate(
-        {question: quest,id:id,code:code,display:display,value:value,readOnly: readOnly,
-            questID:qID,displayClass:qView.getDisplayClass()});
+        {display:display,value:value,readOnly: readOnly,html:qView.getHTML()});
 
    // ctx.html +=  bbTemplates[templateName](
      //   {question: quest,id:id,code:code,display:display,value:value,readOnly: readOnly});

@@ -15,12 +15,12 @@ var QuestionnaireFillinView = BaseView.extend({
 
         var groupid = ev.currentTarget.getAttribute('data-groupid');
 
-        console.log('repeat '+groupid);
+        //console.log('repeat '+groupid);
         //locate the view representing this mayRepeat group...
         var view = this.mayRepeatViews[groupid];
 
-        //set the form context
-        view.setContext({questionViews:this.questionViews});
+        //set the form context in the question view...
+        view.setContext({questionViews:this.questionViews,mayRepeatViews:this.mayRepeatViews});
 
         view.render();
 

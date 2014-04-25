@@ -166,7 +166,7 @@ FHIRHelper.addExtension = function(model,extensionDefn,value) {
     }
 };
 
-
+//get an XML version of a pojo
 FHIRHelper.getXML = function(obj) {
     //http://goessner.net/download/prj/jsonxml/
     var str = "";

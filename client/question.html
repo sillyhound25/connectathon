@@ -276,10 +276,11 @@
 
                     <div class="qReadOnly"> {{value}}&nbsp;</div>
                 {{else}}
-
+                    {{{html}}}
+                <!--
                     <input type='text' class="form-control data-{{code}} {{displayClass}}" value = '{{value}}' id='{{questID}}'
                            placeholder="Enter the {{question.text}}"/>
-
+-->
                 {{/if}}
             </div>
         </div>
@@ -290,18 +291,16 @@
 
 
 <script type="handlebars/template" id='groupTemplate'>
-    <div id="{{groupIdXXXX}}">
-        <div class="row">
-            <div class="col-sm-12 col-md-12">
-                <div class="header{{level}}" title="{{group.text}}">{{group.header}}
-                    {{#if mayRepeat}}
-                        <div class="pull-right">
-                            <a href='#' style="margin:8px">
-                                <i class="glyphicon glyphicon-plus-sign mayRepeat" data-groupid="{{groupId}}"></i>
-                            </a>
-                        </div>
-                    {{/if}}
-                </div>
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+            <div class="header{{level}}" title="{{group.text}}">{{group.header}}
+                {{#if mayRepeat}}
+                    <div class="pull-right">
+                        <a href='#' style="margin:8px">
+                            <i class="glyphicon glyphicon-plus-sign mayRepeat" data-groupid="{{groupId}}"></i>
+                        </a>
+                    </div>
+                {{/if}}
             </div>
         </div>
     </div>
