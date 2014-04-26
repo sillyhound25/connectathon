@@ -6,8 +6,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
-/* global BaseView */
-/* global Handlebars */
+/* global BaseView, Backbone, console, Handlebars */
+
 
 var QuestionnaireQuestionView = BaseView.extend({
 
@@ -15,13 +15,36 @@ var QuestionnaireQuestionView = BaseView.extend({
         var textHTML = "<input type='text' class='form-control {{displayClass}}' value = '{{value}}' id='{{questID}}'"+
             " placeholder='Enter the {{placeHolder}}'/>";
         this.textTemplate = Handlebars.compile(textHTML);
+
+        var dateHTML = "<input type='date' class='form-control {{displayClass}}' value = '{{value}}' id='{{questID}}'"+
+            " placeholder='Enter the {{placeHolder}}'/>";
+        this.dateTemplate = Handlebars.compile(dateHTML);
+
+        var datetimeHTML = "<input type='datetime' class='form-control {{displayClass}}' value = '{{value}}' id='{{questID}}'"+
+            " placeholder='Enter the {{placeHolder}}'/>";
+        this.dateTemplate = Handlebars.compile(datetimeHTML);
+
     },
 
     getHTML : function() {
         var quest = this.model;
+        var extensions =Backbone.FHIRHelper.getAllExtensions(quest);
         var vo = {'value': quest.answerString,questID:this.questID,placeHolder:quest.text,displayClass:this.getDisplayClass()};
-        return this.textTemplate(vo);
+        var html = this.textTemplate(vo);   //default is a string
+        console.log(extensions);
+        if (extensions.answerFormat) {
+            switch (extensions.answerFormat) {
+                case 'date' :
+                    html = this.dateTemplate(vo);
+                    break;
+                case 'datetime' :
+                    html = this.datetimeTemplate(vo);
+                    break;
+            }
+        }
 
+        return html;
+        //return this.dateTemplate(vo);
     },
 
     getDisplayClass : function() {

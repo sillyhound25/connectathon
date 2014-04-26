@@ -6,6 +6,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
+/*global Backbone,$,Handlebars */
+
 var BaseView = Backbone.View.extend({
     getTemplate : function(templateName,callback) {
         var that = this;
@@ -13,10 +15,10 @@ var BaseView = Backbone.View.extend({
         if (! this.template) {
             $.get(fileName,function(html){
                 that.template = Handlebars.compile(html);
-                callback(that.template)
-            })
+                callback(that.template);
+            });
         } else {
-            callback(this.template)
+            callback(this.template);
         }
     }
 });

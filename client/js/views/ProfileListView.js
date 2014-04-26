@@ -2,6 +2,7 @@
  * Generate list of profiles
  */
 
+    /*global Backbone,$,confirm,Handlebars, */
 var ProfileListView = Backbone.View.extend({
     events : {
         "click .orionProfileDetail" : "showDetail",
@@ -39,7 +40,7 @@ var ProfileListView = Backbone.View.extend({
             $.get('templates/orionProfileList.html',function(html){
                 that.template = Handlebars.compile(html);
                 that.draw();
-            })
+            });
         } else {
             this.draw();
         }
@@ -51,4 +52,4 @@ var ProfileListView = Backbone.View.extend({
         this.$el.html(template({entry:this.collection.toJSON()}));
     }
 
-})
+});

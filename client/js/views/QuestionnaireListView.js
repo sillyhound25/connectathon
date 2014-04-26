@@ -179,11 +179,12 @@ var QuestionnaireListView = BaseView.extend({
         that.trigger("qlv:design",{id:id});
     },
 
-    fillinDEP : function(ev) {
+    /*fillinDEP : function(ev) {
         //the user wants to fill in a form...
         var id = ev.currentTarget.getAttribute('data-id');
         this.trigger('qlv:fillin',{id:id});
     },
+    */
     view : function(ev){
         var id = ev.currentTarget.getAttribute('data-id');
         this.trigger('qlv:view',{id:id});
@@ -207,7 +208,7 @@ var QuestionnaireListView = BaseView.extend({
                 }
             });
             that.$el.html(that.template(that.model));
-        })
+        });
     }
 
 });

@@ -36,7 +36,7 @@ renderQ.showGroup = function(grp,lvl,ctx,parent) {
         displayLevel = 2;
     }
 
-    var extensions = FHIRHelper.getAllExtensions(grp);
+    var extensions =Backbone.FHIRHelper.getAllExtensions(grp);
     extensions.numCol = extensions.numCol || 1;     //default is 1 col...
 
     //todo only the 'original' mayRepeat group has all the design artefacts...

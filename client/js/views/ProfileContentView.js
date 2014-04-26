@@ -1,6 +1,8 @@
 /**
  * show the raw content of a Profile
  */
+    /*global Backbone,$,jQuery,json2xml,Handlebars */
+
 var ProfileContentView =  Backbone.View.extend({
     events : {
         "click .pc_display_btn" : "toggle"
@@ -10,7 +12,7 @@ var ProfileContentView =  Backbone.View.extend({
         $('.pc_display').hide();
         $('#'+toShow).show();
         $('.pc_display_btn').removeClass('active');
-        $(ev.currentTarget).addClass('active')
+        $(ev.currentTarget).addClass('active');
 
     },
     setModel : function(model) {
@@ -40,7 +42,7 @@ var ProfileContentView =  Backbone.View.extend({
                 if (node.match( /.+<\/\w[^>]*>$/ )) {
                     indent = 0;
                 } else if (node.match( /^<\/\w/ )) {
-                    if (pad != 0) {
+                    if (pad !== 0) {        //quality thing objected
                         pad -= 1;
                     }
                 } else if (node.match( /^<\w[^>]*[^\/]>.*$/ )) {
@@ -69,7 +71,7 @@ var ProfileContentView =  Backbone.View.extend({
             $.get('templates/profileContent.html',function(html){
                 that.template = Handlebars.compile(html);
                 that.draw();
-            })
+            });
         } else {
             this.draw();
         }
@@ -85,9 +87,9 @@ var ProfileContentView =  Backbone.View.extend({
 
             this.$el.html(template({json:json,xml:xml}));
 
-            this.getXML()
+            this.getXML();
         }
 
     }
 
-})
+});

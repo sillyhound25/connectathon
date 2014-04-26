@@ -2,6 +2,8 @@
  * display all extensions
  */
 
+    /*global Backbone,$ ,Handlebars,sorttable */
+
 var ExtensionView = Backbone.View.extend({
 
 
@@ -12,7 +14,7 @@ var ExtensionView = Backbone.View.extend({
             $.get('templates/extension.html',function(html){
                 that.template = Handlebars.compile(html);
                 that.draw();
-            })
+            });
         } else {
             this.draw();
         }
@@ -27,9 +29,11 @@ var ExtensionView = Backbone.View.extend({
             //console.log(a,b)
             //todo - optimize this...
             if (a.code.toLowerCase() < b.code.toLowerCase()) {
-                return -1
-            }  else return 1;
-        })
+                return -1;
+            }  else {
+                return 1;
+            }
+        });
 
 
         this.$el.html(template({entry:json}));
@@ -40,4 +44,4 @@ var ExtensionView = Backbone.View.extend({
 
     }
 
-})
+});

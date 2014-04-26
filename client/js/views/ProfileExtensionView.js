@@ -3,6 +3,8 @@
  */
 
 
+    /*global Backbone,$,_,console, alert, Handlebars, */
+
 var ProfileExtensionView =  Backbone.View.extend({
     events : {
         "click #eeSave" : "saveExtension",
@@ -40,13 +42,13 @@ var ProfileExtensionView =  Backbone.View.extend({
                 lne += ">"+path+"</option>";
                 $el.append(lne);
 
-            })
-            console.log(callback)
+            });
+            //console.log(callback);
             if (callback) {
                 callback();
             }
             //console.log(arPaths);
-        }})
+        }});
     },
     saveExtension : function() {
         //update the extension
@@ -153,7 +155,7 @@ var ProfileExtensionView =  Backbone.View.extend({
                 if (ext.code === code) {
                     that.meta.extension = ext;
                 }
-            })
+            });
         } else {
             delete that.meta.extension;
         }
@@ -170,7 +172,7 @@ var ProfileExtensionView =  Backbone.View.extend({
             $.get('templates/editExtension.html',function(html){
                 that.template = Handlebars.compile(html);
                 that.draw();
-            })
+            });
         } else {
             this.draw();
         }
@@ -223,7 +225,7 @@ var ProfileExtensionView =  Backbone.View.extend({
 
         //console.log(resourceName,path)
 
-        console.log(that.meta.resourceList);
+        //console.log(that.meta.resourceList);
 
             _.each(that.meta.resourceList,function(name){
                 var lne = "<option value='"+name + "'";
@@ -233,7 +235,7 @@ var ProfileExtensionView =  Backbone.View.extend({
                 }
                 lne += ">"+name+"</option>";
                 $("#eeContextResource").append(lne);
-            })
+            });
 
 
 
@@ -259,7 +261,7 @@ var ProfileExtensionView =  Backbone.View.extend({
                 }
                 lne += ">"+name+"</option>";
                 $("#eeDataType").append(lne);
-            })
+            });
 
 
 
@@ -281,7 +283,7 @@ var ProfileExtensionView =  Backbone.View.extend({
                 }
                 lne += ">"+name+"</option>";
                 $("#eeValueSet").append(lne);
-            })
+            });
        // }
 
 
@@ -299,8 +301,8 @@ var ProfileExtensionView =  Backbone.View.extend({
                 $('#eeShort').focus();
             }
 
-        })
+        });
 
 
     }
-})
+});

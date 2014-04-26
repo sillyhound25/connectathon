@@ -6,6 +6,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
+    /*global BaseView, moment, $, Backbone */
+
 var QuestionnaireDesignerHeaderView = BaseView.extend({
     initialize : function() {
         //this.arStatus = []

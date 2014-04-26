@@ -6,6 +6,9 @@
  * To change this template use File | Settings | File Templates.
  */
 
+    /*global BaseView,$,_,console, alert,renderQ,Backbone,QuestionnaireDesignerGroupView, QuestionnaireDesignerQuestionView */
+/*global QuestionnaireDesignerHeaderView */
+
 var QuestionnaireDesignerView = BaseView.extend({
     events : {
         "click .qGroup" : "itemSelected",
@@ -23,9 +26,9 @@ var QuestionnaireDesignerView = BaseView.extend({
 
         if (this.isNew) {
             var desiredId = $('#qdId').val();
-            this.trigger('qd:saveNewQ',{id:desiredId,Q:this.model,historyId: this.historyId})
+            this.trigger('qd:saveNewQ',{id:desiredId,Q:this.model,historyId: this.historyId});
         } else {
-            this.trigger('qd:updateQ',{id:this.id,Q:this.model,historyId: this.historyId})
+            this.trigger('qd:updateQ',{id:this.id,Q:this.model,historyId: this.historyId});
         }
 
     },
@@ -54,7 +57,7 @@ var QuestionnaireDesignerView = BaseView.extend({
                         that.historyId = lnk.href;
                         console.log(that.historyId);
                     }
-                })
+                });
             }
 
             //this.redrawContent();
@@ -63,11 +66,7 @@ var QuestionnaireDesignerView = BaseView.extend({
             this.isNew = true;
             delete this.id;         //no id for a new resource
         }
-
-        //create a view object for the header...  (the el is set in in render from questionerDesigner.html)
-        //this.headerView = new QuestionnaireDesignerHeaderView({el: $('#qdHeaderDiv')});
-        //this.headerView = null;//new QuestionnaireDesignerHeaderView({el: $('#qdHeaderDiv'),model:this.model});
-        },
+    },
 
     tabSelect : function(ev) {
         if (ev.target.getAttribute('href') === '#qdPreview') {
@@ -75,11 +74,12 @@ var QuestionnaireDesignerView = BaseView.extend({
             if (this.model.group && (this.model.group.group || this.model.group.question)) {
                 //todo - the renderer uses the global html & htmlNav. There must be a better way...
                 //html = "";
-                renderQ.showGroup(this.model.group,0);  //create the questionnaire outline
-                $('#qdPreviewDiv').html(html);
+                var ctx = {};
+                renderQ.showGroup(this.model.group,0,ctx);  //create the questionnaire outline
+                $('#qdPreviewDiv').html(ctx.html);
 
             } else {
-                alert('You need some groups or questions first!')
+                alert('You need some groups or questions first!');
             }
 
 
@@ -108,16 +108,16 @@ var QuestionnaireDesignerView = BaseView.extend({
             if (view.cid === id) {
 
                 view.render();
-                return;
+                //return;
             }
-        })
+        });
     },
     setVersion : function(v){
         //set the version specific Id. Needed for servers (like blaze) that check that sort of thing...
         this.historyId = v;
-        console.log(v)
+        console.log(v);
     },
-    //note: no loger a hierarchy of nodes rooted at $('#qdGroups')
+    //note: no longer a hierarchy of nodes rooted at $('#qdGroups')
     addGroup : function(grp,node,ctx,lvl,parentGroup,parentGroupIndex) {
         //adds a group to the layout...
         var tab = "";
@@ -128,7 +128,7 @@ var QuestionnaireDesignerView = BaseView.extend({
         //each instance of the view needs to have its own DOM element...
         var el = $('<div></div>').appendTo($('#qdDetail'));
         var groupView = new QuestionnaireDesignerGroupView({el:el,model:grp});
-        if (lvl == 0) {
+        if (lvl === 0) {
             groupView.isRoot = true;       //the root group. Can't have questions
         }
 
@@ -139,7 +139,7 @@ var QuestionnaireDesignerView = BaseView.extend({
 
         ctx.viewRef.push(groupView);
         //console.log(inx);
-        var display = "<div class='qGroup' data-indent='"+lvl+"' data-id='"+groupView.cid+"'>" + tab + FHIRHelper.groupDisplay(grp) + '</div>';
+        var display = "<div class='qGroup' data-indent='"+lvl+"' data-id='"+groupView.cid+"'>" + tab + Backbone.FHIRHelper.groupDisplay(grp) + '</div>';
         var newNode = $(display).appendTo($('#qdGroups'));
 
         //if this is a new group, then render it immediately. If there are more than one - or a new group -  then
@@ -150,15 +150,15 @@ var QuestionnaireDesignerView = BaseView.extend({
         }
 
         if (grp.question){
-            ctx.addQuestions(grp.question,lvl,ctx,grp)
+            ctx.addQuestions(grp.question,lvl,ctx,grp);
             //ctx.addQuestions(newNode,grp.question,lvl,ctx,grp)
         }
 
         if (grp.group) {
             $.each(grp.group,function(grpInx,childGroup){
                 var newLevel = lvl +1;
-                ctx.addGroup(childGroup,newNode,ctx,newLevel,grp,grpInx)
-            })
+                ctx.addGroup(childGroup,newNode,ctx,newLevel,grp,grpInx);
+            });
         }
     },
     addQuestions : function(arQuest,glvl,ctx,grp) {
@@ -178,12 +178,12 @@ var QuestionnaireDesignerView = BaseView.extend({
             questView.positionInList = inx;     //the position of the questionin the list
             ctx.viewRef.push(questView);
 
-            var text = FHIRHelper.questionDisplay(quest);
+            var text = Backbone.FHIRHelper.questionDisplay(quest);
             if (text.length > 40) {
                 text = text.substr(0,37) + '...';
             }
 
-            var display = "<div class='qQuestion' data-indent='"+glvl+"' data-id='"+questView.cid+"'>"+tab + text + "</div>"
+            var display = "<div class='qQuestion' data-indent='"+glvl+"' data-id='"+questView.cid+"'>"+tab + text + "</div>";
 
 
             //var questNode = $(display).appendTo(gNode);
@@ -199,10 +199,10 @@ var QuestionnaireDesignerView = BaseView.extend({
                 //this question also has groups attached
                 _.each(quest.group,function(questGroup,inx){
                         var newQuestionLevel = glvl +2;     //<<<<<<<<< not sure why this isn't 1...
-                        ctx.addGroup(questGroup,questNode,ctx,newQuestionLevel,quest,inx)
-                })
+                        ctx.addGroup(questGroup,questNode,ctx,newQuestionLevel,quest,inx);
+                });
             }
-        })
+        });
     },
     redrawContent : function() {
         //re-display the content of the questionnaire - as an xml  resource...
@@ -217,12 +217,14 @@ var QuestionnaireDesignerView = BaseView.extend({
             _.each(this.viewRef,function(view){
                // console.log(view)
                 view.remove();
-            })
+            });
         }
-        $('#qdGroups').html("");
+        var el = $('#qdGroups');
+        el.html("");
 
-        html="";        //the global variable - I don't like this!
-        this.addGroup(this.model.group,$('#qdGroups'),this,0)
+        //html="";        //the global variable - I don't like this!
+
+        this.addGroup(this.model.group,el,this,0);
 
     },
     render : function() {
@@ -241,8 +243,6 @@ var QuestionnaireDesignerView = BaseView.extend({
                 //$("#qdIdText").text("Enter ID")
                 $("#qdId").attr('placeholder','Enter an ID or leave blank for the server to assign');
                 $("#qdId").val('test42');      //<<<< just to be lazt!
-            } else {
-                //$("#qdId").attr('disabled',true);
             }
 
             //need to create the headerview after the DOM node has been created...
@@ -254,9 +254,9 @@ var QuestionnaireDesignerView = BaseView.extend({
 
             //create the hierarchical model of the questionnaires. This will directly populate the DOM
             //and will create references to viewRef so the Questionnaire can be updated.
-            that.addGroup(that.model.group,$('#qdGroups'),that,0)
-        })
+            that.addGroup(that.model.group,$('#qdGroups'),that,0);
+        });
     }
 
 
-})
+});

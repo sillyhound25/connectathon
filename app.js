@@ -1,4 +1,7 @@
 
+/* global require, console, __dirname*/
+
+
 var express = require('express');
 var request = require('request');   //https://github.com/mikeal/request
 var moment = require('moment');
@@ -58,8 +61,7 @@ app.configure(function(){
 var GlobalOptions = {showRequestURI:true};
 
 
-var MongoClient = require('mongodb').MongoClient
-    , Server = require('mongodb').Server;
+var MongoClient = require('mongodb').MongoClient, Server = require('mongodb').Server;
 
 var mongoDbCon;
 
@@ -69,49 +71,6 @@ MongoClient.connect("mongodb://localhost:27017/fhirLog", function(err, mongoDb) 
         mongoDbCon = mongoDb;
     }
 });
-
-
-//----------- pandas routines ----------------------
-app.get('/pandas/makeMedsJson', function(req, res) {
-    pandasService.getPandasSample(function(data){
-        res.json(data);
-    })
-
-});
-
-app.get('/pandas/makeMemberJson', function(req, res) {
-    pandasService.makeMemberJson(function(data){
-        res.json(data);
-    })
-
-});
-
-
-app.get('/pandas/makeClaimsJson', function(req, res) {
-    pandasService.makeClaimsJson(function(data){
-        res.json(data);
-    })
-
-});
-
-app.get('/pandas/patientFlags/patient/:patid?', function(req, res) {
-    var patid = req.params['patid'];
-    console.log(patid);
-    pandasService.getPandasPatientRiskFlags(patid,function(data){
-        res.json(data);
-    })
-
-});
-
-app.get('/pandas/patientFlags/time/:time?', function(req, res) {
-
-    pandasService.getPandasPatientRiskFlagsTime('x',function(data){
-        res.json(data);
-    })
-
-});
-
-//----------------------------------
 
 
 //return the config fil
@@ -127,7 +86,7 @@ app.get('/admin/builders', function(req, res) {
 
 //get a single resource
 app.get('/api/oneresource/:type/:id', function(req, res) {
-    url = req.params.type + "/" + req.params.id;
+    var url = req.params.type + "/" + req.params.id;
     //console.log(url);
     performQueryAgainstFHIRServer(url,null,function(resp,statusCode){
         res.json(resp,statusCode);
@@ -151,7 +110,8 @@ app.get('/api/generalquery', function(req, res){
 
    // req.query
     //console.log(JSON.parse(req.params.query));
-    var query = JSON.parse(req.query['query']);
+    //var query = JSON.parse(req.query['query']);
+    var query = JSON.parse(req.query.query);
     console.log(query);
 
     var url = "";
@@ -193,6 +153,7 @@ app.post('/api/createprofilesample', function(req, res){
     mSample.generateSampleBundle(sample,function(err,bundle,messages){
         //now send the bundle to the server for saving...
 
+        var resp;
         if (!messages) {
             console.log(messages);
         }
@@ -202,14 +163,14 @@ app.post('/api/createprofilesample', function(req, res){
                 postBundleToFHIRServer(bundle,function(resp){
                     resp.messages = messages;
                     res.json(resp);
-                })
+                });
 
-            })
+            });
         } else {
             resp.messages = "Error: " + err;
             res.json(resp);
         }
-    })
+    });
 
 });
 
@@ -226,7 +187,7 @@ app.get('/api/profile/:name/:publisher', function(req, res){
 
     performQueryAgainstFHIRServer(query,server,function(resp){
         res.json(resp,resp.statusCode);
-    })
+    });
 
 });
 
@@ -235,7 +196,7 @@ app.get('/api/conformance', function(req, res){
     var query = 'metadata';
     performQueryAgainstFHIRServer(query,null,function(resp){
         res.json(resp,resp.statusCode);
-    })
+    });
 });
 
 //update a resource (the resource type is inside the resource
@@ -250,8 +211,8 @@ app.put('/api/:id', function(req, res){
         logResource(resource,function(){
             //resp.statusCode
             res.json(resp,resp.statusCode);
-        })
-    })
+        });
+    });
 
 });
 
@@ -263,7 +224,7 @@ app.get('/api/profile/:publisher', function(req, res){
     //var query = 'Profile?publisher=' + req.params.publisher;
     performQueryAgainstFHIRServer(query,null,function(resp){
         res.json(resp,resp.statusCode);
-    })
+    });
 });
 
 
@@ -297,11 +258,8 @@ app.post('/api', function(req, res){
 
         logResource(resource,function(){
             res.json(resp,resp.statusCode);
-        })
-
-
-
-    })
+        });
+    });
 });
 
 
@@ -310,12 +268,10 @@ app.put('/api/valueset/:id', function(req, res){
     var vsID = req.params.id;
     var resource = req.body;
 
-
-
     putToFHIRServer(resource,vsID,function(resp){
         resp.content = resource;
         res.json(resp);
-    })
+    });
 
 });
 
@@ -331,7 +287,7 @@ app.get('/api/valueset/:publisher', function(req, res){
         try {
             resp1.response = JSON.parse(body);
         } catch (ex) {
-            resp1.response = {'err':'non-json body'}
+            resp1.response = {'err':'non-json body'};
         }
 
         resp1.headers = response.headers;
@@ -351,7 +307,7 @@ app.get('/api/patient/:patientID', function(req, res){
         var resp = {};
         resp.content = bundle;
         res.json(resp);
-    })
+    });
 
 });
 
@@ -378,53 +334,6 @@ function logBundle(bundle,name,callback){
     });
 }
 
-
-app.post('/api/createSamples', function(req, res){
-    //console.log('/api/createSamples')
-
-    var samPatientEntry = Patient.getSample({identifier:"orion1"});
-    var samEncounterEntry = Encounter.getSample({});
-
-    var samPractitionerEntry = Practitioner.getSample({});
-
-    samEncounterEntry.content.subject = {reference:samPatientEntry.id};
-    var participant = {individual : {reference:samPractitionerEntry.id},
-        type: [Common.cc({code:'CON',display:'Consultant',system:'http://hl7.org/fhir/v3/ParticipationType'})]};
-    samEncounterEntry.content.participant = [participant];
-
-    var samCondition1Entry = Condition.getSample({});
-    samCondition1Entry.content.subject = {reference:samPatientEntry.id};
-    var samCondition2Entry = Condition.getSample({code:'73211009',display:'Diabetes',system:'http://snomed.info/sct'});
-    samCondition2Entry.content.subject = {reference:samPatientEntry.id};
-
-
-    var samAllergyEntry = Allergy.getSample({});
-    samAllergyEntry.content.subject = {reference:samPatientEntry.id};
-
-
-    var samVSEntry = ValueSet.getSample({});
-
-
-    var bundle = {resourceType:"Bundle"};
-    bundle.title = "Adding resources for medication admin project";
-    bundle.updated = moment().format();
-    bundle.entry = [];
-
-    bundle.entry.push(samVSEntry);
-  /*
-    bundle.entry.push(samPatientEntry);
-    bundle.entry.push(samEncounterEntry);
-    bundle.entry.push(samPractitionerEntry);
-    bundle.entry.push(samCondition1Entry);
-    bundle.entry.push(samCondition2Entry);
-    bundle.entry.push(samAllergyEntry);
-*/
-
-    postBundleToFHIRServer(bundle,function(resp){
-        resp.content = bundle;
-        res.json(resp);
-    })
-});
 
 //post a resource to the configured FHIR server. returns the status code,response body and assigned ID
 //
@@ -460,11 +369,16 @@ function postToFHIRServer(resource,callback) {
 
         var collection = mongoDbCon.collection('POSTLog');
         collection.insert(resp, {w:1}, function(err, result) {
-            callback(resp);
+            //callback(resp);
+            var collection = mongoDbCon.collection('POSTLog');
+            collection.insert(resp, {w:1}, function(err, result) {
+                callback(resp);
+            });
+
         });
 
         //callback(resp);
-    })
+    });
 }
 
 //put a resource to a FHIR server - ie an update...
@@ -481,8 +395,6 @@ function putToFHIRServer(resource,id,vid,callback) {
         uri : FHIRServerUrl + resourceType + "/" + id
     };
 
-    //console.log(options);
-
     request(options,function(error,response,body){
         var resp = {};
         resp.id = response.headers.location;
@@ -498,17 +410,11 @@ function putToFHIRServer(resource,id,vid,callback) {
             console.log(body);
         }
 
-        //console.log(resp);
-
-
         var collection = mongoDbCon.collection('PUTLog');
         collection.insert(resp, {w:1}, function(err, result) {
             callback(resp);
         });
-
-
-
-    })
+    });
 }
 
 function performDeleteAgainstFHIRServer(query,server,callback){
@@ -530,21 +436,32 @@ function performDeleteAgainstFHIRServer(query,server,callback){
 
     request(options,function(error,response,body){
 
-        if (response.statusCode != 204) {
+        if (response.statusCode !== 204) {
             console.log('Error: ' + body);
 
         }
 
+        var resp = {};
+        resp.id = response.headers.location;
+        resp.statusCode = response.statusCode;
+        resp.body = body;
+        resp.headers = response.headers;
+        resp.error = error;
+        resp.options = options;
+        resp.time = new Date();
+
         var json = {};
         try {
-            json = JSON.parse(body)
+            json = JSON.parse(body);
         } catch (ex) {
-            json = {'error': body}
+            json = {'error': body};
         }
 
-        callback(json,response.statusCode);
-
-    })
+        var collection = mongoDbCon.collection('POSTLog');
+        collection.insert(resp, {w:1}, function(err, result) {
+            callback(json,response.statusCode);
+        });
+    });
 }
 
 function performQueryAgainstFHIRServer(query,server,callback){
@@ -583,7 +500,7 @@ function performQueryAgainstFHIRServer(query,server,callback){
             return;
         }
 
-        if (response.statusCode != 200) {
+        if (response.statusCode !== 200) {
             console.log('Error: ' + body);
 
            // throw 'error';
@@ -591,9 +508,9 @@ function performQueryAgainstFHIRServer(query,server,callback){
 
         var json = {};
         try {
-            json = JSON.parse(body)
+            json = JSON.parse(body);
         } catch (ex) {
-            json = {'error': body}
+            json = {'error': body};
         }
 
 
@@ -615,7 +532,7 @@ function performQueryAgainstFHIRServer(query,server,callback){
 
         //callback(json,response.statusCode);
 
-    })
+    });
 }
 /*
 function performQueryAgainstFHIRServerXML(query,callback){
@@ -754,10 +671,107 @@ function postBundleToFHIRServer(bundle,callback) {
             resp.response = JSON.parse(body);
             resp.headers = response.headers;
             callback(resp);
-        })
+        });
 
-    })
+    });
 }
+
+
+//-------- for samples ----
+
+app.post('/api/createSamples', function(req, res){
+    //console.log('/api/createSamples')
+
+    var samPatientEntry = Patient.getSample({identifier:"orion1"});
+    var samEncounterEntry = Encounter.getSample({});
+
+    var samPractitionerEntry = Practitioner.getSample({});
+
+    samEncounterEntry.content.subject = {reference:samPatientEntry.id};
+    var participant = {individual : {reference:samPractitionerEntry.id},
+        type: [Common.cc({code:'CON',display:'Consultant',system:'http://hl7.org/fhir/v3/ParticipationType'})]};
+    samEncounterEntry.content.participant = [participant];
+
+    var samCondition1Entry = Condition.getSample({});
+    samCondition1Entry.content.subject = {reference:samPatientEntry.id};
+    var samCondition2Entry = Condition.getSample({code:'73211009',display:'Diabetes',system:'http://snomed.info/sct'});
+    samCondition2Entry.content.subject = {reference:samPatientEntry.id};
+
+
+    var samAllergyEntry = Allergy.getSample({});
+    samAllergyEntry.content.subject = {reference:samPatientEntry.id};
+
+
+    var samVSEntry = ValueSet.getSample({});
+
+
+    var bundle = {resourceType:"Bundle"};
+    bundle.title = "Adding resources for medication admin project";
+    bundle.updated = moment().format();
+    bundle.entry = [];
+
+    bundle.entry.push(samVSEntry);
+    /*
+     bundle.entry.push(samPatientEntry);
+     bundle.entry.push(samEncounterEntry);
+     bundle.entry.push(samPractitionerEntry);
+     bundle.entry.push(samCondition1Entry);
+     bundle.entry.push(samCondition2Entry);
+     bundle.entry.push(samAllergyEntry);
+     */
+
+    postBundleToFHIRServer(bundle,function(resp){
+        resp.content = bundle;
+        res.json(resp);
+    });
+});
+
+
+
+//----------- pandas routines ----------------------
+app.get('/pandas/makeMedsJson', function(req, res) {
+    pandasService.getPandasSample(function(data){
+        res.json(data);
+    });
+
+});
+
+app.get('/pandas/makeMemberJson', function(req, res) {
+    pandasService.makeMemberJson(function(data){
+        res.json(data);
+    });
+
+});
+
+
+app.get('/pandas/makeClaimsJson', function(req, res) {
+    pandasService.makeClaimsJson(function(data){
+        res.json(data);
+    });
+
+});
+
+app.get('/pandas/patientFlags/patient/:patid?', function(req, res) {
+    var patid = req.params.patid;
+    console.log(patid);
+    pandasService.getPandasPatientRiskFlags(patid,function(data){
+        res.json(data);
+    });
+
+});
+
+app.get('/pandas/patientFlags/time/:time?', function(req, res) {
+
+    pandasService.getPandasPatientRiskFlagsTime('x',function(data){
+        res.json(data);
+    });
+
+});
+
+//----------------------------------
+
+
+
 
 app.listen(4001);
 console.log("Express server listening on port %d in %s mode", 4001, app.settings.env);

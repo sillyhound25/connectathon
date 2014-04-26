@@ -3,6 +3,8 @@
  * displays the complete list of properties for a profile - all the structures and the extensions...
  */
 
+    /*global Backbone,$,Handlebars,alert,console,_ ,ProfileSummaryModel*/
+
 var ProfileSummaryView = Backbone.View.extend({
     initialize : function() {
         var that = this;
@@ -11,7 +13,7 @@ var ProfileSummaryView = Backbone.View.extend({
         //get the template for the item views - todo needs refactoring...
         $.get('templates/profileSummaryItem.html',function(html){
             that.itemTemplate = Handlebars.compile(html);
-        })
+        });
     },
     events : {
         "click #btnCreateSummary" : "createAndShowSummary",
@@ -19,7 +21,7 @@ var ProfileSummaryView = Backbone.View.extend({
         "click #btnSaveChanges" : "saveChanges"
     },
     saveChanges : function() {
-        $('#btnSaveChanges').text('Updating').attr('disabled',true)
+        $('#btnSaveChanges').text('Updating').attr('disabled',true);
         this.model.save({},{
             success : function() {
                 $('#btnSaveChanges').hide();
@@ -28,7 +30,7 @@ var ProfileSummaryView = Backbone.View.extend({
             error : function(xhr,status,err) {
                 console.log(xhr,status,err);
 
-                alert('sorry, there was an error saving the profile - check the console log')
+                alert('sorry, there was an error saving the profile - check the console log');
                 $('#btnSaveChanges').text('Update').attr('disabled',false);
             }
         });
@@ -46,7 +48,7 @@ var ProfileSummaryView = Backbone.View.extend({
         if (this.childViews) {
             _.each(this.childViews,function(view){
                 view.remove();
-            })
+            });
         }
         this.$el.html("");
         $('#btnSaveChanges').hide();
@@ -68,7 +70,7 @@ var ProfileSummaryView = Backbone.View.extend({
             //now locate the model and the view based on this path
             that.arSummary = arSummary;
 
-            console.log(arSummary)
+            //console.log(arSummary)
             var resourceElements = that.arSummary.resources[resourceName];
 
             _.each(resourceElements.models.models,function(m){
@@ -90,10 +92,10 @@ var ProfileSummaryView = Backbone.View.extend({
                     that.changesMade = true;
                     $('#btnSaveChanges').show();
                 }
-            })
+            });
 
 
-        })
+        });
     },
     toggleResource : function(ev){
         var resource = $(ev.currentTarget).attr('data-code');
@@ -111,22 +113,16 @@ var ProfileSummaryView = Backbone.View.extend({
         //first, remove any child views we may have...
         _.each(this.childViews,function(view){
             view.remove();
-        })
+        });
         //console.log(this.model);
         var model = this.model;
         this.profileSummaryModel = new ProfileSummaryModel();
         //profileSummaryModel.setProfile(this.model);
         this.$el.html("Generating summary, please wait...");
         this.profileSummaryModel.getSummary(model,function(err, arSummary){
-           // console.log(err,arSummary);
-          //  _.each(arSummary.resources,function(r){
-           //     console.log(r.models.toJSON());
-           // })
             that.arSummary = arSummary;
-           // that.render(arSummary)
-            //console.log(models.toJSON());
             if (callback) {callback();}
-        })
+        });
 
     },
 
@@ -138,7 +134,7 @@ var ProfileSummaryView = Backbone.View.extend({
             $.get('templates/profileSummaryContainer.html',function(html){
                 that.template = Handlebars.compile(html);
                 that.draw();
-            })
+            });
         } else {
             this.draw();
         }
@@ -172,7 +168,7 @@ var ProfileSummaryView = Backbone.View.extend({
                         if (jsonModel.path.indexOf(exclude) !== -1) {
                             toShow = false;
                         }
-                    })
+                    });
 
 
                     if (toShow) {       //ie it's not one of the standard ones...
@@ -205,35 +201,29 @@ var ProfileSummaryView = Backbone.View.extend({
                                 that.childViews[key] = v;        //save a reference to the view. We'll need it to release the view to avoid zombies...
                                 v1.template = that.itemTemplate;
 
-                                //if (! model.get('content')) {
-                                    //alert('content is empty for path ' + )
-                                //}
-
-
-
                                 v1.content = psiModel.get('content');       //this is the json representation of the structure.element
                                 //console.log(v.content)
                                 v1.resourceName = resourceName;
                                 v1.render();
-                            })
+                            });
 
                         }
 
                     }
 
-                })
-            })
+                });
+            });
 
 
         }
 
     }
-})
+});
 
 
 
-
-ProfileSummaryItemView = Backbone.View.extend({
+//note: var wasn't there before hint...
+var ProfileSummaryItemView = Backbone.View.extend({
 
     events : {
         "click .ps_row_item" : "slice"
@@ -262,7 +252,7 @@ ProfileSummaryItemView = Backbone.View.extend({
 
         //if teh max is 0, then this is not used...
         if (json.max === '0' || json.max === 0) {
-            this.$el.addClass('notUsed')
+            this.$el.addClass('notUsed');
 
         }
     }

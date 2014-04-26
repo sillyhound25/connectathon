@@ -6,6 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+    /*global Backbone,$, console, alert, ProfileModel,confirm, Handlebars */
 
 var ProfileDetailView =  Backbone.View.extend({
     events : {
@@ -16,7 +17,7 @@ var ProfileDetailView =  Backbone.View.extend({
         "click #save_profile_changes" : "save",
         "click #checkNewId" : "checkUniqueId",
          "blur .profile_header": function(){
-             console.log('blur')
+             //console.log('blur');
              this._isDirty = true;
              $('#save_profile_changes').show();
          }
@@ -40,7 +41,7 @@ var ProfileDetailView =  Backbone.View.extend({
                         //todo should really check for a 404
 
                         $('#profile_id').addClass('alert alert-success');
-                        $('#profile_id').attr('disabled',true)
+                        $('#profile_id').attr('disabled',true);
                         that.checkedId = id;
                         //that.userEnteredId = id;
                     } else {
@@ -48,9 +49,9 @@ var ProfileDetailView =  Backbone.View.extend({
                         //console.log();
                     }
 
-            })
+            });
         } else {
-            alert('Enter the ID you want for the profile first...')
+            alert('Enter the ID you want for the profile first...');
         }
 
     },
@@ -77,10 +78,10 @@ var ProfileDetailView =  Backbone.View.extend({
 
         delete this.checkedId;
         //clear the ID field
-        $('#profile_id').attr('disabled',false)
-        $('#profile_id').val("");
+        //$('#profile_id').attr('disabled',false);
+        //$('#profile_id').val("");
 
-        $('#profile_id').removeClass('alert-success');
+        $('#profile_id').removeClass('alert-success').val("").attr('disabled',false);
 
         //clear all the data fields...
         $('#profileName').val("");
@@ -131,15 +132,15 @@ var ProfileDetailView =  Backbone.View.extend({
         }
 
         model.set('content',content);
-        $('#save_profile_changes').text('Updating...').attr('disabled',true)
-        console.log(model.toJSON())
+        $('#save_profile_changes').text('Updating...').attr('disabled',true);
+        //console.log(model.toJSON());
 
         //now, lets see it it is valid. I want to do this before saving as I haven't quite got that working yet...
         var vo = model.myValidate(model,false);
         console.log(vo);
         if (vo.err) {
             alert(vo.err);
-            $('#save_profile_changes').text('Update').attr('disabled',false)
+            $('#save_profile_changes').text('Update').attr('disabled',false);
             return;
         }
 
@@ -151,7 +152,7 @@ var ProfileDetailView =  Backbone.View.extend({
 
         model.save({},{
             success : function() {
-                $('#save_profile_changes').text('Update Profile').attr('disabled',false)
+                $('#save_profile_changes').text('Update Profile').attr('disabled',false);
                 //that.model.set({'isDirty':false});
                 //this.isNew = false;         //need to re-set this after a save - if the view is not re-set...
                 alert('Profile Updated');
@@ -160,9 +161,9 @@ var ProfileDetailView =  Backbone.View.extend({
             },
             error : function(xhr,status,err) {
                 console.log(xhr,status,err);
-                $('#save_profile_changes').text('Update Profile').attr('disabled',false)
-                alert('sorry, there was an error saving the profile - check the console log')
-                $('#save_profile_changes').text('Update').attr('disabled',false)
+                //$('#save_profile_changes').text('Update Profile').attr('disabled',false);
+                alert('sorry, there was an error saving the profile - check the console log');
+                $('#save_profile_changes').text('Update Profile').attr('disabled',false);
             }
         });
     },
@@ -181,14 +182,14 @@ var ProfileDetailView =  Backbone.View.extend({
         }
 
     },
-    addExtension : function(ev){
+    addExtension : function(){
         //add a new extension
       //  if (! this.model) {
           //  this.model = new ProfileModel();
       //  }
 
        // Mediator.assert(jsonModel.meta.id,'The model ID in ProfileDetailView is null');
-        content = this.model.get('content');
+        var content = this.model.get('content');
 
         //set the value for the profile 'header' contents...
         content.name = $('#profileName').val();
@@ -215,7 +216,7 @@ var ProfileDetailView =  Backbone.View.extend({
 
         var rowId = "oneprofilerow_" + code;        //the id of the displayed row...
         $('#'+rowId).remove();
-        $('#save_profile_changes').show()
+        $('#save_profile_changes').show();
         this.trigger('profile:updated');
     },
     editExtension : function(ev){
@@ -234,7 +235,7 @@ var ProfileDetailView =  Backbone.View.extend({
             $.get('templates/oneProfile.html',function(html){
                 that.template = Handlebars.compile(html);
                 that.draw();
-            })
+            });
         } else {
             this.draw();
         }
@@ -254,7 +255,7 @@ var ProfileDetailView =  Backbone.View.extend({
             if (! this.isNew) {
                 //if this is a new profile, then allow the ID to be entered
                 $('#profile_id').attr('disabled',true);
-                $('#checkNewId').hide()
+                $('#checkNewId').hide();
                 //console.log('dis')
             } else {
                 //this is a new profile. Has the user entered and checked the ID?
@@ -271,7 +272,7 @@ var ProfileDetailView =  Backbone.View.extend({
         } else {
             this.$el.html(this.template());
         }
-
+/*
         if (! this._isDirty) {
             //if tehre are no changes yet, then don't show the save changes button
 
@@ -279,11 +280,8 @@ var ProfileDetailView =  Backbone.View.extend({
 
             //$('#save_profile_changes').hide();
         }
+*/
 
-
-
-
-        //this.delegateEvents();
         $('#updatingProfileMsg').hide();
     }
-})
+});

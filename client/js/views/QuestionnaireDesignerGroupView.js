@@ -6,6 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+    /* global BaseView,Backbone, console, alert,$ */
 var QuestionnaireDesignerGroupView = BaseView.extend({
 
     events : {
@@ -23,18 +24,18 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
             this.swapGroups(parentGroup.group,inx,inx-1);
             Backbone.trigger('Q:updated');
         } else {
-            alert('Already at the top')
+            alert('Already at the top');
         }
     },
     moveDown : function() {
-        console.log('dn')
+        //console.log('dn')
         var parentGroup = this.parentGroup; //the parent of this group
         var inx = this.positionInList;      //the position of this group in that list
         if (inx < parentGroup.group.length-1){
             this.swapGroups(parentGroup.group,inx,inx+1);
             Backbone.trigger('Q:updated');
         }  else {
-            alert('Already at the bottom')
+            alert('Already at the bottom');
         }
     },
     swapGroups : function(lst, index_a, index_b) {
@@ -66,7 +67,7 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
 
         //the entry in the Table Of Contents for this group...
         var tocEntry = $("div[data-id='"+cid+"']");
-        var indent = parseInt(tocEntry.attr('data-indent'));
+        var indent = parseInt(tocEntry.attr('data-indent'),10);
         var txt = "";
 
         for (var i=0; i <= indent; i++){
@@ -114,7 +115,7 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
             //need to use a clone as we're adding illegal properties (cid) to the model so the id's can be unique......
             //note: **must** be a deep clone, or the coding will pick up the cid...
             var clone = {};
-            $.extend(true,clone,that.model)
+            $.extend(true,clone,that.model);
             clone.cid = that.cid;
             clone.isRoot = that.isRoot;     //the root group can't have questions...
 
@@ -138,7 +139,7 @@ var QuestionnaireDesignerGroupView = BaseView.extend({
             if (numCols) {
                 $('input[name="qdGroupCols"]').val([numCols]);
             }
-        })
+        });
     }
 
-})
+});

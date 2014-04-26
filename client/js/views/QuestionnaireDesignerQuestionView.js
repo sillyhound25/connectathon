@@ -6,11 +6,13 @@
  * To change this template use File | Settings | File Templates.
  */
 
+    /* global BaseView,Backbone,console,alert,$,_ */
+
 var QuestionnaireDesignerQuestionView = BaseView.extend({
     initialize : function() {
         //don't include string, as that is coded in the template...
         this.arAnswerFormat = ['decimal','integer','boolean','date','dateTime','instant',
-            'single-choice','multiple-choice','open-single-choice','open-multiple-choice']
+            'single-choice','multiple-choice','open-single-choice','open-multiple-choice'];
     },
     events : {
         "click #qdqAddSubGroup" : "addGroup",
@@ -22,25 +24,25 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
         "click #qdqMoveDown" : "moveDown"
     },
     moveUp : function() {
-        console.log('up')
+        //console.log('up')
         var parent = this.parentGroup;      //the group that this question belongs to
         var inx = this.positionInList;      //the index of this question in the list of questions
         if (inx > 0){
            this.swapQuestions(parent.question,inx,inx-1);
             Backbone.trigger('Q:updated');
         } else {
-            alert('Already at the top')
+            alert('Already at the top');
         }
     },
     moveDown : function() {
-        console.log('dn')
+        //console.log('dn')
         var parent = this.parentGroup;      //the group that this question belongs to
         var inx = this.positionInList;      //the index of this question in the list of questions
         if (inx < parent.question.length-1){
             this.swapQuestions(parent.question,inx,inx+1);
             Backbone.trigger('Q:updated');
         }  else {
-            alert('Already at the bottom')
+            alert('Already at the bottom');
         }
 
     },
@@ -102,10 +104,10 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
                 quest.name.coding[0].code = code;
                 quest.name.coding[0].system = system;
             } else {
-                quest.name.coding = [{code:code,system:system}]
+                quest.name.coding = [{code:code,system:system}];
             }
         } else {
-            quest.name = {coding:[{code:code,system:system}]}
+            quest.name = {coding:[{code:code,system:system}]};
         }
         //delete this.model;
         this.model = quest;
@@ -114,9 +116,9 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
         //the entry in the Table Of Contents for this entry...
 
         var tocEntry = $("div[data-id='"+cid+"']");
-        var indent = parseInt( tocEntry.attr('data-indent'));
+        var indent = parseInt(tocEntry.attr('data-indent'),10);
         var txt = "";
-        console.log(indent)
+        console.log(indent);
 
         for (var i=0; i <= indent+1; i++){
             txt += "&nbsp;&nbsp;&nbsp;";
@@ -140,11 +142,11 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
             //need to use a clone as we're adding illegal properties (cid) to the model so the id's can be unique......
             //note: **must** be a deep clone, or the coding will pick up the cid...
             var clone = {};
-            $.extend(true,clone,that.model)
+            $.extend(true,clone,that.model);
 
             //must be a name for the template to render the controls...
             if (! clone.name) {
-                clone.name = {text:"",coding: [{code:"",system:""}]}
+                clone.name = {text:"",coding: [{code:"",system:""}]};
             }
             //add the cid as an attribute
             clone.name.coding[0].cid = that.cid;
@@ -158,11 +160,11 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
             var answerFormatElement = that.cid+'qdq_answerType';
             _.each(that.arAnswerFormat,function(opt){
                 $('#'+answerFormatElement).append("<option value='"+opt+"'>"+opt+"</option>");
-            })
+            });
 
             //var answerFormat = FHIRHelper.getExtensionValue (clone,"http://hl7.org/fhir/questionnaire-extensions#answerFormat","valueCode")
-            var answerFormat = FHIRHelper.getExtensionValue (clone,
-                Backbone.myConstants.extensionDefn.answerFormat)
+            var answerFormat = Backbone.FHIRHelper.getExtensionValue (clone,
+                Backbone.myConstants.extensionDefn.answerFormat);
 
 
             //console.log(answerFormat)
@@ -183,6 +185,6 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
 
 
             //that.$el.html(that.template({group:that.model,display:FHIRHelper.groupDisplay(that.model)}));
-        })
+        });
     }
-})
+});

@@ -1,4 +1,6 @@
 
+/*global Backbone,$,_,Handlebars */
+
 var ProfileStructureView =  Backbone.View.extend({
     initialize : function() {
         this.meta = {};     //keep my properties - eg the extension  - in a separate property...
@@ -12,9 +14,10 @@ var ProfileStructureView =  Backbone.View.extend({
 
         //we're going to return an updated verison of the psiModel.content - ie the json rendition of the element
 
-        var clone = jQuery.extend(true, {}, this.model.toJSON().content);
+        //var clone = jQuery.extend(true, {}, this.model.toJSON().content);
+        var clone = $.extend(true, {}, this.model.toJSON().content);
 
-        var element = clone
+        var element = clone;
 
         clone.definition.min = $('#esMin').val();
         clone.definition.max = $('#esMax').val();
@@ -38,7 +41,7 @@ var ProfileStructureView =  Backbone.View.extend({
             $.get('templates/editStructure.html',function(html){
                 that.template = Handlebars.compile(html);
                 that.draw();
-            })
+            });
         } else {
             this.draw();
         }
@@ -51,7 +54,7 @@ var ProfileStructureView =  Backbone.View.extend({
         //get the content node, which is a json rendition of the element...
         var json = this.model.toJSON().content;
 
-        console.log(json)
+        //console.log(json);//
 
         //now render the template, setting the current values
         //console.log(this.$el);
@@ -72,11 +75,11 @@ var ProfileStructureView =  Backbone.View.extend({
             }
             lne += ">"+name+"</option>";
             $("#esDataType").append(lne);
-        })
+        });
 
 
 
         $('#editStructureDlg').modal();
 
     }
-})
+});

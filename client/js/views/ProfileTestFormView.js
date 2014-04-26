@@ -2,6 +2,7 @@
 Manage the test data form
  */
 
+/* global Backbone,$,alert,console,confirm.Handlebars,_ */
 
 var ProfileTestFormView = Backbone.View.extend({
     initialize : function() {
@@ -30,7 +31,7 @@ var ProfileTestFormView = Backbone.View.extend({
         var queryString = JSON.stringify(query);
         //console.log(queryString);
 
-        $('#td_lookup').text('Please wait...')
+        $('#td_lookup').text('Please wait...');
         $.get('/api/generalquery?query='+queryString,function(bundle){
             //console.log(bundle);
             $('#td_lookup').text('Find Patient');
@@ -45,7 +46,7 @@ var ProfileTestFormView = Backbone.View.extend({
                     patientEntry = entry;
                 }
                 console.log(entry);
-            })
+            });
 
             //var numPatients = bundle.entry.length;
             switch (numPatients) {
@@ -56,7 +57,7 @@ var ProfileTestFormView = Backbone.View.extend({
                 case 1 : {
                     alert('Patient found. The new resources will be attached to that patient');
                     var ar = patientEntry.id.split('/');
-                    $('input:text[data-code=patient-identifier]').addClass('alert alert-success')
+                    $('input:text[data-code=patient-identifier]').addClass('alert alert-success');
 
                     //console.log(bundle.entry[0].id,ar);
                     try {
@@ -73,7 +74,7 @@ var ProfileTestFormView = Backbone.View.extend({
 
 
                     } catch (err){
-                        console.log("Error setting name property: " + err)
+                        console.log("Error setting name property: " + err);
                     }
 
                     that.patientID = "Patient/"+ar[ar.length-1];
@@ -118,7 +119,7 @@ var ProfileTestFormView = Backbone.View.extend({
 
             //console.log(data);
 
-            console.log(data)
+            console.log(data);
             that.render(data);
             //now disable the submit button until the patient ID is checked...
             $('#submitTD').attr('disabled',true);
@@ -172,7 +173,7 @@ var ProfileTestFormView = Backbone.View.extend({
 
             }
 
-        })
+        });
 
         //Warn the user that there will be a new patient creataed.
         if (areThereExtensionsToPatient) {
@@ -186,10 +187,6 @@ var ProfileTestFormView = Backbone.View.extend({
         $('#submitTD').attr('disabled',true);
 
 
-//alert('submit')
-        //return;
-
-        // console.log(sampleData);
         //post the sample to the server
         $.ajax({
             type: "POST",
@@ -220,7 +217,7 @@ var ProfileTestFormView = Backbone.View.extend({
 
                             $('#'+elID).html(ent.id);
 
-                        })
+                        });
                     }
                     } else {
                         //there was an error. If there's an operationOutcome, then show that otherwise just display the whole body
@@ -229,14 +226,14 @@ var ProfileTestFormView = Backbone.View.extend({
                             msg = "";
                             _.each(data.response.issue,function(issue){
                                 msg += issue.details + " ("+issue.severity + ")\n";
-                            })
+                            });
                         }
-                        alert("There was a problem: " + msg)
+                        alert("There was a problem: " + msg);
 
                 }
             },
             error : function(xhr,status,err) {
-                alert('There was an error: ' + err)
+                alert('There was an error: ' + err);
 
             },
             complete : function(xhr,status) {

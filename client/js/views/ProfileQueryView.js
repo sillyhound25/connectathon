@@ -2,6 +2,8 @@
  * Query a FHIR server based on profiles
  */
 
+    /*global Backbone,Handlebars,$,console,alert,_ */
+
 var ProfileQueryView = Backbone.View.extend({
     initialize : function() {
         var t = "{{#each resources}}<div><input type='radio' name='pq_resource' value='{{this}}'/> {{this}}</div>{{/each}}";
@@ -72,12 +74,12 @@ var ProfileQueryView = Backbone.View.extend({
                 if (bundle.issue && bundle.issue.length > 0) {
                     bundle.issue.forEach(function(issue){
                         err += issue.details + "\n";
-                    })
+                    });
 
                 }
 
 
-                alert(err)
+                alert(err);
 
             } else {
                 that.resultBundle = bundle;
@@ -108,7 +110,7 @@ var ProfileQueryView = Backbone.View.extend({
             var numPatients = 0;
             $('#pq_warning').hide();
             if (bundle.entry.length === 0) {
-                alert('No patient found with that identifier')
+                alert('No patient found with that identifier');
             } else {
                 _.each(bundle.entry,function(ent){
                     var id = ent.id;
@@ -121,7 +123,7 @@ var ProfileQueryView = Backbone.View.extend({
 
                         $('#pq_select_patient').append("<option value='"+id+"'>"+ name + " (" + id+")</option>");
                     }
-                })
+                });
 
                 if (numPatients > 1) {
                     alert('Be warned: there are multiple patients with this identifier...');
@@ -129,7 +131,7 @@ var ProfileQueryView = Backbone.View.extend({
 
             }
 
-        })
+        });
 
     },
     selectProfile : function(ev){
@@ -149,9 +151,9 @@ var ProfileQueryView = Backbone.View.extend({
                     if (arResources.indexOf(resource) === -1) {
                         arResources.push(resource);
                     }
-                })
+                });
             }
-        })
+        });
         //console.log(arResources)
         this.resources = arResources;
 
@@ -180,7 +182,7 @@ var ProfileQueryView = Backbone.View.extend({
             $.get('templates/profileQuery.html',function(html){
                 that.template = Handlebars.compile(html);
                 that.draw();
-            })
+            });
         } else {
             this.draw();
         }
@@ -193,4 +195,4 @@ var ProfileQueryView = Backbone.View.extend({
         $('#pq_warning').hide();
     }
 
-})
+});

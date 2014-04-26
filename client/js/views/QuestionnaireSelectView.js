@@ -2,6 +2,7 @@
  * Allow the user to select a questionnaire based on a number of criteria...
  */
 
+/*global BaseView, $ */
 
 var QuestionnaireSelectView = BaseView.extend({
     events : {
@@ -28,7 +29,7 @@ var QuestionnaireSelectView = BaseView.extend({
             //console.log(that.$el)
             that.$el.html(that.template());
 
-        })
+        });
     }
 
 });
