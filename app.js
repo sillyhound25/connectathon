@@ -87,7 +87,7 @@ app.get('/admin/builders', function(req, res) {
 //get a single resource
 app.get('/api/oneresource/:type/:id', function(req, res) {
     var url = req.params.type + "/" + req.params.id;
-    //console.log(url);
+    console.log(url);
     performQueryAgainstFHIRServer(url,null,function(resp,statusCode){
         res.json(resp,statusCode);
     });
@@ -281,7 +281,7 @@ app.get('/api/valueset/:publisher', function(req, res){
 
     request(getOptions(FHIRServerUrl+ 'ValueSet?publisher='+publisher),function(error,response,body){
         var resp1={};
-       // console.log(response);
+        console.log(response);
         resp1.id = response.headers.location;
         resp1.statusCode = response.statusCode;
         try {
@@ -482,7 +482,7 @@ function performQueryAgainstFHIRServer(query,server,callback){
     };
 
 
-    //console.log(options);
+    console.log('options',options);
     if (GlobalOptions.showRequestURI) {
         console.log(options.uri);
     }

@@ -19,9 +19,10 @@ var MediatorQ={};
 
 Backbone.myFunctions = {};
 
-
-
 Backbone.myConstants = {};
+
+//cached resources - generally valuesets
+Backbone.myCache = {};
 
 //default namespaces. todo: dynamically allow these to be added to...
 Backbone.myConstants.arSystem = [];
@@ -37,7 +38,7 @@ Backbone.myConstants.extensionDefn.mayRepeat = {url:"http://hl7.org/fhir/questio
 
 Backbone.myConstants.currentCounter = 0;
 
-//a function to return an incrementing counter. Used to generate unique ID's in the forms...
+//a function to return an incrementing counter. Used to generate locally unique ID's in the forms...
 Backbone.myFunctions.getNextCounter = function() {
     return Backbone.myConstants.currentCounter++;
 };
@@ -76,6 +77,14 @@ Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
         return;
     }
 
+    var headers = {};   //the http headers...
+    headers['content-type'] = 'application/json';
+    if (vo.historyId) {
+        headers['content-location'] =  vo.historyId;
+    }
+
+    console.log(headers);
+
     //vlaidate reosurce. This strictly belongs somewhere else - ?model
     var Q = vo.Q;
     //the proxy server will make the correct FHIR call based on the contents of the resource...
@@ -84,10 +93,7 @@ Backbone.listenTo(qDesignerView,'qd:saveNewQ qd:updateQ',function(vo){
     $.ajax (uri,{
         method : 'PUT',
         data : JSON.stringify(Q),
-        headers : {
-            'content-type' : 'application/json'
-            //'content-location' : vo.historyId // - not version aware updates yet...
-        },
+        headers : headers,
         success : function(data){
             MediatorQ.hideWorking();
             alert('Questionnaire updated');
@@ -131,7 +137,7 @@ Backbone.listenTo(questionnaireSelectView,'qSelect:select',function(vo){
 });
 
 //user wishes to create a new Questionnaire
-Backbone.listenTo(questionnaireSelectView,'qlv:newQ',function(){
+Backbone.listenTo(questionnaireListView,'qlv:newQ',function(){
     qDesignerView.init();
 
     qDesignerView.render();
@@ -143,6 +149,7 @@ Backbone.listenTo(questionnaireSelectView,'qlv:newQ',function(){
 //this could be a new form, or editing an existing
 Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
     var questionnaireID = vo.questionnaireID;             //either the id of the template or the form (depending on isNew)
+    var questionnaireVID = vo.questionnaireVID;             //the version specific ID
     var patientID = vo.patientID;
     var isNew = vo.isNew;       //true if this is a new form based on this template
     if (! questionnaireID) {
@@ -160,9 +167,10 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
     var uri = '/api/oneresource/Questionnaire/' + questionnaireID.getLogicalID();
     $.get(uri,function(Q){
 
-        qFillinView.init({Q:Q,questionnaireID:questionnaireID,patientID:patientID,isNew:isNew});
+        qFillinView.init({Q:Q,questionnaireID:questionnaireID,questionnaireVID:questionnaireVID,
+            patientID:patientID,isNew:isNew});
 
-        renderQ.readOnly = false;
+        //renderQ.readOnly = false;
         qFillinView.render();
 
 /*
@@ -182,11 +190,12 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
 
 });
 
-//adding a new form (based on a questionnaire
+//adding or updating a new form (based on a questionnaire
 Backbone.listenTo(qFillinView,'qfv:update',function(vo){
     console.log(vo);
     var questionnaire = vo.questionnaire;       //the completed questionnaire. It will be the template with some answers...
-    var questionnaireID = vo.questionnaireID;
+    var questionnaireID = vo.questionnaireID;   //the logical id of the Q
+    var questionnaireVID = vo.questionnaireVID; //the version specific id of the Q
     var patientID = vo.patientID;
 
     if (! questionnaireID) {
@@ -201,6 +210,7 @@ Backbone.listenTo(qFillinView,'qfv:update',function(vo){
 
     var isNew = vo.isNew;
     var uri = '/api/';
+    var headers = {'content-type' : 'application/json'};
     var vid = "";       //the version ID. If an update  then this needs to be set for version aware updating
 
     var http_method = 'PUT';        //default to a PUT (ie an update)
@@ -209,11 +219,14 @@ Backbone.listenTo(qFillinView,'qfv:update',function(vo){
         //if it's new then the http method is a POST
         http_method = 'POST';
     } else {
-        //otherwise, leave it as a PUT and add the resource ID
+        //otherwise, leave it as a PUT and add the resource ID plus version specific id
         uri += questionnaireID.getLogicalID();
+        if (questionnaireVID) {
+            headers['content-location'] = questionnaireVID;
+        }
     }
 
-    console.log(http_method,uri,questionnaire);
+    console.log(http_method,uri,headers,questionnaire);
 
     //return;
 
@@ -228,10 +241,7 @@ Backbone.listenTo(qFillinView,'qfv:update',function(vo){
     $.ajax (uri,{
         method : http_method,
         data : JSON.stringify(questionnaire),
-        headers : {
-            'content-type' : 'application/json',
-            'content-location' : vid
-        },
+        headers : headers,
         success : function(data){
             console.log(data);
             alert('Questionnaire successfully saved');
@@ -247,6 +257,7 @@ Backbone.listenTo(qFillinView,'qfv:update',function(vo){
         }
     });
 });
+
 
 //user has selected a template or form to design...
 Backbone.listenTo(questionnaireListView,'qlv:design',function(vo){
@@ -276,35 +287,50 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     var id = vo.id;     //form or template
     var entry = _.findWhere(MediatorQ.allQuests.entry,{id:id});
 
-    //todo - for some reason, as soon as this is true the templates will always receive it as true
-    //I cannot figure this out!
+    //get the version specific ID from the entry...
+    var vID = FHIRHelper.getVersionSpecificID(entry);
 
-    //renderQ.readOnly = true;    //will cause controls to be rendered as text...
-    //html = "";
+    //see if this profile references any valuesets...
+    var lstValueSets = renderQ.getValueSets(entry.content.group);
+
+    //... and load them if not already cached...
+    if (lstValueSets.length) {
+        MediatorQ.showWorking();
+        FHIRHelper.loadValueSets(lstValueSets,function(){
+            MediatorQ.hideWorking();
+            MediatorQ.showPreview(id,entry.content);
+        });
+    }
+
+
+
+
+
+});
+
+//show the preview for a single Q
+MediatorQ.showPreview = function(id,Q){
     var ctx = {};
-    renderQ.showGroup(entry.content.group,0,ctx);  //create the questionnaire form
-
-    //console.log(ctx);
-
+    renderQ.showGroup(Q.group,0,ctx);  //create the questionnaire form
     if (ctx.html === "") {
         ctx.html = "Not enough content to preview";
+        return;
     }
 
     //set the banner above the viewer
     $('#qlHeader').show();          //display the header...
     $('#qlShowID').html(id);
-    $('#qlShowDate').html(moment(entry.content.authored).format("dddd, MMMM Do YYYY, h:mm:ss a"));
+    $('#qlShowDate').html(moment(Q.authored).format("dddd, MMMM Do YYYY, h:mm:ss a"));
 
     //render the Q in the preview area...
     $('#displayQ').html(ctx.html);
-
-
-});
-
+};
 
 
 //at the moment we're getting all questionnaires and filtering here because Furore is not filtering on status...
 MediatorQ.getQuests = function(type,callback) {
+
+    //get all q's from the server...
     var searchQuery = {resource:'Questionnaire',params:[]};
     var uri = '/api/generalquery?query='+JSON.stringify(searchQuery);
     //var uri = './samples/soapQuestionnaire.xml';

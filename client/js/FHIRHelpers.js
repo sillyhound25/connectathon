@@ -2,11 +2,74 @@
  *  helpers for FHIR
  */
 
-    /* global Backbone, _ , jQuery, json2xml */
+    /* global Backbone, _ ,$, jQuery, json2xml,console,async */
 
 var FHIRHelper = {};
 
 Backbone.FHIRHelper = FHIRHelper;       //so helpers can be accessed anywhere..
+
+//load an array of valuesets and save in the Backone.myCache cache. Call the callback when all are loaded...
+FHIRHelper.loadValueSets = function(arSets,callback){
+    if (arSets.length > 0) {
+        //if there are valuesets to fetch, then create a set of tasks to fetch them (if not already loaded)
+        var arTasks = [];
+        _.each(arSets,function(vsID){
+            arTasks.push(function(cb){
+                FHIRHelper.loadOneResource('ValueSet',vsID.getLogicalID(),function(){
+                    cb();
+                });
+            });
+        });
+        //now execute the calls asynchronously..
+        async.parallel(arTasks,function(){
+            //at this point all valuesets not already loaded have been...
+            //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> this is the exit point from the function - it's async remember!!!
+            //if (callback) {
+                callback();
+            //}
+        });
+
+
+    } else {
+        callback();
+    }
+
+
+};
+
+
+//If not already in the cache; load a single resource, save in the cache and callback
+FHIRHelper.loadOneResource = function(type,id,callback) {
+    //todo - handle errors...
+    var url = '/api/oneresource/ValueSet/'+id;
+
+    //console.log(url);
+    //if the reference exists in the cache, then we can use it - otherwise we need to retrieve it...
+    if (! Backbone.myCache[url]) {
+        //todo handle error
+        $.get(url,function(data) {
+            Backbone.myCache[url] = data;
+            console.log(data);
+            callback();
+        });
+    } else {
+        callback();
+    }
+};
+
+//get the version specific ID for a resource from a bundle entry...
+FHIRHelper.getVersionSpecificID = function(entry){
+    var vID = "";
+    if (entry && entry.link) {
+        _.each(entry.link,function(lnk){
+            if (lnk.rel==='self') {
+                vID = lnk.href;
+                //console.log(vID);
+            }
+        });
+    }
+    return vID;
+};
 
 //generate a display for a codeableconcept
 FHIRHelper.ccDisplay = function(cc){

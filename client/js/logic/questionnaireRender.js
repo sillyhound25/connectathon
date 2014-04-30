@@ -1,10 +1,12 @@
 
 
-/* global alert, _, $, FHIRHelper, Backbone, QuestionnaireMRView, QuestionnaireQuestionView  */
+/* global alert, _, console, $, FHIRHelper, Backbone, QuestionnaireMRView, QuestionnaireQuestionView  */
 
 
 //these have to be globals for the recursive algorithm to work. todo would like to fix this...
 var renderQ = {mayRepeatViews : {}};    //collection of views manageing repeats
+
+
 
 
 //show a group
@@ -59,6 +61,14 @@ renderQ.showGroup = function(grp,lvl,ctx,parent) {
     ctx.html += Backbone.myTemplates.groupTemplate({group: grp,level:displayLevel,
         mayRepeat : extensions.mayRepeat,groupId : groupId});
 
+    //nested groups are processed before questions in the group...
+    if (grp.group) {
+        lvl++;
+        _.each(grp.group,function(grp1){
+            renderQ.showGroup(grp1,lvl,ctx,grp);
+        });
+    }
+
     if (grp.question) {
 
         ctx.html += "<row>";
@@ -82,12 +92,7 @@ renderQ.showGroup = function(grp,lvl,ctx,parent) {
 
     }
 
-    if (grp.group) {
-        lvl++;
-        _.each(grp.group,function(grp1){
-            renderQ.showGroup(grp1,lvl,ctx,grp);
-        });
-    }
+
 
     //insert a marker div for where to insert the repeat
     if (extensions.mayRepeat) {
@@ -130,11 +135,69 @@ renderQ.showQuestion = function(quest,id,numCol,ctx) {
       //  {question: quest,id:id,code:code,display:display,value:value,readOnly: readOnly,
        //     questID:qID,displayClass:qView.getDisplayClass(),html:qView.getHTML()});
 
-    ctx.html +=  qTemplate(
-        {display:display,value:value,readOnly: readOnly,html:qView.getHTML()});
+
+    //this has to be an async call, as the server might need to resolve the ValueSet reference
+    qView.getHTML(function(html){
+        //console.log(html);
+
+        ctx.html +=  qTemplate(
+           {display:display,value:value,readOnly: readOnly,html:html});
+
+    });
+
+
+   // ctx.html +=  qTemplate(
+     //   {display:display,value:value,readOnly: readOnly,html:qView.getHTML()});
 
    // ctx.html +=  bbTemplates[templateName](
      //   {question: quest,id:id,code:code,display:display,value:value,readOnly: readOnly});
 
 };
 
+
+//get all the valuesets that are references in this questionnaire. These can all be retrieved prior to rendering the questionnaire...
+renderQ.getValueSets = function(group) {
+    var lst = [];
+    //console.log(group);
+    renderQ.getGroup(group,{vs:lst});
+
+    //console.log(lst);
+    return lst;
+
+};
+
+
+renderQ.getGroup = function(grp,ctx) {
+//console.log(grp.group);
+    if (grp.question) {
+        _.each(grp.question,function(quest){
+            renderQ.getQuestion(quest,ctx);
+        });
+    }
+
+    if (grp.group) {
+        //this group has sub-groups
+        _.each(grp.group,function(subGroup){
+            renderQ.getGroup(subGroup,ctx);
+        });
+
+
+    }
+};
+
+renderQ.getQuestion = function(quest,ctx) {
+//console.log(arQuestion)
+   // _//.each(arQuestion,function(quest){
+//console.log(quest.options);
+        if (quest.options) {
+            ctx.vs.push(quest.options.reference);
+            //console.log('x');
+        }
+
+        if (quest.group) {
+            //this question has groups
+            renderQ.getGroup(quest.group,ctx);
+        }
+   // });
+
+};

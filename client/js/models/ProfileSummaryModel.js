@@ -3,9 +3,11 @@
  */
 
 
+/*global Backbone, $ */
+
 //represents a structure.element in the profile (which is the same as a path)...
 //has the same structure as element in the profile...
-ProfileSummaryItemModel = Backbone.Model.extend({
+var ProfileSummaryItemModel = Backbone.Model.extend({
     defaults : {
         path : "",
         min : 0,
@@ -18,9 +20,9 @@ ProfileSummaryItemModel = Backbone.Model.extend({
         content : {},     //the actual JSON represnetation of the profile structure element
         extensions : []     //extensions against this path...
     }
-})
+});
 
-ProfileSummaryItemCollection = Backbone.Collection.extend({
+var ProfileSummaryItemCollection = Backbone.Collection.extend({
     model : ProfileSummaryItemModel
 });
 
@@ -75,7 +77,7 @@ ProfileSummaryModel = Backbone.Model.extend({
                     //if this resource has been cached, then don't need to retrieve it...
                     getStructures(resourceName,Backbone.fhirResourceCache[resourceName],function(){
                         cb();       //and tell async we're done...
-                    })
+                    });
 
                 } else {
 
@@ -359,7 +361,7 @@ ProfileSummaryModel = Backbone.Model.extend({
             //if not, then download it and save in the cache...
             $.get( "/api/profile/"+resourceName+"/FHIR Project", function( data ) {
 
-
+console.log(data);
                 var resourceProfile;
                 $.each(data.entry,function(inx,entry){
                     //>>>>>  assume that the name property of the profile is the same as the resourceName
@@ -368,7 +370,7 @@ ProfileSummaryModel = Backbone.Model.extend({
                         //save resource profile in cache...
                         Backbone.fhirResourceCache[resourceName.toLowerCase()] = resourceProfile;     //the fhir representation of the profile
                     }
-                })
+                });
 
                 var ar = [];
                 if (resourceProfile) {
@@ -378,7 +380,7 @@ ProfileSummaryModel = Backbone.Model.extend({
 
 
                 callback (ar);
-            })
+            });
             //this needs a fhor call...
 
         }

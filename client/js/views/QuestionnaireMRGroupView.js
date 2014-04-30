@@ -2,13 +2,8 @@
  * The view that manages a repeating group
  */
 
-/* global BaseView */
-/* global $ */
-/* global Backbone */
-/* global console */
-/* global MediatorQ */
-/* global renderQ */
-/* global alert */
+/* global BaseView,$ Backbone,console,MediatorQ,renderQ,alert */
+
 var QuestionnaireMRView = BaseView.extend({
 
     initialize : function() {

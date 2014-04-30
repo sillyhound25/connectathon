@@ -6,17 +6,21 @@
  */
 
 
+/*global $,Backbone,alert,profileCollection,ProfileQueryView,ValueSetCollection,ValueSetListView */
+/*global ValueSetDetailView,ProfileCollection,confirm,_,console,ProfileDetailView,ProfileExtensionView */
+/*global ProfileContentView,ProfileTestFormView, ExtensionCollection,ExtensionView,ValueSetSummaryView */
+/*global ProfileSummaryView,ProfileModel,ProfileStructureView, ProfileListView,ProfileSummaryModel,QueryView*/
 
 //add a function to the string prototype to get the resource name from a path...
 
 String.prototype.getResourceNameFromPath = function (){
-    g = this.indexOf('.');
+    var g = this.indexOf('.');
     if (g > -1) {
-        return this.substr(0,g)
+        return this.substr(0,g);
     } else {
         return this.toString();
     }
-}
+};
 
 
 
@@ -29,7 +33,7 @@ Backbone.fhirResourceCache = {};
 Backbone.fhirTestBuilders = [];
 $.get('admin/builders',function(builders){
     Backbone.fhirTestBuilders = builders;
-})
+});
 
 
 
@@ -40,10 +44,10 @@ Mediator.assert = function( outcome, description ) {
     if (!outcome) {
         alert("Assert Error: " + description);
     }
-}
+};
 
 //the list of permissable datatypes in a profile...
-var dataTypeList = ['boolean','code','date','string','integer','Coding','CodeableConcept','Period']
+var dataTypeList = ['boolean','code','date','string','integer','Coding','CodeableConcept','Period'];
 var resourceList = ['Encounter','MedicationAdministration','MedicationPrescription','Medication','Observation','Patient','Practitioner'];
 
 
@@ -65,20 +69,20 @@ var colProfile = new ProfileCollection();
         //see if the existing valueset has been changed...
         var canShowVS = true;
         if (vsDetailView.hasChanged()) {
-            canShowVS = confirm("There are unsaved changes. Are you sure you wish to continue?")
+            canShowVS = confirm("There are unsaved changes. Are you sure you wish to continue?");
         }
         if (canShowVS) {
-            var selectedModel = colVS.findModelByResourceID(vo.id);       //the vs selected in the list view
-            vsDetailView.model = selectedModel;
+            //var selectedModel = colVS.findModelByResourceID(vo.id);       //the vs selected in the list view
+            vsDetailView.model = colVS.findModelByResourceID(vo.id);
             vsDetailView.render();
         }
     });
 
     //the handler when the option to create a new ValueSet is selected
-    Backbone.listenTo(listVS,'vsList:new',function(vo){
+    Backbone.listenTo(listVS,'vsList:new',function(){
         vsDetailView.setNewValueSet();
         vsDetailView.render();
-    })
+    });
 
 //when a valueset is to be deleted
 //todo - the overall logic flow requires review...
@@ -97,7 +101,7 @@ Backbone.listenTo(listVS,'valueSet:delete',function(vo){
             _.each(profiles,function(prof){
                 msg += prof.toJSON().name + " (" + prof.id + ")\n";
 
-            })
+            });
             alert(msg);
             return;
         }
@@ -114,7 +118,7 @@ Backbone.listenTo(listVS,'valueSet:delete',function(vo){
                 error : function(xhr,status,err) {
                     console.log(xhr,status,err);
                     //$('#save_profile_changes').text('Update Profile').attr('disabled',false)
-                    alert('sorry, there was an error deleting the profile ')
+                    alert('sorry, there was an error deleting the profile ');
                 }
             });
 
@@ -122,16 +126,16 @@ Backbone.listenTo(listVS,'valueSet:delete',function(vo){
         }
 
     }
-})
+});
 
 
 
 
     //when a new valueset is added...
-    Backbone.listenTo(vsDetailView,'vsList:added',function(vo){
+    Backbone.listenTo(vsDetailView,'vsList:added',function(){
         Mediator.loadValueSets();
         vsDetailView.render();
-    })
+    });
 
 
 //}
@@ -201,7 +205,7 @@ Backbone.listenTo(listProfiles,'profileList:select',function(vo){
         profileSummaryView.model = selectedModel;
         profileSummaryView.createSummary(function(){
             profileSummaryView.render();            //render the summary. This might be slow if the resource profile needs to be loaded...
-        })
+        });
 
         profileTestFormView.model = selectedModel;
         profileContentView.setModel(selectedModel);     //set the model and render
@@ -215,7 +219,7 @@ Backbone.listenTo(listProfiles,'profileList:select',function(vo){
 });
 
 //creating a new profile
-Backbone.listenTo(listProfiles,'profileList:new',function(vo){
+Backbone.listenTo(listProfiles,'profileList:new',function(){
     $('.nav-tabs a[href="#profileDetailSubTab"]').tab('show');
 
     //the setNewProfile will check is there are unsaved changes, and only return true if there are none,
@@ -234,12 +238,12 @@ Backbone.listenTo(listProfiles,'profileList:new',function(vo){
 
         profileSummaryView.model = m;
 
-        console.log(m.toJSON())
+        console.log(m.toJSON());
         //profileDetailView.model =  m;
 
         profileDetailView.render();
     }
-})
+});
 
 //delete a profile - for this we use the ID rather than the cid
 Backbone.listenTo(listProfiles,'profileList:delete',function(vo){
@@ -255,23 +259,23 @@ Backbone.listenTo(listProfiles,'profileList:delete',function(vo){
             error : function(xhr,status,err) {
                 console.log(xhr,status,err);
                 //$('#save_profile_changes').text('Update Profile').attr('disabled',false)
-                alert('sorry, there was an error deleting the profile ')
+                alert('sorry, there was an error deleting the profile ');
             }
         });
 
     } else {
-        alert("can't find the model with the ID: " + vo.id)
+        alert("can't find the model with the ID: " + vo.id);
     }
 
     profileDetailView.render();
-})
+});
 
 //handler for when a user clicks on an existing extension definition in a profile
 Backbone.listenTo(profileDetailView,'profileDetail:editExtension',function(vo){
-    console.log(vo);
-    var selectedModel = colProfile.findModelByCID(vo.cid);       //the vs selected in the list view
+    //console.log(vo);
+    //var selectedModel = colProfile.findModelByCID(vo.cid);       //the vs selected in the list view
 
-    profileExtensionView.model = selectedModel;
+    profileExtensionView.model = colProfile.findModelByCID(vo.cid);
     profileExtensionView.setCode(vo.code);
     profileExtensionView.render();
 
@@ -281,11 +285,11 @@ Backbone.listenTo(profileDetailView,'profileDetail:editExtension',function(vo){
 Backbone.listenTo(profileDetailView,'profileDetail:addExtension',function(vo){
     console.log(vo);
     //find a model that matches the id. If none, then find one with a cid: of 'new' (ie a new, unsaved profile)
-    var selectedModel = colProfile.findModelByCID(vo.cid); ;       //the profile selected in the list view
+    var selectedModel = colProfile.findModelByCID(vo.cid);     //the profile selected in the list view
 
     Mediator.assert(selectedModel,"No model with an id of '" + vo.id + "' was found");
 
-    console.log(selectedModel)
+    console.log(selectedModel);
 
     profileExtensionView.model = selectedModel;
     profileExtensionView.setCode("");   //an empty code will mean a new extension...
@@ -296,7 +300,7 @@ Backbone.listenTo(profileDetailView,'profileDetail:addExtension',function(vo){
 Backbone.listenTo(profileDetailView,'profileDetail:showVS',function(vo){
 
     valueSetSummaryView.render(vo.uri);
-})
+});
 
 
 //a new profile was added
@@ -312,28 +316,22 @@ Backbone.listenTo(profileDetailView,'profile:added',function(vo){
             profileQueryView.render();  //render the query view (has a list of profiles)
             //todo - might want to find the new profile and render a summary...
 
-
-
-
         },
         error : function() {
-            alert('There was an error loading the Profiles')
+            alert('There was an error loading the Profiles');
         }
     });
-
-    //colProfile.add(vo.model);
-    //listProfiles.render();      //re-display the vi
 });
 
 //an extension in a profile has been updated.
-Backbone.listenTo(profileExtensionView,'profileExtension:updated',function(vo){
+Backbone.listenTo(profileExtensionView,'profileExtension:updated',function(){
     //re-render the profile - the model should already be set...
     profileDetailView.render();
     profileContentView.render();
     profileSummaryView.createSummary(function(){
-        console.log('redn')
+
         profileSummaryView.render();
-    })
+    });
 
 });
 
@@ -343,20 +341,20 @@ Backbone.listenTo(profileExtensionView,'profileExtension:selectedResource',funct
     var sum = new ProfileSummaryModel();
     sum.getPathsForResource(resourceName,function(arPaths){
         vo.callback(arPaths);
-    })
+    });
 
 
-})
+});
 
 
-Backbone.listenTo(profileDetailView,'profile:updated',function(vo){
+Backbone.listenTo(profileDetailView,'profile:updated',function(){
     //re-render the profile - the model should already be set...
     profileDetailView.render();
     profileContentView.render();
     profileSummaryView.createSummary(function(){
-        console.log('redn')
+
         profileSummaryView.render();
-    })
+    });
 });
 
 //a user is modifying a resource path...  (not just slicing)
@@ -366,7 +364,7 @@ Backbone.on('profileSummary:slice',function(vo){
 
     //console.log(selectedProfileModel)
         if (selectedProfileModel) {
-            console.log(vo)
+            //console.log(vo)
             if (vo.type==='ext') {
                 //this is an extensio
                 //todo - changes are not being saved here...
@@ -377,24 +375,24 @@ Backbone.on('profileSummary:slice',function(vo){
             } else {
                 //this is a structure
                 profileStructureView.resourceName = vo.resourceName;
-                profileStructureView.profileModel = selectedProfileModel
+                profileStructureView.profileModel = selectedProfileModel;
                 profileStructureView.model = vo.psiModel;     //this is json structure.element
-                console.log(vo.psiModel)
+                console.log(vo.psiModel);
                 profileStructureView.setType(vo.type);  //the code of the extension is in the path in the summary view...
                 profileStructureView.render();
             }
         } else {
-            alert('No model with the ID ' + vo.profileid + " was found...")
+            alert('No model with the ID ' + vo.profileid + " was found...");
         }
 });
 
 
 //triggered when the 'all extensions' page is shown - re-render the page...
-Backbone.on("extensions:render",function(ev){
+Backbone.on("extensions:render",function(){
 
     extensionView.render();
 
-})
+});
 
 //when a structure.element is altered in the UI but not yet saved......  NOT extensions...
 Backbone.listenTo(profileStructureView,'element:updated',function(vo){
@@ -409,14 +407,14 @@ Backbone.listenTo(profileStructureView,'element:updated',function(vo){
 
     //remove any existing structure with this path...
     var lst = [];   //this will be the new list of elements...
-    _.each(profileJson.structure,function(struc,inx){
+    _.each(profileJson.structure,function(struc){
         if (struc.element[0].path !== vo.element.path) {
             lst.push(struc);
         }
-    })
+    });
 
     //add a new resource (structure)
-    var structure = {name:vo.resourceName,element:[]}
+    var structure = {name:vo.resourceName,element:[]};
     structure.element.push(vo.element);
 
     lst.push(structure);
@@ -424,7 +422,7 @@ Backbone.listenTo(profileStructureView,'element:updated',function(vo){
     profileSummaryView.updatePath(vo.resourceName,vo.element.path);
 
 
-})
+});
 
 
 //extension definitions that were located while parsing profiles
@@ -447,20 +445,20 @@ Mediator.loadProfiles = function(){
             $('#loading').hide();
             _.each(colProfile.models,function(m){
                 //console.log(m.get('vid'));
-            })
+            });
             //console.log(colProfile.length)
             Mediator.hideWorking();
             //console.log(colProfile.models);
             listProfiles.render();      //render the list of valuesets...
             profileQueryView.setProfiles(colProfile);
         },
-        error : function(collection,response,options) {
+        error : function(collection,response) {
             console.log(response);
             alert('There was an error loading the Profiles');
             Mediator.hideWorking();
         }
     });
-}
+};
 
 
 Mediator.loadValueSets = function() {
@@ -471,10 +469,10 @@ Mediator.loadValueSets = function() {
             listVS.render();      //render the list of valuesets...
         },
         error : function() {
-            alert('There was an error loading the ValueSets')
+            alert('There was an error loading the ValueSets - Did the server repsond in time?');
         }
     });
-}
+};
 
 //load the profiles & valuesets...
 Mediator.loadProfiles();
@@ -495,23 +493,23 @@ Mediator.clearProfileWorkareas = function() {
 
     //$('#workAreaContentProfile').html();
 
-}
+};
 
 
 //clear workareas associated with valuesets...
 Mediator.clearValueSetWorkareas = function(){
     vsDetailView.clearView();
-}
+};
 
 
 
 //show/hide the 'working/loading' display...
 Mediator.showWorking = function() {
     $('#loading').show();
-}
+};
 Mediator.hideWorking = function() {
     $('#loading').hide();
-}
+};
 
 //check if the current profile has been altered. If is has, then prompt the user to save or abandon changes...
 
@@ -521,5 +519,7 @@ Mediator.canSelectNewProfile = function() {
         var msg = 'The current profile has been changed. Do you wish to abandon these changes and proceed, or cancel';
         return window.prompt(msg);
 
-    } else return true
-}
+    } else {
+        return true;
+    }
+};

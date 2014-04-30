@@ -6,6 +6,10 @@
  * To change this template use File | Settings | File Templates.
  */
 
+
+    /*global Backbone,$,Handlebars,_,console,alert */
+
+
 var QueryView = Backbone.View.extend({
     events : {
 
@@ -33,14 +37,14 @@ var QueryView = Backbone.View.extend({
                         //move the common parameter names to the top of the list
                         _.each(['name','identifier'],function(paramName){
                             moveToTop(res,paramName);
-                        })
+                        });
 
 
                         $('#query_params').html(template({item:res.searchParam,resourceName:that.resourceName}));
                         return that;
-                    })
+                    });
                 }
-            })
+            });
 
             //move a particular parameter to the top of the list for the users convenience
             function moveToTop(res,paramName) {
@@ -49,7 +53,7 @@ var QueryView = Backbone.View.extend({
                     if (sp.name === paramName) {
                         pos = inx;
                     }
-                })
+                });
                 if (pos > 0){
                     var param = res.searchParam[pos];
                     res.searchParam.splice(pos,1);
@@ -58,7 +62,7 @@ var QueryView = Backbone.View.extend({
             }
 
         },
-        "click #query_execute" : function(ev){
+        "click #query_execute" : function(){
             var that = this;
             //clear the display area...
             $('#query_results').html("");
@@ -74,29 +78,25 @@ var QueryView = Backbone.View.extend({
                     var paramName = $(el).attr('data-code');
                     query.params.push({name:paramName,value:v});
                 }
-            })
+            });
             var queryString = JSON.stringify(query);
 
 
-            console.log(queryString);
-
             $.get('/api/generalquery?query='+queryString,function(json){
-//console.log(json);
-
                 that.resultSet = json;
                 //display a list of the responses...
                 $.each(json.entry,function(inx,res){
                     var templ = _.template("<li><a class='qry_select_result' data-inx = '<%= inx %>' href='#'>Result # <%= inx %></a></li>");
 
                     $('#query_results').append(templ({inx:inx}));
-                })
+                });
 
 
                 //show the results list
                 $('#qry_params_tabview a[href="#qry_tab_results"]').tab('show'); // Select tab by name
 
                 that.showResult(0);
-            })
+            });
 
 
         }
@@ -134,17 +134,17 @@ var QueryView = Backbone.View.extend({
                         res.common = true;
                         //console.log(res)
                     }
-                })
+                });
                 that.$el.html(template(conf));
                 return that;
-            })
+            });
             } else {
-                alert('The conformance statement from the server was either missing, or described no REST end-points')
+                alert('The conformance statement from the server was either missing, or described no REST end-points');
             }
 
 
 
-        })
+        });
     }
 
 });

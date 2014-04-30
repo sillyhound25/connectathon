@@ -6,6 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+    /*global Backbone,$,Handlebars */
 //display the list of valuesets
 var ValueSetListView = Backbone.View.extend({
     events : {
@@ -44,7 +45,7 @@ var ValueSetListView = Backbone.View.extend({
             $.get('templates/listVS.html',function(html){
                 that.template = Handlebars.compile(html);
                 that.draw();
-            })
+            });
         } else {
             this.draw();
         }
@@ -56,4 +57,4 @@ var ValueSetListView = Backbone.View.extend({
         this.$el.html(template({item:this.collection.toJSON()}));
     }
 
-})
+});

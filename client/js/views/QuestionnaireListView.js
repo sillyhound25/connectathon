@@ -4,7 +4,7 @@
  *   - Allows the user to select a patient, view their Q's and create a new form (based on a template)
  */
 
-/*global Backbone, BaseView, Handlebars, moment, $, alert, _ */
+/*global Backbone, BaseView, Handlebars, moment, $, alert, _ ,console*/
 
 var QuestionnaireListView = BaseView.extend({
     initialize : function( ) {
@@ -20,11 +20,21 @@ var QuestionnaireListView = BaseView.extend({
 
         //get the Q name from a Questionnaire resource
         Handlebars.registerHelper('getQName',function(entry){
+            var name = "Unknown";
             try {
-                return entry.content.name.coding[0].display;
+                name =  entry.content.name.coding[0].display;
             } catch (e) {
-                return 'Unnamed Questionnaire';
+                //return 'Unnamed Questionnaire';
             }
+            if (!name) {
+                try {
+                    name = entry.content.name.text;
+                } catch (ex){
+
+                }
+
+            }
+            return name;
         });
 
 
@@ -34,6 +44,11 @@ var QuestionnaireListView = BaseView.extend({
 
         });
 
+        //get version specific ID
+        Handlebars.registerHelper('getVID',function(entry){
+            return Backbone.FHIRHelper.getVersionSpecificID(entry);
+
+        });
 
         //a short template to render a list of patients...
         var listPat = '<ul class="list-unstyled">{{#each entry}}<li>' +
@@ -42,7 +57,8 @@ var QuestionnaireListView = BaseView.extend({
 
         //a short template to render a list of questionnaires for a patient...
         var listQ = '<ul class="list-unstyled">{{#each entry}}<li>' +
-            '<a href="#" class="qlPatientQ" data-id="{{id}}">{{getQName this}} ({{getQDate this}})</a></li>{{/each}}</ul>';
+            '<a href="#" class="qlPatientQ"  data-vid={{getVID this}} data-id="{{id}}">{{getQName this}} ({{getQDate this}})</a></li>{{/each}}</ul>';
+
         listQ += "<div><button class='btn btn-success pull-right' id='qlNewQ'>New Form</button> </div>";
         this.listPatientQTemplate = Handlebars.compile(listQ);
 
@@ -61,12 +77,17 @@ var QuestionnaireListView = BaseView.extend({
         "click .qlOnePatient" : "patientselected",
         "click .qlPatientQ" : "QSelected",
         "click #qlNewQ" : "newForm",
-        "click #qlEdit" : "edit"
+        "click #qlEdit" : "edit",
+        "click #qlNewTemplate" : "newTemplate"
+    },
+    newTemplate : function(){
+        this.trigger("qlv:newQ");
     },
     edit : function() {
         //an existing form is selected for editing
         //console.log(this.currentFormID);
-        this.trigger('qlv:fillin',{questionnaireID:this.currentFormID,patientID : this.selectedPatientID });
+        this.trigger('qlv:fillin',{questionnaireID:this.currentFormID,questionnaireVID:this.currentFormVID,
+            patientID : this.selectedPatientID });
 
         //this.trigger('qlv:edit',{questionnaireID:this.currentFormID});
 
@@ -106,6 +127,11 @@ var QuestionnaireListView = BaseView.extend({
         //console.log(ev.currentTarget);
         var id = $(ev.currentTarget).attr('data-id');
         this.currentFormID = id;          //save the id of the form so it is available for the edit (see above)
+        this.currentFormVID = $(ev.currentTarget).attr('data-vid');     //the version specific id
+
+        console.log(this.currentFormVID);
+
+        //this.currentFormVersionId = Backbone.FHIRHelper.
         this.trigger('qlv:view',{id:id});
 
 
@@ -200,6 +226,7 @@ var QuestionnaireListView = BaseView.extend({
             //get the display title - not all Q;s have a name...
             _.each(that.model.entry,function(ent){
                 ent.meta = {};
+                ent.meta.versionID = Backbone.FHIRHelper.getVersionSpecificID(ent);     //the version specific ID
                 if (ent.content.name) {
                     //console.log(ent.content.name);
                     ent.meta.name = Backbone.FHIRHelper.ccDisplay(ent.content.name);

@@ -6,6 +6,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
+    /*global Backbone,$,console,alert,_,moment,ValueSetModel,Handlebars */
+
 var ValueSetDetailView =  Backbone.View.extend({
     events : {
         "click .define_concept_del" : "removeConcept",
@@ -22,7 +24,9 @@ var ValueSetDetailView =  Backbone.View.extend({
         //has the underlying model changed?
         if (this.model) {
             return this.model.get('isDirty');
-        } else return false;
+        } else {
+            return false;
+        }
 
     },
     fieldChanged : function(ev) {
@@ -67,9 +71,9 @@ var ValueSetDetailView =  Backbone.View.extend({
         //remove a concept from the list of concepts...
         var codeToRemove = ev.currentTarget.getAttribute('data-code');
         var vs = this.model.get('content'); //get the valueset
-        var newConceptList = _.reject(vs.define.concept,function(con) {return con.code===codeToRemove});
+        var newConceptList = _.reject(vs.define.concept,function(con) {return con.code===codeToRemove;});
         vs.define.concept = newConceptList;
-        this.model.set({'content':vs})
+        this.model.set({'content':vs});
         this.render();
 
     },
@@ -85,7 +89,7 @@ var ValueSetDetailView =  Backbone.View.extend({
         newContent.experimental = true;
         newContent.extensible = false;
         newContent.date = moment().format();
-        newContent.define = {system:'fhir.orionhealth.com'}
+        newContent.define = {system:'fhir.orionhealth.com'};
         this.model = new ValueSetModel();
         this.model.set({'content':newContent});
         this.model.set({'isDirty':false});
@@ -99,7 +103,7 @@ var ValueSetDetailView =  Backbone.View.extend({
             $.get('templates/oneVS.html',function(html){
                 that.template = Handlebars.compile(html);
                 that.draw();
-            })
+            });
         } else {
             this.draw();
         }

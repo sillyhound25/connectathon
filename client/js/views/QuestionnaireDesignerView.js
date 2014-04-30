@@ -20,6 +20,8 @@ var QuestionnaireDesignerView = BaseView.extend({
         //need to get any updates from the header. This will update the shared model directly..
         this.headerView.update();
 
+        console.log(this.model);
+
         if (! window.confirm("Are you sure you wish to update this Questionnaire?")) {
             return;
         }
@@ -38,6 +40,8 @@ var QuestionnaireDesignerView = BaseView.extend({
         //then it is a new questionnaire.
         //at the moment I susyect there is a memory leak (viewRef is not being cleared) but I'm leaving that so I can
         //experiment with chrome memory checking...
+
+        //todo scan the code systems and add to the list of options so they will render...
         var that = this;
         if (entry) {
             this.model = entry.content;

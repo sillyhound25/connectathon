@@ -45,7 +45,8 @@ var QuestionnaireFillinView = BaseView.extend({
 
             if (confirm('Please confirm that you wish to update this form: id='+this.questionnaireID)) {
                 this.trigger('qfv:update',{patientID:this.patientID,questionnaire:this.model,
-                    status:status,isNew:false,questionnaireID : this.questionnaireID});
+                    status:status,isNew:false,questionnaireID : this.questionnaireID,
+                    questionnaireVID : this.questionnaireVID});
             }
         }
 
@@ -62,6 +63,7 @@ var QuestionnaireFillinView = BaseView.extend({
         this.model = vo.Q;      //the model is a clone of the entire questionnaire (including header)
         this.isNew = vo.isNew;
         this.questionnaireID = vo.questionnaireID;
+        this.questionnaireVID = vo.questionnaireVID;
         this.patientID = vo.patientID;
 
         /*jshint unused:true, eqnull:true */
