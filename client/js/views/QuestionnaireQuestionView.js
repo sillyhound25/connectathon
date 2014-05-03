@@ -36,9 +36,20 @@ var QuestionnaireQuestionView = BaseView.extend({
 
         if (quest.options){
             //todo - at the moment the assumption is that the reference is to a valueset on the same server...
-            //todo - note that at this point, we assume the valueset is cached...
+            //todo - note that at this point, we assume the valueset is cached... - see the mediator for details...
             var valueSetID = quest.options.reference.getLogicalID();
-            var url = '/api/oneresource/ValueSet/'+valueSetID;
+
+            //todo - need to check for relative and contained valuesets
+            //need to get the valueset form whereever it is stored...
+            var url = '/api/oneresourceabsolute/'+ btoa(quest.options.reference);
+
+           // $.get(uri,function(data){
+
+             //   console.log(data);
+
+           // });
+
+            //var url = '/api/oneresource/ValueSet/'+valueSetID;
 
             that.generateControl(callback,Backbone.myCache[url]);
             /*

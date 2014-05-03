@@ -13,9 +13,11 @@ FHIRHelper.loadValueSets = function(arSets,callback){
     if (arSets.length > 0) {
         //if there are valuesets to fetch, then create a set of tasks to fetch them (if not already loaded)
         var arTasks = [];
-        _.each(arSets,function(vsID){
+
+        _.each(arSets,function(uri){
             arTasks.push(function(cb){
-                FHIRHelper.loadOneResource('ValueSet',vsID.getLogicalID(),function(){
+                //FHIRHelper.loadOneResource('ValueSet',vsID.getLogicalID(),function(){
+                FHIRHelper.loadOneResource(uri,function(){
                     cb();
                 });
             });
@@ -39,9 +41,12 @@ FHIRHelper.loadValueSets = function(arSets,callback){
 
 
 //If not already in the cache; load a single resource, save in the cache and callback
-FHIRHelper.loadOneResource = function(type,id,callback) {
+FHIRHelper.loadOneResource = function(uri,callback) {
+    //FHIRHelper.loadOneResource = function(type,id,callback) {
     //todo - handle errors...
-    var url = '/api/oneresource/ValueSet/'+id;
+    var url = '/api/oneresourceabsolute/'+ btoa(uri);
+
+    //var url = '/api/oneresource/ValueSet/'+id;
 
     //console.log(url);
     //if the reference exists in the cache, then we can use it - otherwise we need to retrieve it...

@@ -9,6 +9,9 @@
 var QuestionnaireListView = BaseView.extend({
     initialize : function( ) {
 
+
+
+
         //get the patient name from a Patient resource
         Handlebars.registerHelper('getPName',function(entry){
             try {
@@ -81,6 +84,7 @@ var QuestionnaireListView = BaseView.extend({
         "click #qlNewTemplate" : "newTemplate"
     },
     newTemplate : function(){
+        //a new questionnaire form
         this.trigger("qlv:newQ");
     },
     edit : function() {

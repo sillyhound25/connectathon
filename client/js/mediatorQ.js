@@ -167,7 +167,7 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
     $.get(uri,function(Q){
 
         //see if this profile references any valuesets...
-        var lstValueSets = renderQ.getValueSets(Q.group);
+        var lstValueSets = renderQ.getValueSets(Q.group);       //this is a list of all the valueset URI's
 
         //... and load them if not already cached...
         if (lstValueSets.length) {
@@ -365,6 +365,7 @@ MediatorQ.getQuests = function(type,callback) {
     function filterBundle(bundle,callback) {
         //this is only needed until the server handles status query
 
+        if (bundle && bundle.entry) {
         $.each(bundle.entry,function(inx,ent){
 
             ent.include = (arStatus.indexOf(ent.content.status) > -1);
@@ -379,6 +380,9 @@ MediatorQ.getQuests = function(type,callback) {
         });
 
         callback(bundle);
+        } else {
+            callback({entry:[]});
+        }
     }
 
 

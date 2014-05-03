@@ -9,6 +9,8 @@ var async = require('async');
 var _ = require('underscore');
 var fs = require('fs');
 
+var atob = require('atob');
+
 //FHIR sample modules
 var Common = require('./server/common.js');
 var Patient = require('./server/patient.js');
@@ -84,6 +86,8 @@ app.get('/admin/builders', function(req, res) {
     res.json(mSample.builderList());
 });
 
+
+
 //get a single resource
 app.get('/api/oneresource/:type/:id', function(req, res) {
     var url = req.params.type + "/" + req.params.id;
@@ -93,6 +97,22 @@ app.get('/api/oneresource/:type/:id', function(req, res) {
 
 
     performQueryAgainstFHIRServer(url,null,function(resp,statusCode){
+        res.json(resp,statusCode);
+    });
+});
+
+
+//get a single resource, specifying the absolute URI
+app.get('/api/oneresourceabsolute/:url', function(req, res) {
+
+
+    var url = atob(req.params.url);
+    console.log(url);
+
+    //console.log(req.params.server);
+
+
+    performAbsoluteQueryAgainstFHIRServer(url,function(resp,statusCode){
         res.json(resp,statusCode);
     });
 });
@@ -477,10 +497,11 @@ function performDeleteAgainstFHIRServer(query,server,callback){
     });
 }
 
-function performQueryAgainstFHIRServer(query,server,callback,specifiedUrl){
+function performQueryAgainstFHIRServer(query,server,callback){
 
     //default the server URL...
-    var fhirServer = specifiedUrl || FHIRServerUrl;
+    var fhirServer =  FHIRServerUrl;
+
     if (server) {
         fhirServer = server;
     }
@@ -549,6 +570,83 @@ function performQueryAgainstFHIRServer(query,server,callback,specifiedUrl){
 
     });
 }
+
+
+
+function performAbsoluteQueryAgainstFHIRServer(uri,callback){
+
+    //default the server URL...
+ //   var fhirServer = specifiedUrl || FHIRServerUrl;
+   // if (server) {
+     //   fhirServer = server;
+   // }
+
+    var options = {
+        method:'GET',
+        headers : {
+            "Accept" : 'application/json+fhir'
+        },
+        uri : uri,
+        timeout : 10000
+    };
+
+
+    console.log('query options',options);
+    if (GlobalOptions.showRequestURI) {
+        console.log(options.uri);
+    }
+
+
+    request(options,function(error,response,body){
+
+        //  if (error) {
+        //     throw error;
+        //  }
+
+        if (! response){
+            //this happens when the server times out...
+            callback({'error':'Server timed out'},504);
+            return;
+        }
+
+        if (response.statusCode !== 200) {
+            console.log('Error: ' + body);
+
+            // throw 'error';
+        }
+
+        var json = {};
+        try {
+            json = JSON.parse(body);
+        } catch (ex) {
+            json = {'error': body};
+        }
+
+
+
+        var resp = {};
+        resp.uri = options.uri;
+
+        resp.id = response.headers.location;
+        resp.statusCode = response.statusCode;
+        resp.body = body;
+        resp.headers = response.headers;
+        resp.error = error;
+        resp.options = options;
+        resp.time = new Date();
+
+
+        var collection = mongoDbCon.collection('GETLog');
+        collection.insert(resp, {w:1}, function(err, result) {
+            callback(json,response.statusCode);
+        });
+
+        //callback(json,response.statusCode);
+
+    });
+}
+
+
 /*
 function performQueryAgainstFHIRServerXML(query,callback){
     var options = {
