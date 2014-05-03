@@ -80,7 +80,8 @@ var QuestionnaireFillinView = BaseView.extend({
             var quest = qView.model;    //the node in the questionnaire object
             var v = $('#'+ID).val();
             if (v) {
-                console.log(quest.name.coding[0].code,v);
+
+                //console.log(quest.name.coding[0].code,v);
                 //todo - check for answerFormat
                 quest.answerString = v;
             }

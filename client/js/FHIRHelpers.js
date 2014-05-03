@@ -51,7 +51,10 @@ FHIRHelper.loadOneResource = function(type,id,callback) {
             Backbone.myCache[url] = data;
             console.log(data);
             callback();
-        });
+        }).fail(function(){
+                console.log('Failed to retrieve '+ type + " "+id);
+                callback();
+            });
     } else {
         callback();
     }

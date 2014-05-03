@@ -51,8 +51,8 @@ var QuestionnaireListView = BaseView.extend({
         });
 
         //a short template to render a list of patients...
-        var listPat = '<ul class="list-unstyled">{{#each entry}}<li>' +
-            '<a href="#" class="qlOnePatient" data-id="{{id}}">{{getPName this}}</a></li>{{/each}}</ul>';
+        var listPat = '<ul class="list-group">{{#each entry}}<li class="list-group-item">' +
+            '<a href="#" class="qlOnePatient " data-id="{{id}}">{{getPName this}}</a><div>{{id}}</div></li>{{/each}}</ul>';
         this.listPatientTemplate = Handlebars.compile(listPat);
 
         //a short template to render a list of questionnaires for a patient...
@@ -147,7 +147,7 @@ var QuestionnaireListView = BaseView.extend({
 
         //get all the questionnaires where the subject is this patient
         var query = {resource:'Questionnaire',params : [{name:'subject',value:this.selectedPatientID.getLogicalID()}]};
-        //console.log(query)
+        console.log(query);
         var queryString = JSON.stringify(query);
 
         //console.log(queryString);

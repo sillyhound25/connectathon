@@ -35,7 +35,6 @@ Backbone.myConstants.extensionDefn.answerFormat = {url:"http://hl7.org/fhir/ques
 Backbone.myConstants.extensionDefn.numCol = {url:"http://fhir.orionhealth.com/questionnaire#numcol",type:'valueInteger'};
 Backbone.myConstants.extensionDefn.mayRepeat = {url:"http://hl7.org/fhir/questionnaire-extensions#mayRepeat",type:'valueBoolean'};
 
-
 Backbone.myConstants.currentCounter = 0;
 
 //a function to return an incrementing counter. Used to generate locally unique ID's in the forms...
@@ -157,7 +156,7 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
         return;
     }
     if (! patientID) {
-        alert('patientID is null. Cannot create template');
+        alert('patientID is null. Cannot create form');
         return;
     }
     console.log(questionnaireID,patientID,isNew);
@@ -167,28 +166,35 @@ Backbone.listenTo(questionnaireListView,'qlv:fillin',function(vo){
     var uri = '/api/oneresource/Questionnaire/' + questionnaireID.getLogicalID();
     $.get(uri,function(Q){
 
-        qFillinView.init({Q:Q,questionnaireID:questionnaireID,questionnaireVID:questionnaireVID,
-            patientID:patientID,isNew:isNew});
+        //see if this profile references any valuesets...
+        var lstValueSets = renderQ.getValueSets(Q.group);
 
-        //renderQ.readOnly = false;
-        qFillinView.render();
+        //... and load them if not already cached...
+        if (lstValueSets.length) {
+            MediatorQ.showWorking();
+            FHIRHelper.loadValueSets(lstValueSets,function(){
+                MediatorQ.hideWorking();
+                MediatorQ.showFillin (Q,questionnaireID,questionnaireVID,patientID,isNew);
+            });
+        } else {
+            MediatorQ.showFillin (Q,questionnaireID,questionnaireVID,patientID,isNew);
+        }
 
-/*
-        //var form = Q.group;     //the root element of the form
-
-        //navView is the navigational view - the overall layout of the form to assist the user completing it...
-        //todo - move to a component of fillinview
-
-        navView.model = Q;      //the navView has the questionnaire as a model
-        navView.html = "";      //todo - should have a proper thing
-        navView.html += "<h5>Document Navigation</h5>";
-
-        navView.render();
-*/
-        Backbone.myFunctions.showMainTab('newFormTab');
     });
 
 });
+
+//show the form fillin view.
+MediatorQ.showFillin = function(Q,questionnaireID,questionnaireVID,patientID,isNew) {
+    qFillinView.init({Q:Q,questionnaireID:questionnaireID,questionnaireVID:questionnaireVID,
+        patientID:patientID,isNew:isNew});
+
+    qFillinView.render();
+
+    Backbone.myFunctions.showMainTab('newFormTab');
+};
+
+
 
 //adding or updating a new form (based on a questionnaire
 Backbone.listenTo(qFillinView,'qfv:update',function(vo){
@@ -300,6 +306,8 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
             MediatorQ.hideWorking();
             MediatorQ.showPreview(id,entry.content);
         });
+    } else {
+        MediatorQ.showPreview(id,entry.content);
     }
 
 

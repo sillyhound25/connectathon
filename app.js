@@ -88,10 +88,16 @@ app.get('/admin/builders', function(req, res) {
 app.get('/api/oneresource/:type/:id', function(req, res) {
     var url = req.params.type + "/" + req.params.id;
     console.log(url);
+
+    //console.log(req.params.server);
+
+
     performQueryAgainstFHIRServer(url,null,function(resp,statusCode){
         res.json(resp,statusCode);
     });
 });
+
+
 
 //delete a single resource...
 app.del('/api/:type/:id', function(req, res) {
@@ -359,6 +365,8 @@ function postToFHIRServer(resource,callback) {
         }
 
         var resp = {};
+        resp.uri = options.uri;
+        resp.savedResource = resource;
         resp.id = response.headers.location;
         resp.statusCode = response.statusCode;
         resp.body = body;
@@ -366,6 +374,7 @@ function postToFHIRServer(resource,callback) {
         resp.error = error;
         resp.options = options;
         resp.time = new Date();
+        resp.savedResource = resource;
 
         var collection = mongoDbCon.collection('POSTLog');
         collection.insert(resp, {w:1}, function(err, result) {
@@ -397,6 +406,9 @@ function putToFHIRServer(resource,id,vid,callback) {
 
     request(options,function(error,response,body){
         var resp = {};
+        resp.uri = options.uri;
+        resp.savedResource = resource;
+
         resp.id = response.headers.location;
         resp.statusCode = response.statusCode;
         resp.body = body;
@@ -404,6 +416,7 @@ function putToFHIRServer(resource,id,vid,callback) {
         resp.error = error;
         resp.options = options;
         resp.time = new Date();
+
 
         //console.log(resp);
         if (error){
@@ -464,10 +477,10 @@ function performDeleteAgainstFHIRServer(query,server,callback){
     });
 }
 
-function performQueryAgainstFHIRServer(query,server,callback){
+function performQueryAgainstFHIRServer(query,server,callback,specifiedUrl){
 
     //default the server URL...
-    var fhirServer = FHIRServerUrl;
+    var fhirServer = specifiedUrl || FHIRServerUrl;
     if (server) {
         fhirServer = server;
     }
@@ -482,7 +495,7 @@ function performQueryAgainstFHIRServer(query,server,callback){
     };
 
 
-    console.log('options',options);
+    console.log('query options',options);
     if (GlobalOptions.showRequestURI) {
         console.log(options.uri);
     }
@@ -516,6 +529,8 @@ function performQueryAgainstFHIRServer(query,server,callback){
 
 
         var resp = {};
+        resp.uri = options.uri;
+
         resp.id = response.headers.location;
         resp.statusCode = response.statusCode;
         resp.body = body;
