@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-/* global $,BaseView, Backbone, console, Handlebars */
+/* global $,BaseView, Backbone, console, Handlebars,_ */
 
 
 var QuestionnaireQuestionView = BaseView.extend({
@@ -77,6 +77,7 @@ var QuestionnaireQuestionView = BaseView.extend({
 
     generateControl : function(callback,data) {
         var quest = this.model;
+        var that = this;
         var extensions =Backbone.FHIRHelper.getAllExtensions(quest);
         var vo = {'value': quest.answerString,questID:this.questID,placeHolder:quest.text,displayClass:this.getDisplayClass()};
         var html = this.textTemplate(vo);   //default is a string
@@ -85,6 +86,9 @@ var QuestionnaireQuestionView = BaseView.extend({
             //if there's data then render as a list...
             var html1 = "";
             var numberOfOptions = data.define.concept.length;
+
+
+            console.log(quest.answerString);
 
 
             //if there are more than 5 in the list, make it an autocomplete
@@ -100,16 +104,20 @@ var QuestionnaireQuestionView = BaseView.extend({
                 if (numberOfOptions > 8) {
                     klass='makeAC';
                 }
-                html1 = "<select class='form-control "+klass+"'>";
+                html1 = "<select id='"+that.questID +"' class='form-control "+klass+"'>";
                 html1 += "<option value=''></option>";
+
                 $.each(data.define.concept,function(inx,item){
-                    html1 += "<option value='"+item.code + "'>"+item.display+"</option>";
+                    html1 += "<option value='"+item.code + "'";
+
+                    if (quest.answerString && quest.answerString == item.code) {
+                        html1 += " selected = 'selected' ";
+                    }
+
+
+                    html1 += ">"+item.display+"</option>";
                 });
             }
-
-
-
-
 
 
             html1 += "</select>";

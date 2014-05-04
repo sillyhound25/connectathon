@@ -622,8 +622,6 @@ function performAbsoluteQueryAgainstFHIRServer(uri,callback){
             json = {'error': body};
         }
 
-
-
         var resp = {};
         resp.uri = options.uri;
 
@@ -634,11 +632,13 @@ function performAbsoluteQueryAgainstFHIRServer(uri,callback){
         resp.error = error;
         resp.options = options;
         resp.time = new Date();
+        resp.content = json;
 
 
         var collection = mongoDbCon.collection('GETLog');
         collection.insert(resp, {w:1}, function(err, result) {
             callback(json,response.statusCode);
+            //callback(resp,response.statusCode);
         });
 
         //callback(json,response.statusCode);

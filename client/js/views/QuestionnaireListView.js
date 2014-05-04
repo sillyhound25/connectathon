@@ -40,7 +40,7 @@ var QuestionnaireListView = BaseView.extend({
 
         //get a short questionnaire date -
         Handlebars.registerHelper('getQDate',function(entry){
-            return moment(entry.content.authored).format('HH:MM');
+            return moment(entry.content.authored).format('dddd, MMMM Do YYYY, h:mm a');
 
         });
 
@@ -57,7 +57,7 @@ var QuestionnaireListView = BaseView.extend({
 
         //a short template to render a list of questionnaires for a patient...
         var listQ = '<ul class="list-group">{{#each entry}}<li class="list-group-item">' +
-            '<a href="#" class="qlPatientQ"  data-vid={{getVID this}} data-id="{{id}}">{{getQDate this}} {{getQName this}}</a></li>{{/each}}</ul>';
+            '<a href="#" class="qlPatientQ"  data-vid={{getVID this}} data-id="{{id}}"><div>{{getQDate this}}</div> {{getQName this}}</a></li>{{/each}}</ul>';
 
         listQ += "<div><button class='btn btn-success pull-right' id='qlNewQ'>New Form</button> </div>";
         this.listPatientQTemplate = Handlebars.compile(listQ);
@@ -155,6 +155,9 @@ var QuestionnaireListView = BaseView.extend({
         //console.log(ev.currentTarget);
         this.selectedPatientID = $(ev.currentTarget).attr('data-id');
 
+        this.getPatientQuestionnaires();
+
+/*
         //console.log(this.selectedPatientID);
 
         //get all the questionnaires where the subject is this patient
@@ -179,6 +182,35 @@ var QuestionnaireListView = BaseView.extend({
                 $('#qlPatientQuestionnaires').html("<h4>Current Forms</h4>" + that.listPatientQTemplate(bundle));
             }
         });
+        */
+    },
+    getPatientQuestionnaires : function() {
+        var that=this;
+        //console.log(this.selectedPatientID);
+
+        //get all the questionnaires where the subject is this patient
+        // var query = {resource:'Questionnaire',params : [{name:'subject',value:this.selectedPatientID.getLogicalID()}]};
+        var query = {resource:'Questionnaire',params : [{name:'subject',value:this.selectedPatientID}]};
+        console.log(query);
+        var queryString = JSON.stringify(query);
+
+        //console.log(queryString);
+        $.get('/api/generalquery?query='+queryString,function(bundle){
+            //if there was an error, then we'll get back an operation outcome...
+            if (bundle.resourceType.toLowerCase()==='operationoutcome') {
+                var err = "There was an error:\n ";
+                if (bundle.issue && bundle.issue.length > 0) {
+                    bundle.issue.forEach(function(issue){
+                        err += issue.details + "\n";
+                    });
+                }
+                alert(err);
+            } else {
+                //render the list existing questionnaires. There are handlers that allow them to be displayed
+                $('#qlPatientQuestionnaires').html("<h4>Current Forms</h4>" + that.listPatientQTemplate(bundle));
+            }
+        });
+
     },
     selectPatient : function() {
         //the user has entered a patient name. Find the matching patients on the server and render in a list.

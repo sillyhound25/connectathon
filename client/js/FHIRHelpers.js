@@ -25,10 +25,12 @@ FHIRHelper.loadValueSets = function(arSets,callback){
             });
         });
         //now execute the calls asynchronously..
+        console.log('executing queries...')
         async.parallel(arTasks,function(){
             //at this point all valuesets not already loaded have been...
             //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> this is the exit point from the function - it's async remember!!!
-            //if (callback) {
+            //if (callback)
+            console.log('done');
                 callback();
             //}
         });
@@ -57,14 +59,17 @@ FHIRHelper.loadOneResource = function(uri,callback) {
         if (! Backbone.myCache[url]) {
             //todo handle error
             $.get(url,function(data) {
-                Backbone.myCache[url] = data;
+                Backbone.myCache[url] = data;   //the actual resource
                 console.log(data);
                 callback();
             }).fail(function(){
-                    console.log('Failed to retrieve '+ atob(url));
-                    callback();
-                });
+                console.log('Failed to retrieve '+ atob(url));
+                callback();
+            });
+        } else {
+            callback();
         }
+        //
     } else {
         callback();
     }

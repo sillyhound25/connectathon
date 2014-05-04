@@ -251,6 +251,9 @@ Backbone.listenTo(qFillinView,'qfv:update',function(vo){
         success : function(data){
             console.log(data);
             alert('Questionnaire successfully saved');
+
+            //questionnaireListView.getPatientQuestionnaires();
+
         },
         error : function(xhr,status,err){
             alert('There was an error saving the questionnaire. View the console.');
@@ -291,6 +294,17 @@ Backbone.listenTo(questionnaireListView,'qlv:design',function(vo){
 //user has selected a template or form to view...
 Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     var id = vo.id;     //form or template
+
+
+    var url = '/api/oneresourceabsolute/'+ btoa(id);
+
+
+    $.get(url,function(data,status,xhr) {
+
+        console.log(data);
+        //console.log(xhr.getAllResponseHeaders());
+    });
+
 /*
     var url = '/api/oneresourceabsolute/'+ btoa(id);
 
