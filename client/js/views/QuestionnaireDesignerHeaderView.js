@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-    /*global BaseView, moment, $, Backbone */
+    /*global BaseView, moment, $, _, Backbone */
 
 var QuestionnaireDesignerHeaderView = BaseView.extend({
     initialize : function() {
@@ -63,6 +63,35 @@ var QuestionnaireDesignerHeaderView = BaseView.extend({
             //console.log(that.model);
 
 
+            //ensure that we have all the system values as selectize won;t show it...
+            _.each(that.model.name.coding,function(coding){
+                Backbone.FHIRHelper.addToSystem(coding.system);
+                /*
+                var fnd = false;
+                _.each(Backbone.myConstants.arSystem,function(mysys){
+                    if (mysys.value === coding.system) {fnd=true;}
+                });
+                if (! fnd) {
+                    //console.log('add')
+                    Backbone.myConstants.arSystem.push({label:coding.system,value:coding.system});
+                }
+ */
+            });
+
+            //if there is an existing system, it needs to be added to Backbone.myConstants.arSystem
+            //or selectize won't show it
+/*
+            if ()
+            var fnd = false;
+            _.each(Backbone.myConstants.arSystem,function(mysys){
+                if (mysys.value === )
+                Backbone.myConstants.arSystem.push({label:'http://loinc.org',value:'http://loinc.org/'});
+
+            });
+             */
+
+
+
             $('#qdh_system').selectize({
                 //delimiter: ',',
                 persist: false,
@@ -72,6 +101,7 @@ var QuestionnaireDesignerHeaderView = BaseView.extend({
                 labelField: "label",
                 valueField: "value"
             });
+
             //that.$el.html('here!');
             //console.log(that.model)
         });

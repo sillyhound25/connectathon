@@ -44,7 +44,7 @@ var QuestionnaireDesignerView = BaseView.extend({
         //todo scan the code systems and add to the list of options so they will render...
         var that = this;
         if (entry) {
-            this.model = entry.content;
+            this.model = entry.content;     //this is the Q model
 
             if (! this.model.group) {
                 //It's legal for a questionnaire not to have a top level group, but the designer expects one...

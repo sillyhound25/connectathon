@@ -129,8 +129,6 @@ Backbone.listenTo(listVS,'valueSet:delete',function(vo){
 });
 
 
-
-
     //when a new valueset is added...
     Backbone.listenTo(vsDetailView,'vsList:added',function(){
         Mediator.loadValueSets();

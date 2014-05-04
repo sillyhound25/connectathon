@@ -11,6 +11,8 @@ Backbone.FHIRHelper = FHIRHelper;       //so helpers can be accessed anywhere..
 //load an array of valuesets and save in the Backone.myCache cache. Call the callback when all are loaded...
 FHIRHelper.loadValueSets = function(arSets,callback){
     if (arSets.length > 0) {
+        console.log(arSets);
+
         //if there are valuesets to fetch, then create a set of tasks to fetch them (if not already loaded)
         var arTasks = [];
 
@@ -44,25 +46,29 @@ FHIRHelper.loadValueSets = function(arSets,callback){
 FHIRHelper.loadOneResource = function(uri,callback) {
     //FHIRHelper.loadOneResource = function(type,id,callback) {
     //todo - handle errors...
-    var url = '/api/oneresourceabsolute/'+ btoa(uri);
+    //if this is an internal reference to a contained valueset, then don't try to retrieve...
+    if (uri.substr(0,1) !== '#') {
+        var url = '/api/oneresourceabsolute/'+ btoa(uri);
+        console.log(uri + " " + url);
+        //var url = '/api/oneresource/ValueSet/'+id;
 
-    //var url = '/api/oneresource/ValueSet/'+id;
-
-    //console.log(url);
-    //if the reference exists in the cache, then we can use it - otherwise we need to retrieve it...
-    if (! Backbone.myCache[url]) {
-        //todo handle error
-        $.get(url,function(data) {
-            Backbone.myCache[url] = data;
-            console.log(data);
-            callback();
-        }).fail(function(){
-                console.log('Failed to retrieve '+ type + " "+id);
+        //console.log(url);
+        //if the reference exists in the cache, then we can use it - otherwise we need to retrieve it...
+        if (! Backbone.myCache[url]) {
+            //todo handle error
+            $.get(url,function(data) {
+                Backbone.myCache[url] = data;
+                console.log(data);
                 callback();
-            });
+            }).fail(function(){
+                    console.log('Failed to retrieve '+ atob(url));
+                    callback();
+                });
+        }
     } else {
         callback();
     }
+
 };
 
 //get the version specific ID for a resource from a bundle entry...
@@ -131,6 +137,19 @@ FHIRHelper.groupDisplay = function(group){
 
 
     return display;
+};
+
+
+FHIRHelper.addToSystem = function(system) {
+    //add this code to teh system if it doesn't exist...
+    var fnd = false;
+    _.each(Backbone.myConstants.arSystem,function(mysys){
+        if (mysys.value === system) {fnd=true;}
+    });
+    if (! fnd) {
+        //console.log('add')
+        Backbone.myConstants.arSystem.push({label:system,value:system});
+    }
 };
 
 

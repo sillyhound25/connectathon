@@ -148,6 +148,9 @@ var QuestionnaireFillinView = BaseView.extend({
 
 
             var ctx = {};       //the context object...
+
+            ctx.Q = that.model;     //pass a reference into the Questionnaire. This is needed for contained resources...
+
             renderQ.showGroup(that.model.group,0,ctx);  //create the questionnaire form
 
             //setup the nav control...
@@ -164,6 +167,8 @@ var QuestionnaireFillinView = BaseView.extend({
 
             $('#qfMain').html(ctx.html);
 
+
+
             //iterate through the 'mayRepeats' and set the container. We have to do this after the fillinView has rendered.
             //todo This is not quite right - the container needs to be after any previous repeats...
             $.each(that.mayRepeatViews,function(inx,view) {
@@ -173,8 +178,6 @@ var QuestionnaireFillinView = BaseView.extend({
 
             //now associate the individual question views with their DOM element.
             //todo an enhancement might be to build a render tree rather than building HTML manually
-
-
             $.each(that.questionViews,function(inx,qView) {
                 var qEl = $('#'+ qView.questID);
                 qView.setElement(qEl);
@@ -184,6 +187,8 @@ var QuestionnaireFillinView = BaseView.extend({
             //console.log(renderQ.mayRepeatViews);
 
 
+            //convert any select lists with the class 'makeAC' into an autocomplete control...
+            $('.makeAC').selectize();
 
         });
 

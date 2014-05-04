@@ -55,19 +55,19 @@ var QuestionnaireListView = BaseView.extend({
 
         //a short template to render a list of patients...
         var listPat = '<ul class="list-group">{{#each entry}}<li class="list-group-item">' +
-            '<a href="#" class="qlOnePatient " data-id="{{id}}">{{getPName this}}</a><div>{{id}}</div></li>{{/each}}</ul>';
+            '<a href="#" class="qlOnePatient " data-id="{{id}}" title="{{id}}">{{getPName this}}</a></li>{{/each}}</ul>';
         this.listPatientTemplate = Handlebars.compile(listPat);
 
         //a short template to render a list of questionnaires for a patient...
-        var listQ = '<ul class="list-unstyled">{{#each entry}}<li>' +
-            '<a href="#" class="qlPatientQ"  data-vid={{getVID this}} data-id="{{id}}">{{getQName this}} ({{getQDate this}})</a></li>{{/each}}</ul>';
+        var listQ = '<ul class="list-group">{{#each entry}}<li class="list-group-item">' +
+            '<a href="#" class="qlPatientQ"  data-vid={{getVID this}} data-id="{{id}}">{{getQDate this}} {{getQName this}}</a></li>{{/each}}</ul>';
 
         listQ += "<div><button class='btn btn-success pull-right' id='qlNewQ'>New Form</button> </div>";
         this.listPatientQTemplate = Handlebars.compile(listQ);
 
         //list the templates in the modal select box...
         var listTemplates = '<ul class="list-unstyled">{{#each entry}}{{#if include}}<div>' +
-            '<input type="radio" name="qlTemplateNew" value="{{id}}"/> ' +
+            '<input type="radio" name="qlTemplateNew" value="{{id}}" class="mTemplate"/> ' +
             '{{getQName this}}</div>{{/if}}</li>{{/each}}</ul>';
         this.listTemplates = Handlebars.compile(listTemplates);
 
@@ -83,6 +83,7 @@ var QuestionnaireListView = BaseView.extend({
         "click #qlEdit" : "edit",
         "click #qlNewTemplate" : "newTemplate"
     },
+
     newTemplate : function(){
         //a new questionnaire form
         this.trigger("qlv:newQ");
@@ -106,6 +107,15 @@ var QuestionnaireListView = BaseView.extend({
         $('#modalDialogDiv').html(genDialogFrame);      //write the frame to the DOM
         //will render the templates as a list. Note that the model is a bundle of Q's
         $('#modal-content').html(this.listTemplates(this.model));
+
+        //a handler for when a tmeplate is selected to show a preview (the text)
+        $('.mTemplate').on('click',function(ev){
+            var v = $(ev.currentTarget).val();
+            //todo - need to activate the preview alert('c' + v);
+        });
+
+
+
         $('#generalDlgTitle').html('Please select the template to use');
 
         //this.model = the bundle of templates...
@@ -118,6 +128,7 @@ var QuestionnaireListView = BaseView.extend({
             //that.newTemplateSelected();
             var qID =$("input[name='qlTemplateNew']:checked").val();
 
+            console.log('trigger qlv:fillin',qID,that.selectedPatientID)
             //will cause the selected template to be displayed by fillin
             that.trigger('qlv:fillin',{questionnaireID:qID,patientID:that.selectedPatientID,isNew:true});
 

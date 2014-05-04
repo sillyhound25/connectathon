@@ -29,21 +29,18 @@
         <label class="col-sm-1 control-label">Name</label>
         <!-- This is spectacularly clumsy...-->
         {{#with name}}
+            <div class="col-sm-5">
+                <input type='text' class="form-control" id="qdh_text" placeholder="Form Name" value='{{text}}'/>
+            </div>
+            {{#each coding}}
 
-                {{#each coding}}
-                    <div class="col-sm-5">
-                        <input type='text' class="form-control" id="qdh_text" placeholder="Form Name" value='{{display}}'/>
-                    </div>
-                    <div class="col-sm-2">
-                        <div><input type='text' class="form-control" id="qdh_code" placeholder="Code" value='{{code}}'/></div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div><input type='text' class="form-control" id="qdh_system" placeholder="System" value='{{system}}'/></div>
-                    </div>
-                {{/each}}
-
-
-
+                <div class="col-sm-2">
+                    <div><input type='text' class="form-control" id="qdh_code" placeholder="Code" value='{{code}}'/></div>
+                </div>
+                <div class="col-sm-3">
+                    <div><input type='text' class="form-control" id="qdh_system" placeholder="System" value='{{system}}'/></div>
+                </div>
+            {{/each}}
 
         {{/with}}
     </div>

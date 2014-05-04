@@ -32,6 +32,7 @@ var QuestionnaireQuestionView = BaseView.extend({
 
     getHTML : function(callback) {
         var that = this;
+        var Q = this.Q;
         var quest = this.model;
 
         if (quest.options){
@@ -41,31 +42,32 @@ var QuestionnaireQuestionView = BaseView.extend({
 
             //todo - need to check for relative and contained valuesets
             //need to get the valueset form whereever it is stored...
-            var url = '/api/oneresourceabsolute/'+ btoa(quest.options.reference);
 
-           // $.get(uri,function(data){
 
-             //   console.log(data);
 
-           // });
-
-            //var url = '/api/oneresource/ValueSet/'+valueSetID;
-
-            that.generateControl(callback,Backbone.myCache[url]);
-            /*
-            //console.log(url);
-            //if the reference exists in the cache, then we can use it - otherwise we need to retrieve it...
-            if (! Backbone.myCache[url]) {
-                //todo handle error
-                $.get(url,function(data) {
-                    Backbone.myCache[url] = data;
-                    console.log(data);
-                    that.generateControl(callback,data);
+            //this is a contained valueset (SCTT 2006 Psychosocial))
+            if (quest.options.reference.substr(0,1) === '#') {
+                //this is an internal valueset
+                var internalId = quest.options.reference.substr(1);
+                var vs;
+                console.log(internalId,Q);
+                _.each(Q.contained,function(res){
+                    if (res.id === internalId) {
+                        vs = res;
+                    }
                 });
+                if (vs) {
+                    that.generateControl(callback,vs);
+                }
+
             } else {
+                //this is an external valueset...
+                var url = '/api/oneresourceabsolute/'+ btoa(quest.options.reference);
                 that.generateControl(callback,Backbone.myCache[url]);
             }
-            */
+
+
+
 
         } else {
             that.generateControl(callback);
@@ -79,14 +81,37 @@ var QuestionnaireQuestionView = BaseView.extend({
         var vo = {'value': quest.answerString,questID:this.questID,placeHolder:quest.text,displayClass:this.getDisplayClass()};
         var html = this.textTemplate(vo);   //default is a string
 
-        if (data) {
+        if (data && data.define && data.define.concept) {
             //if there's data then render as a list...
-            //todo - change to an autocomplete. The calling app will need to attach the A/C control via the class attribute
-            //todo - this code should probably be in a fhirhelper
-            var html1 = "<select class='form-control'>";
-            $.each(data.define.concept,function(inx,item){
-                html1 += "<option value='"+item.code + "'>"+item.display+"</option>";
-            });
+            var html1 = "";
+            var numberOfOptions = data.define.concept.length;
+
+
+            //if there are more than 5 in the list, make it an autocomplete
+            var klass = '';
+
+            if (numberOfOptions < 4) {
+                //if less that 4 then render as radios
+                $.each(data.define.concept,function(inx,item){
+                    html1 +=  " <div><input type='radio' value='"+item.code + "'/> "+item.display + "</div>";
+                });
+            } else {
+                //if more than 8 then use an autocomplete, otherwise an ordinary dropdown...
+                if (numberOfOptions > 8) {
+                    klass='makeAC';
+                }
+                html1 = "<select class='form-control "+klass+"'>";
+                html1 += "<option value=''></option>";
+                $.each(data.define.concept,function(inx,item){
+                    html1 += "<option value='"+item.code + "'>"+item.display+"</option>";
+                });
+            }
+
+
+
+
+
+
             html1 += "</select>";
             //console.log(quest,html1);
             callback( html1);

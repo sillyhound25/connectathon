@@ -310,10 +310,6 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
         MediatorQ.showPreview(id,entry.content);
     }
 
-
-
-
-
 });
 
 //show the preview for a single Q

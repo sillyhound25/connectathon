@@ -172,6 +172,11 @@ var QuestionnaireDesignerQuestionView = BaseView.extend({
                 $('#'+answerFormatElement).val(answerFormat);
             }
 
+            //check that the system is present in the lust of systems
+            _.each(clone.name.coding,function(coding){
+                Backbone.FHIRHelper.addToSystem(coding.system);
+            });
+
             $('.qdq_system').selectize({
                 persist: true,
                 maxItems: 1,

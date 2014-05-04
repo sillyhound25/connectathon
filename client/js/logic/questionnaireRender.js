@@ -124,6 +124,8 @@ renderQ.showQuestion = function(quest,id,numCol,ctx) {
     var qTemplate = bbTemplates[templateName];
 
     var qView = new QuestionnaireQuestionView();
+    qView.Q = ctx.Q;    //need the Questionnaire respurce to resolve contined valuesets...
+
     //var qID= 'questID' + renderQ.questCtr++;      //get the next counter and increment
     var qID= 'questID' + Backbone.myFunctions.getNextCounter();
     qView.questID = qID;
@@ -161,7 +163,7 @@ renderQ.getValueSets = function(group) {
     //console.log(group);
     renderQ.getGroup(group,{vs:lst});
 
-    //console.log(lst);
+    console.log(lst);
     return lst;
 
 };
@@ -193,6 +195,16 @@ renderQ.getQuestion = function(quest,ctx) {
             ctx.vs.push(quest.options.reference);
             //console.log('x');
         }
+
+        //check that the system for any existing answers exists in
+
+/*
+    _.each(Backbone.myConstants.arSystem,function(mysys){
+        if (mysys.value === )
+            Backbone.myConstants.arSystem.push({label:'http://loinc.org',value:'http://loinc.org/'});
+
+    });
+*/
 
         if (quest.group) {
             //this question has groups
