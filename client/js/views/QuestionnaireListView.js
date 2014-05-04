@@ -9,9 +9,6 @@
 var QuestionnaireListView = BaseView.extend({
     initialize : function( ) {
 
-
-
-
         //get the patient name from a Patient resource
         Handlebars.registerHelper('getPName',function(entry){
             try {
@@ -128,7 +125,7 @@ var QuestionnaireListView = BaseView.extend({
             //that.newTemplateSelected();
             var qID =$("input[name='qlTemplateNew']:checked").val();
 
-            console.log('trigger qlv:fillin',qID,that.selectedPatientID)
+            console.log('trigger qlv:fillin',qID,that.selectedPatientID);
             //will cause the selected template to be displayed by fillin
             that.trigger('qlv:fillin',{questionnaireID:qID,patientID:that.selectedPatientID,isNew:true});
 
@@ -161,7 +158,8 @@ var QuestionnaireListView = BaseView.extend({
         //console.log(this.selectedPatientID);
 
         //get all the questionnaires where the subject is this patient
-        var query = {resource:'Questionnaire',params : [{name:'subject',value:this.selectedPatientID.getLogicalID()}]};
+       // var query = {resource:'Questionnaire',params : [{name:'subject',value:this.selectedPatientID.getLogicalID()}]};
+        var query = {resource:'Questionnaire',params : [{name:'subject',value:this.selectedPatientID}]};
         console.log(query);
         var queryString = JSON.stringify(query);
 

@@ -291,7 +291,57 @@ Backbone.listenTo(questionnaireListView,'qlv:design',function(vo){
 //user has selected a template or form to view...
 Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
     var id = vo.id;     //form or template
+/*
+    var url = '/api/oneresourceabsolute/'+ btoa(id);
+
+
+    $.get(url,function(Q,status,xhr) {
+
+        console.log(Q);
+        console.log(xhr.getResponseHeader("content-location"));
+
+
+
+        //get the version specific ID from the entry...
+        //var vID = FHIRHelper.getVersionSpecificID(entry);
+
+        //see if this profile references any valuesets...
+        var lstValueSets = renderQ.getValueSets(Q.group);
+
+        //... and load them if not already cached...
+        if (lstValueSets.length) {
+            MediatorQ.showWorking();
+            FHIRHelper.loadValueSets(lstValueSets,function(){
+                MediatorQ.hideWorking();
+                MediatorQ.showPreview(id,Q);
+            });
+        } else {
+            MediatorQ.showPreview(id,Q);
+        }
+
+
+
+
+
+    }).fail(function(){
+            alert('Error retrieving the Qestionnaire: ' + id);
+    });
+
+
+    return;
+*/
+    console.log(MediatorQ.allQuests.entry,id);
     var entry = _.findWhere(MediatorQ.allQuests.entry,{id:id});
+
+
+
+    if (!entry){
+        alert("Can't find the Questionnaire with the ID: "+id);
+        return;
+    }
+
+
+
 
     //get the version specific ID from the entry...
     var vID = FHIRHelper.getVersionSpecificID(entry);
