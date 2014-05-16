@@ -3,7 +3,9 @@
  "serverOptions" :[
     {"FHIRServerUrl":"http://spark.furore.com/fhir/"},
     {"FHIRServerUrl":"http://hisappakl/blaze/fhirDEP/"},
+    {"FHIRServerUrl":"https://open-api.fhir.me/"},
     {"FHIRServerUrl":"http://fhir.healthintersections.com.au/open/"},
     {"FHIRServerUrl":"https://his-medicomp-gateway.orionhealth.com/blaze/fhir/"}
  ]
 }
+

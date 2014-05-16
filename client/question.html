@@ -203,7 +203,7 @@
         MediatorQ.showWorking();
         MediatorQ.getQuests('template',function(bundle){
             MediatorQ.hideWorking();
-            //console.log(bundle)
+            console.log(bundle)
             questionnaireListView.model = bundle;
             questionnaireListView.render();
         })

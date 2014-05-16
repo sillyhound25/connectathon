@@ -11,11 +11,34 @@ var QuestionnaireListView = BaseView.extend({
 
         //get the patient name from a Patient resource
         Handlebars.registerHelper('getPName',function(entry){
-            try {
-                return entry.content.name[0].text;
-            } catch (e){
-                return 'unknown name';
+            var name;
+            if (entry && entry.content && entry.content.name && entry.content.name.length > 0) {
+                try {
+                    name =  entry.content.name[0].text;
+                } catch (e){
+                    return 'unknown name';
+                }
+                //console.log(name,entry.content.name[0]);
+                if ( name === "" || name === undefined) {
+                    name = "";
+                    //console.log('x')
+                    _.each(entry.content.name[0].given,function(g){
+                        //console.log(g)
+                        name += g + " ";
+                    });
+                    _.each(entry.content.name[0].family,function(f){
+                        name += f + " ";
+                    });
+
+                }
+
+                return name;
+            } else {
+                return "Unknown Patient";
             }
+
+
+
         });
 
         //get the Q name from a Questionnaire resource

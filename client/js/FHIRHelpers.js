@@ -51,7 +51,7 @@ FHIRHelper.loadOneResource = function(uri,callback) {
     //if this is an internal reference to a contained valueset, then don't try to retrieve...
     if (uri.substr(0,1) !== '#') {
         var url = '/api/oneresourceabsolute/'+ btoa(uri);
-        console.log(uri + " " + url);
+        //console.log(uri + " " + url);
         //var url = '/api/oneresource/ValueSet/'+id;
 
         //console.log(url);
@@ -60,7 +60,7 @@ FHIRHelper.loadOneResource = function(uri,callback) {
             //todo handle error
             $.get(url,function(data) {
                 Backbone.myCache[url] = data;   //the actual resource
-                console.log(data);
+                //console.log(data);
                 callback();
             }).fail(function(){
                 console.log('Failed to retrieve '+ atob(url));

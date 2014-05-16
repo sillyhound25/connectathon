@@ -33,6 +33,13 @@ var QuestionnaireQuestionView = BaseView.extend({
     getHTML : function(callback) {
         var that = this;
         var Q = this.Q;
+
+        if (!Q ) {
+            console.log("no Questionnaire");
+        } else {
+            console.log("Q assigned");
+        }
+
         var quest = this.model;
 
         if (quest.options){
@@ -88,7 +95,7 @@ var QuestionnaireQuestionView = BaseView.extend({
             var numberOfOptions = data.define.concept.length;
 
 
-            console.log(quest.answerString);
+            //console.log(quest.answerString);
 
 
             //if there are more than 5 in the list, make it an autocomplete

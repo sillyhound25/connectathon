@@ -298,9 +298,7 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
 
     var url = '/api/oneresourceabsolute/'+ btoa(id);
 
-
     $.get(url,function(data,status,xhr) {
-
         console.log(data);
         //console.log(xhr.getAllResponseHeaders());
     });
@@ -379,6 +377,7 @@ Backbone.listenTo(questionnaireListView,'qlv:view',function(vo){
 //show the preview for a single Q
 MediatorQ.showPreview = function(id,Q){
     var ctx = {};
+    ctx.Q = Q;
     renderQ.showGroup(Q.group,0,ctx);  //create the questionnaire form
     if (ctx.html === "") {
         ctx.html = "Not enough content to preview";
@@ -399,7 +398,7 @@ MediatorQ.showPreview = function(id,Q){
 MediatorQ.getQuests = function(type,callback) {
 
     //get all q's from the server...
-    var searchQuery = {resource:'Questionnaire',params:[]};
+    var searchQuery = {resource:'Questionnaire',params:[{name:'_count',value:50}]};
     var uri = '/api/generalquery?query='+JSON.stringify(searchQuery);
     //var uri = './samples/soapQuestionnaire.xml';
     var arStatus;
