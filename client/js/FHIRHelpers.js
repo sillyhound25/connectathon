@@ -63,7 +63,7 @@ FHIRHelper.loadOneResource = function(uri,callback) {
                 //console.log(data);
                 callback();
             }).fail(function(){
-                console.log('Failed to retrieve '+ atob(url));
+                console.log('Failed to retrieve '+ myAtob(url));
                 callback();
             });
         } else {

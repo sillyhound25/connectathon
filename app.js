@@ -9,8 +9,10 @@ var async = require('async');
 var _ = require('underscore');
 var fs = require('fs');
 
-var atob = require('atob');
+var myAtob = require('atob');
 
+
+var Logger = require('./server/logger.js');
 //FHIR sample modules
 var Common = require('./server/common.js');
 var Patient = require('./server/patient.js');
@@ -24,11 +26,12 @@ var mSample = require('./server/serverSample.js');  //used to generate sample me
 
 //var app = module.exports = express.createServer();
 var app = express.createServer();
+Logger.addRoutes(app);
 
 var FHIRCoreRegistry = 'http://spark.furore.com/fhir/';
 
 //test data for pandas
-var pandasService = require('./server/pandasService.js');
+//var pandasService = require('./server/pandasService.js');
 
 //----------- note that the config file will overwrite these values!!!!
 //var FHIRServerUrl = 'http://hisappakl/blaze/fhir/';
@@ -53,15 +56,16 @@ fs.readFile('config.json',function(err,contents){
 
 
 app.configure(function(){
-  app.use(express.bodyParser());
+  //app.use(express.bodyParser());
+    //console.log('bp')
   //app.use(express.methodOverride());
-  app.use(app.router);
+  //app.use(app.router);
   app.use(express.static(__dirname + '/client'));
 });
 
+//app.use(express.bodyParser());
 
 var GlobalOptions = {showRequestURI:true};
-
 
 var MongoClient = require('mongodb').MongoClient, Server = require('mongodb').Server;
 
@@ -71,6 +75,9 @@ MongoClient.connect("mongodb://localhost:27017/fhirLog", function(err, mongoDb) 
     if(!err) {
         console.log("Connection to fhirLog established");
         mongoDbCon = mongoDb;
+        Logger.setDbCon(mongoDbCon);
+    } else {
+        console.log("Unable to connect to MongoDB");
     }
 });
 
@@ -82,7 +89,6 @@ app.get('/admin/config', function(req, res) {
 
 //get the list of resource builders...
 app.get('/admin/builders', function(req, res) {
-
     res.json(mSample.builderList());
 });
 
@@ -106,7 +112,7 @@ app.get('/api/oneresource/:type/:id', function(req, res) {
 app.get('/api/oneresourceabsolute/:url', function(req, res) {
 
 
-    var url = atob(req.params.url);
+    var url = myAtob(req.params.url);
     console.log(url);
 
     //console.log(req.params.server);
@@ -228,17 +234,31 @@ app.get('/api/conformance', function(req, res){
 //update a resource (the resource type is inside the resource
 app.put('/api/:id', function(req, res){
     var resourceID = req.params.id;
-    var resource = req.body;
     console.log('PUT to ' + resourceID);
-    var vid = req.headers['content-location'];
-//console.log(req.headers);
-    putToFHIRServer(resource,resourceID,vid,function(resp){
-        resp.content = resource;
-        logResource(resource,function(){
-            //resp.statusCode
-            res.json(resp,resp.statusCode);
+    console.log(req.headers['content-type'])
+
+    var resource = "";//req.body;
+
+    req.addListener("data", function(data) {
+        resource += data;
+    });
+
+    req.addListener("end", function() {
+        console.log(resource);
+
+        var vid = req.headers['content-location'];
+        console.log(vid,resource);
+        putToFHIRServer(JSON.parse(resource),resourceID,vid,function(resp){
+            resp.content = resource;
+           // logResource(resource,function(){
+                //resp.statusCode
+                res.json(resp,resp.statusCode);
+           // });
         });
     });
+
+
+
 
 });
 
@@ -274,30 +294,46 @@ app.get('/api/valueset/id/:id', function(req, res){
 //the resource name is in the resource. todo - change
 app.post('/api', function(req, res){
     //var vsID = req.params.id;
-    var resource = req.body;
+    var resource = "";//req.body;
+
+    req.addListener("data", function(data) {
+        resource += data;
+    });
+
+    req.addListener("end", function() {
+        postToFHIRServer(JSON.parse(resource),function(resp){
+            resp.content = resource;
+
+            //logResource(resource,function(){
+                res.json(resp,resp.statusCode);
+            //});
+        });
+    });
 
     //console.log('saving',resource)
 
 
-    postToFHIRServer(resource,function(resp){
-        resp.content = resource;
 
-        logResource(resource,function(){
-            res.json(resp,resp.statusCode);
-        });
-    });
 });
 
 
-//update a valueset
+//update a valueset - todo this should be depreciated but need client change
 app.put('/api/valueset/:id', function(req, res){
     var vsID = req.params.id;
-    var resource = req.body;
+    var resource = "";//req.body;
 
-    putToFHIRServer(resource,vsID,function(resp){
-        resp.content = resource;
-        res.json(resp);
+    req.addListener("data", function(data) {
+        resource += data;
     });
+    req.addListener("end", function(data) {
+        putToFHIRServer(resource,vsID,function(resp){
+            resp.content = resource;
+            res.json(resp);
+        });
+    });
+
+
+
 
 });
 
@@ -305,9 +341,18 @@ app.put('/api/valueset/:id', function(req, res){
 app.get('/api/valueset/:publisher', function(req, res){
     var publisher = req.params.publisher;
 
+
+    var query = 'ValueSet?publisher='+publisher;
+    performQueryAgainstFHIRServer(query,null,function(resp){
+        console.log('resp=',resp);
+        //res.json({content:resp,statusCode:resp.statusCode});
+        res.json(resp);
+    });
+
+    /*
     request(getOptions(FHIRServerUrl+ 'ValueSet?publisher='+publisher),function(error,response,body){
         var resp1={};
-        console.log(response);
+       // console.log(response);
         resp1.id = response.headers.location;
         resp1.statusCode = response.statusCode;
         try {
@@ -322,7 +367,7 @@ app.get('/api/valueset/:publisher', function(req, res){
         res.json(resp);
 
     });
-
+*/
 });
 
 //gets all the resources for a patient...
@@ -381,10 +426,11 @@ function postToFHIRServer(resource,callback) {
         //console.log(body)
 
         if (response.statusCode !== 201) {
-            console.log(error,body);
+            console.log('error',error,body);
         }
 
         var resp = {};
+        resp.method='POST'
         resp.uri = options.uri;
         resp.savedResource = resource;
         resp.id = response.headers.location;
@@ -396,10 +442,10 @@ function postToFHIRServer(resource,callback) {
         resp.time = new Date();
         resp.savedResource = resource;
 
-        var collection = mongoDbCon.collection('POSTLog');
+        var collection = mongoDbCon.collection('RESTLog');
         collection.insert(resp, {w:1}, function(err, result) {
             //callback(resp);
-            var collection = mongoDbCon.collection('POSTLog');
+            var collection = mongoDbCon.collection('RESTLog');
             collection.insert(resp, {w:1}, function(err, result) {
                 callback(resp);
             });
@@ -426,6 +472,7 @@ function putToFHIRServer(resource,id,vid,callback) {
 
     request(options,function(error,response,body){
         var resp = {};
+        resp.method='PUT';
         resp.uri = options.uri;
         resp.savedResource = resource;
 
@@ -443,7 +490,7 @@ function putToFHIRServer(resource,id,vid,callback) {
             console.log(body);
         }
 
-        var collection = mongoDbCon.collection('PUTLog');
+        var collection = mongoDbCon.collection('RESTLog');
         collection.insert(resp, {w:1}, function(err, result) {
             callback(resp);
         });
@@ -475,6 +522,7 @@ function performDeleteAgainstFHIRServer(query,server,callback){
         }
 
         var resp = {};
+        resp.method='DELETE';
         resp.id = response.headers.location;
         resp.statusCode = response.statusCode;
         resp.body = body;
@@ -490,7 +538,7 @@ function performDeleteAgainstFHIRServer(query,server,callback){
             json = {'error': body};
         }
 
-        var collection = mongoDbCon.collection('POSTLog');
+        var collection = mongoDbCon.collection('RESTLog');
         collection.insert(resp, {w:1}, function(err, result) {
             callback(json,response.statusCode);
         });
@@ -551,7 +599,7 @@ function performQueryAgainstFHIRServer(query,server,callback){
 
         var resp = {};
         resp.uri = options.uri;
-
+        resp.method='GET';
         resp.id = response.headers.location;
         resp.statusCode = response.statusCode;
         resp.body = body;
@@ -561,7 +609,7 @@ function performQueryAgainstFHIRServer(query,server,callback){
         resp.time = new Date();
 
 
-        var collection = mongoDbCon.collection('GETLog');
+        var collection = mongoDbCon.collection('RESTLog');
         collection.insert(resp, {w:1}, function(err, result) {
             callback(json,response.statusCode);
         });
@@ -624,7 +672,7 @@ function performAbsoluteQueryAgainstFHIRServer(uri,callback){
 
         var resp = {};
         resp.uri = options.uri;
-
+        resp.method = 'GET';
         resp.id = response.headers.location;
         resp.statusCode = response.statusCode;
         resp.body = body;
@@ -635,7 +683,7 @@ function performAbsoluteQueryAgainstFHIRServer(uri,callback){
         resp.content = json;
 
 
-        var collection = mongoDbCon.collection('GETLog');
+        var collection = mongoDbCon.collection('RESTLog');
         collection.insert(resp, {w:1}, function(err, result) {
             callback(json,response.statusCode);
             //callback(resp,response.statusCode);
@@ -840,7 +888,7 @@ app.post('/api/createSamples', function(req, res){
 });
 
 
-
+/*
 //----------- pandas routines ----------------------
 app.get('/pandas/makeMedsJson', function(req, res) {
     pandasService.getPandasSample(function(data){
@@ -880,6 +928,8 @@ app.get('/pandas/patientFlags/time/:time?', function(req, res) {
     });
 
 });
+
+*/
 
 //----------------------------------
 
