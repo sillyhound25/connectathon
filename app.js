@@ -87,13 +87,6 @@ app.get('/admin/config', function(req, res) {
     res.json(config);
 });
 
-//get the list of resource builders...
-app.get('/admin/builders', function(req, res) {
-    res.json(mSample.builderList());
-});
-
-
-
 //get a single resource
 app.get('/api/oneresource/:type/:id', function(req, res) {
     var url = req.params.type + "/" + req.params.id;
@@ -122,7 +115,6 @@ app.get('/api/oneresourceabsolute/:url', function(req, res) {
         res.json(resp,statusCode);
     });
 });
-
 
 
 //delete a single resource...
@@ -235,7 +227,7 @@ app.get('/api/conformance', function(req, res){
 app.put('/api/:id', function(req, res){
     var resourceID = req.params.id;
     console.log('PUT to ' + resourceID);
-    console.log(req.headers['content-type'])
+    console.log(req.headers['content-type']);
 
     var resource = "";//req.body;
 
@@ -382,6 +374,20 @@ app.get('/api/patient/:patientID', function(req, res){
 
 });
 
+
+
+
+//get the list of resource builders...
+app.get('/admin/builders', function(req, res) {
+    res.json(mSample.builderList());
+});
+
+
+
+
+
+
+
 function logResource(resource,callback){
     var fileName = "./resourceBackup/"+resource.resourceType+ '-' + new Date().getTime() + '.json';
     fs.writeFile(fileName,JSON.stringify(resource), function(err) {
@@ -430,7 +436,7 @@ function postToFHIRServer(resource,callback) {
         }
 
         var resp = {};
-        resp.method='POST'
+        resp.method='POST';
         resp.uri = options.uri;
         resp.savedResource = resource;
         resp.id = response.headers.location;
@@ -444,11 +450,15 @@ function postToFHIRServer(resource,callback) {
 
         var collection = mongoDbCon.collection('RESTLog');
         collection.insert(resp, {w:1}, function(err, result) {
+
             //callback(resp);
-            var collection = mongoDbCon.collection('RESTLog');
-            collection.insert(resp, {w:1}, function(err, result) {
-                callback(resp);
-            });
+           // var collection = mongoDbCon.collection('RESTLog');
+            //collection.insert(resp, {w:1}, function(err, result) {
+            if (result && result.length >0) {
+                resp.logId = result[0]._id;
+            }
+            callback(resp);
+           // });
 
         });
 
@@ -492,6 +502,10 @@ function putToFHIRServer(resource,id,vid,callback) {
 
         var collection = mongoDbCon.collection('RESTLog');
         collection.insert(resp, {w:1}, function(err, result) {
+            //console.log(result);
+            if (result && result.length >0) {
+                resp.logId = result[0]._id;
+            }
             callback(resp);
         });
     });
@@ -564,7 +578,7 @@ function performQueryAgainstFHIRServer(query,server,callback){
     };
 
 
-    console.log('query options',options);
+    //console.log('query options',options);
     if (GlobalOptions.showRequestURI) {
         console.log(options.uri);
     }
@@ -596,7 +610,6 @@ function performQueryAgainstFHIRServer(query,server,callback){
         }
 
 
-
         var resp = {};
         resp.uri = options.uri;
         resp.method='GET';
@@ -608,9 +621,9 @@ function performQueryAgainstFHIRServer(query,server,callback){
         resp.options = options;
         resp.time = new Date();
 
-
         var collection = mongoDbCon.collection('RESTLog');
         collection.insert(resp, {w:1}, function(err, result) {
+
             callback(json,response.statusCode);
         });
 

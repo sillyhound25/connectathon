@@ -16,13 +16,13 @@ exports.addRoutes = function(app){
         var ar = [];
         var cursor = collection.find();
         //cursor.sort(fields).limit(n).skip(m).
-        cursor.sort({time:1}).each(function(err,doc){
+        cursor.sort({time:-1}).each(function(err,doc){
             //console.log(err,doc);
             if (doc){
                 var item = {time:doc.time,method:doc.method,uri:doc.uri,statusCode:doc.statusCode,id:doc._id};
                 if (doc.statusCode >= 300) {
                     //if there was an error, then add additional items...
-                    item.body = doc.body;       //what the server send back
+                    item.body = JSON.parse(doc.body);       //what the server send back
                     item.resource = doc.savedResource;  //what we were trying to save (for a POST/PUT)
                 }
                 ar.push(item);
