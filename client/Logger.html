@@ -18,46 +18,122 @@
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/selectize.bootstrap3.css">
 
+    <style>
+        .fixedHeight {
+            overflow: auto;height:200px
+        }
+    </style>
 </head>
 <body style="padding: 8px">
 <h1>Logger</h1>
 
-<div id="lstLog"></div>
+
+<div id="lstLog" class="fixedHeight"></div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h5>Summary</h5>
+        <div id="detailSumry"></div>
+    </div>
+    <div class="col-md-4">
+        <h5>Sent Headers</h5>
+        <div id="sendHeaders"></div>
+    </div>
+    <div class="col-md-4">
+        <h5>Receive Headers</h5>
+        <div id="receiveHeaders"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <textarea rows=10 class="form-control" id="logSendBody"></textarea>
+    </div>
+    <div class="col-md-6">
+        <textarea rows=10 class="form-control" id="logReceiveBody"></textarea>
+    </div>
+</div>
+
 
 <script>
     $(document).ready(function(){
+        var global = {};
+        global.logShowHeaders = Handlebars.compile($('#logShowHeaders').html());
+        global.logShowDetailSummary = Handlebars.compile($('#logShowDetailSummary').html());
 
 
         Handlebars.registerHelper('myDate',function(daString) {
-            var s = "";
-            var formatStr = "YYYY-MM-DD:HH:mm z";
-            return moment(daString).format(formatStr);
+            //var s = "";
+            //var formatStr = "YYYY-MM-DD:HH:mm z";
+            return moment(daString).format("YYYY-MM-DD:HH:mm z");
         });
 
 
         $.get("/admin/log/summary",function(data){
             console.log(data);
 
-            var template = Handlebars.compile($('#saveButtonTemplate').html())
+            var template = Handlebars.compile($('#logSummary').html())
             $('#lstLog').html(template({items:data}));
+
+
+            $('.summary').on('click',function(ev){
+                var id = $(ev.currentTarget).attr('data-id');
+                console.log(id)
+
+                $.get("/admin/log/detail/"+id,function(logEntry){
+                    console.log(logEntry);
+                    var body = JSON.parse(logEntry.body);
+
+                    var sendBody = JSON.parse(logEntry.options.body);
+
+                    $('#logSendBody').val(JSON.stringify(sendBody,null,2));
+                    $('#logReceiveBody').val(JSON.stringify(body,null,2));
+
+                    $('#detailSumry').html(global.logShowDetailSummary(logEntry));
+
+                    $('#sendHeaders').html(global.logShowHeaders({headers:logEntry.options.headers}));
+                    $('#receiveHeaders').html(global.logShowHeaders({headers:logEntry.headers}));
+
+                });
+
+
+            })
+
 
         })
     });
 
 </script>
 
-<script type="handlebars/template" id='saveButtonTemplate'>
-    <h5>Log entries</h5>
-            <table class="table table-bordered table-condensed">
-                {{#each items}}
-                    <tr>
-                        <td>{{myDate time}}</td>
-                        <td>{{method}}</td>
-                        <td>{{statusCode}}</td>
-                        <td>{{uri}}</td>
-                    </tr>
-                {{/each}}
-            </table>
+<script type="handlebars/template" id='logShowDetailSummary'>
+    <div><strong>date:</strong> {{myDate time}}</div>
+    <div><strong>method:</strong> {{method}}</div>
+    <div><strong>statusCode:</strong> {{statusCode}}</div>
+    <div><strong>URI:</strong> {{uri}}</div>
+</script>
+
+<script type="handlebars/template" id='logShowHeaders'>
+    <ul class="list list-unstyled">
+        {{#each headers}}
+            <li><strong>{{@key}}:</strong> {{this}}</li>
+        {{/each}}
+    </ul>
+</script>
+
+
+<script type="handlebars/template" id='logSummary'>
+
+    <table class="table table-bordered table-condensed">
+        <tr><th>Date</th><th>Method</th><th>StatusCode</th><th>URI</th></tr>
+        {{#each items}}
+            <tr>
+                <td><a href="#" class="summary" data-id="{{id}}">{{myDate time}}</a></td>
+                <td>{{method}}</td>
+                <td>{{statusCode}}</td>
+                <td>{{uri}}</td>
+            </tr>
+        {{/each}}
+    </table>
 
 </script>
 
