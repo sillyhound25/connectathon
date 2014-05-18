@@ -59,12 +59,6 @@ var ProfileExtensionView =  Backbone.View.extend({
             return;
         }
 
-        /*
-        if (this.model.getExtension(code)){
-            alert("Sorry, there's already an extension with the code '"+code+"' in the Profile.");
-            return;
-        }
-*/
 
         var extension = this.meta.extension;    //for right now, assume update
         if (!extension) {
@@ -73,6 +67,7 @@ var ProfileExtensionView =  Backbone.View.extend({
         }
 
 
+        extension.contextType = 'resource';
         extension.code=$('#eeCode').val();
         extension.definition.short=$('#eeShort').val();
         extension.definition.formal=$('#eeFormal').val();
@@ -117,6 +112,7 @@ var ProfileExtensionView =  Backbone.View.extend({
             var vsText = $("#eeValueSet option:selected").text();
             extension.definition.binding = {name:vsText,referenceResource: {reference :vsValue}};
         } else {
+            //delete any existing binding - eg if removing a valueset...
             delete extension.definition.binding ;
         }
 

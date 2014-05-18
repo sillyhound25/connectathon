@@ -29,7 +29,7 @@
 
 
 <div id="lstLog" class="fixedHeight"></div>
-
+<hr />
 <div class="row">
     <div class="col-md-4">
         <h5>Summary</h5>
@@ -63,8 +63,6 @@
 
 
         Handlebars.registerHelper('myDate',function(daString) {
-            //var s = "";
-            //var formatStr = "YYYY-MM-DD:HH:mm z";
             return moment(daString).format("YYYY-MM-DD:HH:mm z");
         });
 
@@ -72,25 +70,30 @@
         $.get("/admin/log/summary",function(data){
             console.log(data);
 
-            var template = Handlebars.compile($('#logSummary').html())
+            var template = Handlebars.compile($('#logSummary').html());
             $('#lstLog').html(template({items:data}));
 
 
             $('.summary').on('click',function(ev){
                 var id = $(ev.currentTarget).attr('data-id');
-                console.log(id)
+                //console.log(id)
 
                 $.get("/admin/log/detail/"+id,function(logEntry){
-                    console.log(logEntry);
-                    var body = JSON.parse(logEntry.body);
+                    //console.log(logEntry);
 
-                    var sendBody = JSON.parse(logEntry.options.body);
+                    //the body received back from the server...
+                    if (logEntry.body) {
+                        var body = JSON.parse(logEntry.body);
+                        $('#logReceiveBody').val(JSON.stringify(body,null,2));
+                    }
 
-                    $('#logSendBody').val(JSON.stringify(sendBody,null,2));
-                    $('#logReceiveBody').val(JSON.stringify(body,null,2));
+                    //the content sent to the server...
+                    if (logEntry.options.body) {
+                        var sendBody = JSON.parse(logEntry.options.body);
+                        $('#logSendBody').val(JSON.stringify(sendBody,null,2));
+                    }
 
                     $('#detailSumry').html(global.logShowDetailSummary(logEntry));
-
                     $('#sendHeaders').html(global.logShowHeaders({headers:logEntry.options.headers}));
                     $('#receiveHeaders').html(global.logShowHeaders({headers:logEntry.headers}));
 

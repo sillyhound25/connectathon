@@ -184,9 +184,6 @@ var ProfileDetailView =  Backbone.View.extend({
     },
     addExtension : function(){
         //add a new extension
-      //  if (! this.model) {
-          //  this.model = new ProfileModel();
-      //  }
 
        // Mediator.assert(jsonModel.meta.id,'The model ID in ProfileDetailView is null');
         var content = this.model.get('content');

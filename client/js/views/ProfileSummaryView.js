@@ -223,11 +223,13 @@ var ProfileSummaryView = Backbone.View.extend({
 
 
 //note: var wasn't there before hint...
+//a single item in the summary
 var ProfileSummaryItemView = Backbone.View.extend({
 
     events : {
         "click .ps_row_item" : "slice"
     },
+    //not really a slice, but editing an element
     slice : function(ev){
         ev.preventDefault();
         ev.stopPropagation();

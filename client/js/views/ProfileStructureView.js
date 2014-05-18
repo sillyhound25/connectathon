@@ -24,7 +24,7 @@ var ProfileStructureView =  Backbone.View.extend({
 
         $('#editStructureDlg').modal('hide');
 
-        //the medicator will save the changes and re-draw...
+        //the mediator will save the changes and re-draw...
         this.trigger('element:updated',{element:clone,type:this.type,resourceName : this.resourceName});
     },
     setType : function(type) {

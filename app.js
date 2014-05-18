@@ -336,7 +336,7 @@ app.get('/api/valueset/:publisher', function(req, res){
 
     var query = 'ValueSet?publisher='+publisher;
     performQueryAgainstFHIRServer(query,null,function(resp){
-        console.log('resp=',resp);
+        //console.log('resp=',resp);
         //res.json({content:resp,statusCode:resp.statusCode});
         res.json(resp);
     });
@@ -560,7 +560,7 @@ function performDeleteAgainstFHIRServer(query,server,callback){
 }
 
 function performQueryAgainstFHIRServer(query,server,callback){
-
+console.log('performQueryAgainstFHIRServer',query);
     //default the server URL...
     var fhirServer =  FHIRServerUrl;
 
@@ -627,7 +627,7 @@ function performQueryAgainstFHIRServer(query,server,callback){
             callback(json,response.statusCode);
         });
 
-        //callback(json,response.statusCode);
+
 
     });
 }

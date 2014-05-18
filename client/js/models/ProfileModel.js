@@ -2,7 +2,10 @@
  * Represents a Profile
  */
 
-ProfileModel = Backbone.Model.extend({
+/* global Backbone,_,$,moment,alert,console */
+
+
+var ProfileModel = Backbone.Model.extend({
 
     initialize: function(d){
         //if the model is created without any attributes (as when creating a new profile), then create default content
@@ -13,8 +16,8 @@ ProfileModel = Backbone.Model.extend({
             content.status = "draft";
             content.experimental = true;
             content.date = moment().format();
-            content.publisher='Orion Health'
-            this.set('content',content)
+            content.publisher='Orion Health';
+            this.set('content',content);
         }
     },
     //return a single extension based on code. Return null if not found...
@@ -23,11 +26,11 @@ ProfileModel = Backbone.Model.extend({
         var content = this.get('content');
         var ext;
         _.each(content.extensionDefn,function(ex){
-            console.log(code,ex)
+            console.log(code,ex);
             if (ex.code === code) {
                 ext = ex;
             }
-        })
+        });
 
         return ext;
     },
@@ -35,7 +38,7 @@ ProfileModel = Backbone.Model.extend({
         var content = this.get('content');
         content.extensionDefn = content.extensionDefn || [];
         content.extensionDefn.push(extensionDefn);
-        console.log(content)
+        console.log(content);
     },
     updateExtension : function(extensionDefn) {
         //update the given extension in the content of the model
@@ -45,7 +48,7 @@ ProfileModel = Backbone.Model.extend({
             if (ext.code === extensionDefn.code) {
                 pos = inx;
             }
-        })
+        });
         if (pos > -1) {
             content.extensionDefn[pos] = extensionDefn;
         }
@@ -57,7 +60,7 @@ ProfileModel = Backbone.Model.extend({
             if (ext.code === code) {
                 pos = inx;
             }
-        })
+        });
         if (pos > -1) {
             content.extensionDefn.splice(pos,1);
         }
@@ -87,7 +90,8 @@ ProfileModel = Backbone.Model.extend({
                     err += 'There is an empty context field in an extension';
                 }
             }
-        })
+        });
+
         if (! fhirProfile.extensionDefn || fhirProfile.extensionDefn.length < 1 ) {
             err += 'There must be at least one Extension in a profile (at the moment)';
         }
@@ -100,39 +104,16 @@ ProfileModel = Backbone.Model.extend({
     validateAndClean : function(model,callback) {
         //validate the profile and remote any meta nodes...
         //todo this could be tidied...
-        console.log(model)
+        //console.log(model)
 
         var vo = this.myValidate(model,true);
         callback(vo.err,vo.fhirProfile);
-
-      //  this.myValidate(model,true,function(err,fhirProfile){
-          //  callback(err,fhirProfile);
-       // })
-        //var fhirProfile = model.get('content');
-
-        /*
-        var err = "";
-        delete fhirProfile.meta;
-
-        _.each(fhirProfile.extensionDefn,function(ext){
-            if (ext.meta) {
-                delete ext.meta;
-                if (! ext.context[0]) {
-                    err += 'There is an empty context field in an extension';
-                }
-            }
-        })
-        */
-        //console.log(fhirProfile);
-       // callback(err,fhirProfile);
 
     },
     sync : function(method,model,options) {
         //todo - apparently thic can be done once for all models - Backbone.sync ...
         var uri = '/api/';
         var rest_method = 'PUT';
-
-
         var userEnteredId= this.get('userEnteredId');
 
 
@@ -146,25 +127,25 @@ ProfileModel = Backbone.Model.extend({
                 //console.log(vs);
 
                 switch (method){
-                    case 'create' : {
+                    case 'create' :
                         rest_method = 'POST';
                         break;
-                    }
-                    case 'update' : {
+
+                    case 'update' :
                         //get the logical id
                         var ar = model.get('id').split('/');
-                        var id = ar[ar.length-1]
+                        var id = ar[ar.length-1];
                         uri = uri +id;
                         break;
-                    }
-                    case 'delete' : {
+
+                    case 'delete' :
                         rest_method = 'DELETE';
-                        var ar = model.get('id').split('/');
-                        var id = ar[ar.length-1]
+                        var ar1 = model.get('id').split('/');
+                        var id1 = ar1[ar1.length-1];
                         //the PUT and POST have the actual resource in the body...
-                        uri = uri + 'Profile/'+id;
+                        uri = uri + 'Profile/'+id1;
                         break;
-                    }
+
                 }
 
                 //if  the user has entered an id for a new profile, need to be able to execute a PUT
@@ -188,7 +169,7 @@ ProfileModel = Backbone.Model.extend({
                         'content-location' : vid
                     },
                     success : function(data,status,xhr){
-                        options.success(xhr,status)
+                        options.success(xhr,status);
 
                     },
                     error : function(xhr,status,err){
@@ -196,20 +177,16 @@ ProfileModel = Backbone.Model.extend({
                        // console.log('error: ' + xhr.responseText)
                         //responseText will ave properties statusCode & body - from the proxy...
 
-                        console.log(xhr.responseText)
+                        console.log(xhr.responseText);
 
-                        options.error(xhr,status,err)
+                        options.error(xhr,status,err);
 
                     }
-                })
+                });
 
             }
 
-
-        })
-
-
-
+        });
 
     }
 })
