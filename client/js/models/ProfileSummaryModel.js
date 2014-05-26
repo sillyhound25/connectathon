@@ -3,7 +3,7 @@
  */
 
 
-/*global Backbone, $ */
+/*global Backbone, $,alert,console,async,_ */
 
 //represents a structure.element in the profile (which is the same as a path)...
 //has the same structure as element in the profile...
@@ -27,7 +27,7 @@ var ProfileSummaryItemCollection = Backbone.Collection.extend({
 });
 
 
-ProfileSummaryModel = Backbone.Model.extend({
+var ProfileSummaryModel = Backbone.Model.extend({
     //generate the summary...
     getSummary : function(profileModel,callback) {
         //set the profile to generate a summary of
@@ -52,10 +52,10 @@ ProfileSummaryModel = Backbone.Model.extend({
             }
 
             if ( ! summary.resources[resource]) {
-                summary.resources[resource] = {name:resource}
+                summary.resources[resource] = {name:resource};
                 summary.resources[resource].models =  new ProfileSummaryItemCollection();
             }
-        })
+        });
 
 
         //console.log(summary);
@@ -73,7 +73,7 @@ ProfileSummaryModel = Backbone.Model.extend({
             //now add the task...
             arTasks.push(function(cb){
                 if (Backbone.fhirResourceCache[resourceName]) {
-                    console.log('load ' + resourceName + ' from cache')
+                    console.log('load ' + resourceName + ' from cache');
                     //if this resource has been cached, then don't need to retrieve it...
                     getStructures(resourceName,Backbone.fhirResourceCache[resourceName],function(){
                         cb();       //and tell async we're done...
@@ -99,7 +99,7 @@ ProfileSummaryModel = Backbone.Model.extend({
                                     //save resource profile in cache...
                                      Backbone.fhirResourceCache[resourceName] = resourceProfile;     //the fhir representation of the profile
                                 }
-                            })
+                            });
 
 
                             if (! resourceProfile) {
@@ -110,7 +110,7 @@ ProfileSummaryModel = Backbone.Model.extend({
                                 //pulls the properties from the resource and from the profile into the summary
                                 getStructures(resourceName,resourceProfile,function(){
                                     cb();       //and tell async we're done...
-                                })
+                                });
                             }
 
                         }
@@ -120,8 +120,8 @@ ProfileSummaryModel = Backbone.Model.extend({
                     });
 
                 }
-            })
-        })
+            });
+        });
 
         //now execute all the tasks in parallel...
         //this will retrieve the profiles for the resources, and then extract the structures (ie properties)
@@ -215,11 +215,11 @@ ProfileSummaryModel = Backbone.Model.extend({
 
                                                 models.push(itemModel);
                                             }
-                                        })
+                                        });
                                     }
 
                                 }
-                            })
+                            });
 
                         }
 
@@ -259,7 +259,7 @@ ProfileSummaryModel = Backbone.Model.extend({
                                 //ext is a the fhie extensionDefn
                                 if (ext.context[0] === path) {
                                     //console.log('froun')
-                                    var ar = itemModel.get('extensions') || []
+                                    var ar = itemModel.get('extensions') || [];
 
                                     //console.log(ext.code);
 
@@ -281,62 +281,18 @@ ProfileSummaryModel = Backbone.Model.extend({
                             });
 
                         } else {
-                            alert('There was a structure in the profile that could not be mapped for display')
+                            alert('There was a structure in the profile that could not be mapped for display');
                         }
 
                         cnt++;
                         //console.log(el);
                     }
 
-                } else {
-                    //just add the name...
-
-                  //  arStructures.push({path : el.path, description: el.definition.short,type:"----------",resource:resourceName})
                 }
 
-            })
-
-/*
-            //now add the extensions that this profile defines for this resource...
-          //  arStructures.push({path : '-------', description: '-------',type:"----------",resource:resourceName})
-            //console.log(Z.currentProfile);
-            $.each(profile.extensionDefn,function(inx,ext){
-                //console.log(ext)
-
-                //if (ext.context[0].toLowerCase() === resourceName) {
-
-                //the context is a path...
-                //if (ext.context[0].getResourceNameFromPath() === resourceName) {
-                //we only want extensions defined against the top level of the resource
-                    if (ext.context[0] === resourceName) {
-                    //only the extensions that apply to this profile
-                    cnt++;
-                    var type = '?????';
-                    if (ext.definition.type) {
-                        type = ext.definition.type[0].code;
-                    }
-
-                        console.log(ext.code);
-
-                 //   arStructures.push({path : ext.code, description: ext.definition.short,type:type,
-                  ///      min:ext.definition.min,max:ext.definition.max,resource:resourceName,type:'ext'})
-//console.log(ext.code);
-                    models.push(new ProfileSummaryItemModel({
-                        profileid : profileModel.get('id'),
-                        path : ext.code,
-                        description: ext.definition.short,
-                        datatype:type,
-                        min:ext.definition.min,
-                        max:ext.definition.max,
-                        resource:resourceName,
-                        type:'ext'      //indicates that this is an extension from the profile
-                    }));
-                }
+            });
 
 
-            })
-
-            */
 
             //todo ========= here is where we'll get the structural profile elements...
 
@@ -355,7 +311,7 @@ ProfileSummaryModel = Backbone.Model.extend({
         //see if it's already in the cache...
         if (Backbone.fhirResourceCache[resourceName.toLowerCase()]){
             console.log('from cache');
-            var ar = processResourceProfile(Backbone.fhirResourceCache[resourceName.toLowerCase()])
+            var ar = processResourceProfile(Backbone.fhirResourceCache[resourceName.toLowerCase()]);
             callback (ar);
         } else {
             //if not, then download it and save in the cache...
@@ -374,14 +330,10 @@ console.log(data);
 
                 var ar = [];
                 if (resourceProfile) {
-                    ar = processResourceProfile(resourceProfile)
+                    ar = processResourceProfile(resourceProfile);
                 }
-
-
-
                 callback (ar);
             });
-            //this needs a fhor call...
 
         }
 
@@ -398,9 +350,6 @@ console.log(data);
                     //don't include extensions on the standard profile - they all have them and it's clutter at the moment...
 
                     if (type.toLowerCase() !== 'extension') {//don't want extensions
-
-//console.log(el)
-
                         var pathName = el.path;//.toLowerCase();
                         //strip off the resource name;
                         //console.log(resource.name);
@@ -414,6 +363,11 @@ console.log(data);
 
 
                     }
+                } else {
+                    //these are the 'container' elements - those that have children like careplan.goal ...
+                    console.log(el);
+                    var pathName1 = el.path.replace(resourceName + '.', "");
+                    ar.push(pathName1);
                 }
             });
 
@@ -426,4 +380,4 @@ console.log(data);
     }
 
 
-})
+});

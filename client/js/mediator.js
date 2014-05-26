@@ -47,8 +47,8 @@ Mediator.assert = function( outcome, description ) {
 };
 
 //the list of permissable datatypes in a profile...
-var dataTypeList = ['boolean','code','date','string','integer','Coding','CodeableConcept','Period'];
-var resourceList = ['Encounter','MedicationAdministration','MedicationPrescription','Medication','Observation','Patient','Practitioner'];
+var dataTypeList = ['boolean','code','date','string','integer','uri','Coding','CodeableConcept','Period'];
+var resourceList = ['CarePlan','Encounter','MedicationAdministration','MedicationPrescription','Medication','Observation','Patient','Practitioner'];
 
 
 var colVS = new ValueSetCollection();           //collection of ValueSets
@@ -413,6 +413,7 @@ Backbone.listenTo(profileStructureView,'element:updated',function(vo){
 
     //add a new resource (structure)
     var structure = {name:vo.resourceName,element:[]};
+    structure.type = vo.resourceName;       //assume that the structure being extended is the resource.
     structure.element.push(vo.element);
 
     lst.push(structure);
