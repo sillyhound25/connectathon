@@ -47,7 +47,7 @@ Mediator.assert = function( outcome, description ) {
 };
 
 //the list of permissable datatypes in a profile...
-var dataTypeList = ['boolean','code','date','string','integer','uri','Coding','CodeableConcept','Period'];
+var dataTypeList = ['boolean','code','date','string','integer','uri','Coding','CodeableConcept','Period','ResourceReference'];
 var resourceList = ['CarePlan','Encounter','MedicationAdministration','MedicationPrescription','Medication','Observation','Patient','Practitioner'];
 
 
@@ -412,7 +412,9 @@ Backbone.listenTo(profileStructureView,'element:updated',function(vo){
     });
 
     //add a new resource (structure)
-    var structure = {name:vo.resourceName,element:[]};
+    //var structure = {name:vo.resourceName,element:[]};
+    var structure = {element:[]};
+    structure.name = 'struc'+profileJson.structure.length;      //the name is so the structure can be referred to from elsewhere
     structure.type = vo.resourceName;       //assume that the structure being extended is the resource.
     structure.element.push(vo.element);
 

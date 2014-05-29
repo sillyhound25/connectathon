@@ -1,5 +1,5 @@
 {
- "FHIRServerUrl":"https://his-medicomp-gateway.orionhealth.com/blaze/fhir/",
+ "FHIRServerUrl":" https://fhir.orionhealth.com/blaze/fhir/",
  "serverOptions" :[
     {"FHIRServerUrl":"http://spark.furore.com/fhir/"},
     {"FHIRServerUrl":"http://hisappakl/blaze/fhirDEP/"},

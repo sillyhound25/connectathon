@@ -76,13 +76,7 @@ var ProfileSummaryView = Backbone.View.extend({
             _.each(resourceElements.models.models,function(m){
                 //m is of type ProfileSummaryItemModel
 
-                //console.log(path,resourceName,m)
-
-                //console.log(path, m.toJSON().path)
                 if (m.toJSON().path === path) {
-                //    if (m.toJSON().path.toLowerCase() === path.toLowerCase()) {
-                    //console.log(m.toJSON())
-                       // alert('match')
                     var view = that.childViews[resourceName+"_"+path];
                     console.log(view);
                     view.content = m.toJSON();
@@ -91,6 +85,7 @@ var ProfileSummaryView = Backbone.View.extend({
                     //if a re-render is being called, then the profile is likely to have been changed...
                     that.changesMade = true;
                     $('#btnSaveChanges').show();
+                    $('#btnSaveChanges').text('Update').attr('disabled',false);
                 }
             });
 
@@ -202,7 +197,7 @@ var ProfileSummaryView = Backbone.View.extend({
                                 v1.template = that.itemTemplate;
 
                                 v1.content = psiModel.get('content');       //this is the json representation of the structure.element
-                                //console.log(v.content)
+                                console.log(ext,v1.content);
                                 v1.resourceName = resourceName;
                                 v1.render();
                             });
@@ -239,9 +234,7 @@ var ProfileSummaryItemView = Backbone.View.extend({
         //console.log(this.content);
         //console.log('x')
         Backbone.trigger('profileSummary:slice',
-           // {profileid : profileID,type:type,element:this.content,resourceName:this.resourceName});
-        //{profileid : profileID,type:type,path:path,element:this.content,resourceName:this.resourceName});
-        {profileid : profileID,type:type,path:path,psiModel:this.model,resourceName:this.resourceName});
+            {profileid : profileID,type:type,path:path,psiModel:this.model,resourceName:this.resourceName});
     },
 
     render : function(){

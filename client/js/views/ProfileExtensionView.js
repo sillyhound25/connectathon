@@ -75,6 +75,15 @@ var ProfileExtensionView =  Backbone.View.extend({
         extension.definition.max=$('#eeMax').val();
         extension.definition.type = [{code:$('#eeDataType').val()}];
 
+        if (! extension.definition.short) {
+            alert('The short definition is required');
+            return;
+        }
+        if (! extension.definition.formal) {
+            alert('The formal definition is required');
+            return;
+        }
+
         //the context path is the full path to the element that is being extended.
         var fullContextPath = $('#eeContextResource').val();        //the resource name
 

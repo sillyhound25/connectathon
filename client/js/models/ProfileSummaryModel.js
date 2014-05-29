@@ -185,8 +185,8 @@ var ProfileSummaryModel = Backbone.Model.extend({
                             _.each(profile.structure,function(struc){
 
                                 //console.log(struc)
-
-                                if (struc.name === resourceName) {
+                                if (struc.type === resourceName) {      //type has the name of the resource...
+                                //if (struc.name === resourceName) {
                                     //if (struc.name.toLowerCase() === resourceName.toLowerCase()) {
                                     //yep, we've got at least one modification for this resource
                                     if (struc.element) {
@@ -228,8 +228,6 @@ var ProfileSummaryModel = Backbone.Model.extend({
 
                         if (! pathFromProfile) {
                             //if here, then the profile does *not* override the path...
-                          ///  arStructures.push({path : el.path, description: el.definition.short,type:type,
-                           //     min:el.definition.min,max:el.definition.max,resource:resourceName,type:'core'})
 
                             //create the model - this will be the way forward...
                             itemModel = new ProfileSummaryItemModel({
@@ -269,7 +267,8 @@ var ProfileSummaryModel = Backbone.Model.extend({
                                         path : " -> " + ext.code,
                                         code : ext.code,
                                         description: ext.definition.short,
-                                        datatype:type,
+                                        //datatype:type,
+                                        datatype:ext.definition.type[0].code,
                                         min:ext.definition.min,
                                         max:ext.definition.max,
                                         resource:resourceName,
@@ -287,6 +286,66 @@ var ProfileSummaryModel = Backbone.Model.extend({
                         cnt++;
                         //console.log(el);
                     }
+
+                } else {
+                    //this is managing the 'header' elements - like careplan.goal.
+                    //they can have extensions, so do need to be in the list...
+                    console.log(el);
+
+                    //todo - this really needs refactoring - much code duplication...
+
+                     var itemModel1 = new ProfileSummaryItemModel({
+                     content : el,
+                     profileid : profileModel.get('id'),
+                     path : el.path,
+                     description: el.definition.short,
+                     datatype:type,
+                     //min:el.definition.min,
+                     //max:el.definition.max,
+                     extensions:[],
+                     resource:resourceName,
+                     //extensions: [{name:'test'}],
+                     type:'core'     //indicates that this model represents the core definition. It may be overridden by a profile of course...
+                     });
+
+
+
+
+                     models.push(itemModel1);
+
+
+
+
+
+                    $.each(profile.extensionDefn,function(inx,ext){
+                        //ext is a the fhie extensionDefn
+                        if (ext.context[0] === el.path) {
+                            //console.log('froun')
+                            var ar = itemModel1.get('extensions') || [];
+
+                            //console.log(ext.code);
+
+                            ar.push(new ProfileSummaryItemModel({
+                                content : ext,
+                                profileid : profileModel.get('id'),
+                                path : " -> " + ext.code,
+                                code : ext.code,
+                                description: ext.definition.short,
+                                //datatype:type,
+                                datatype:ext.definition.type[0].code,
+                                min:ext.definition.min,
+                                max:ext.definition.max,
+                                resource:resourceName,
+                                extensions:[],      //this will be where nested etenions go...
+                                type:'ext'      //indicates that this is an extension from the profile
+                            }));
+                            itemModel1.set('extensions',ar);
+                        }
+                    });
+
+
+
+
 
                 }
 

@@ -422,6 +422,7 @@ function postToFHIRServer(resource,callback) {
             "content-type" : 'application/json+fhir'
         },
         body : JSON.stringify(resource),
+        rejectUnauthorized: false,      //to allow self-signed cetificates
         uri : FHIRServerUrl + resourceType
     };
 
@@ -477,6 +478,7 @@ function putToFHIRServer(resource,id,vid,callback) {
             "content-location" : vid
         },
         body : JSON.stringify(resource),
+        rejectUnauthorized: false,      //to allow self-signed cetificates
         uri : FHIRServerUrl + resourceType + "/" + id
     };
 
@@ -574,6 +576,7 @@ console.log('performQueryAgainstFHIRServer',query);
             "Accept" : 'application/json+fhir'
         },
         uri : fhirServer + query,
+        rejectUnauthorized: false,      //to allow self-signed cetificates
         timeout : 10000
     };
 
@@ -590,6 +593,7 @@ console.log('performQueryAgainstFHIRServer',query);
        //     throw error;
       //  }
 
+        console.log(error);
         if (! response){
             //this happens when the server times out...
             callback({'error':'Server timed out'},504);
