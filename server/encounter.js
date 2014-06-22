@@ -1,10 +1,5 @@
-/**
- * Created with JetBrains WebStorm.
- * User: davidha
- * Date: 21/02/14
- * Time: 10:53 AM
- * To change this template use File | Settings | File Templates.
- */
+/*global require,exports */
+
 var _ = require("underscore");
 var moment = require('moment');
 var builder = {};
@@ -17,10 +12,11 @@ function getSample(vo) {
     entry.id = 'cid:Encounter'+ new Date().getTime();
     entry.updated = moment().format();
 
+
     var sam = {};
     sam.resourceType = "Encounter";
-    sam.status = 'in progress';
-    sam.class = 'inpatient';
+    sam.status = vo.status || 'in progress';
+    sam.class = vo.class || 'inpatient';
     sam.identifier = [{value:"ZZZ",system:"http://myhospital/ID"}];
     sam.text = getText(this);
     sam.subject = {reference:vo.patientID};
@@ -52,5 +48,5 @@ function getText(obj) {
 
 exports.getSample = getSample;
 exports.getDependencies = function() {
-    return ['patient','practitioner']
+    return ['patient','practitioner'];
 }

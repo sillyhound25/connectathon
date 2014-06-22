@@ -1,10 +1,12 @@
+
+/*global require,exports */
 var _ = require("underscore");
 var moment = require('moment');
 
 //get a sample in simple format
 function getSample(vo) {
 
-    vo.substance = vo.substance || "Sticking Plaster"
+    vo.substance = vo.substance || "Sticking Plaster";
     vo.reaction =  vo.reaction  || "Hives";
 
     var entry = {};

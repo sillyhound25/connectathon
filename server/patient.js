@@ -1,3 +1,5 @@
+
+/*global require,exports */
 var _ = require("underscore");
 var moment = require('moment');
 
@@ -5,10 +7,10 @@ var moment = require('moment');
 function getSample(vo) {
     vo.fname = vo.fname || "John";
     vo.lname = vo.lname || "Cardinal";
-    vo.identifier = vo.identifier || "PRP1660"
+    vo.identifier = vo.identifier || "PRP1660";
     var entry = {};
     entry.title='Patient';
-    entry.id = 'cid:Patient'+ new Date().getTime();
+    entry.id = 'cid:Patient'+ new Date().getTime() + "@bundle";
     entry.updated = moment().format();
 
     var sam = {};
@@ -24,7 +26,7 @@ function getSample(vo) {
 
 //generate the text element for the resource...
 function getText(obj) {
-    console.log(obj)
+    //console.log(obj)
     var rtn = {status:"generated"};
     var txt = "";
     var fullName = obj.name[0].given + " " + obj.name[0].family;

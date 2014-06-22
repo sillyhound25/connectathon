@@ -858,37 +858,72 @@ function postBundleToFHIRServer(bundle,callback) {
 //-------- for samples ----
 
 app.post('/api/createSamples', function(req, res){
-    //console.log('/api/createSamples')
 
-    var samPatientEntry = Patient.getSample({identifier:"orion1"});
-    var samEncounterEntry = Encounter.getSample({});
+    var bundle = {resourceType:"Bundle"};
+    bundle.title = "Sample Data";
+    bundle.updated = moment().format();
+    bundle.entry = [];
 
+    //need to remain separate objects so can use as references later...
+
+    var samPatientEntry = Patient.getSample(config.sampleData.patient);
     var samPractitionerEntry = Practitioner.getSample({});
 
-    samEncounterEntry.content.subject = {reference:samPatientEntry.id};
-    var participant = {individual : {reference:samPractitionerEntry.id},
-        type: [Common.cc({code:'CON',display:'Consultant',system:'http://hl7.org/fhir/v3/ParticipationType'})]};
-    samEncounterEntry.content.participant = [participant];
+    bundle.entry.push(samPatientEntry);
+    bundle.entry.push(samPractitionerEntry);
 
-    var samCondition1Entry = Condition.getSample({});
-    samCondition1Entry.content.subject = {reference:samPatientEntry.id};
-    var samCondition2Entry = Condition.getSample({code:'73211009',display:'Diabetes',system:'http://snomed.info/sct'});
-    samCondition2Entry.content.subject = {reference:samPatientEntry.id};
+    _.each(config.sampleData.encounter,function(enc){
+        var samEncounterEntry = Encounter.getSample(enc);
+        samEncounterEntry.content.subject = {reference:samPatientEntry.id};
+        var participant = {individual : {reference:samPractitionerEntry.id},
+            type: [Common.cc({code:'CON',display:'Consultant',system:'http://hl7.org/fhir/v3/ParticipationType'})]};
+        samEncounterEntry.content.participant = [participant];
+        bundle.entry.push(samEncounterEntry);
+    });
+
+    _.each(config.sampleData.condition,function(con){
+        //console.log(con);
+        var samConditionEntry = Condition.getSample(con);
+        samConditionEntry.content.subject = {reference:samPatientEntry.id};
+        bundle.entry.push(samConditionEntry);
+    });
+
+    _.each(config.sampleData.allergy,function(al){
+        var samAllergyEntry = Allergy.getSample(al);
+        samAllergyEntry.content.subject = {reference:samPatientEntry.id};
+        bundle.entry.push(samAllergyEntry);
+    });
 
 
-    var samAllergyEntry = Allergy.getSample({});
-    samAllergyEntry.content.subject = {reference:samPatientEntry.id};
+
+
+   // var samCondition1Entry = Condition.getSample({});
+   // samCondition1Entry.content.subject = {reference:samPatientEntry.id};
+    //var samCondition2Entry = Condition.getSample({code:'73211009',display:'Diabetes',system:'http://snomed.info/sct'});
+    //samCondition2Entry.content.subject = {reference:samPatientEntry.id};
+
+
+
+    //var samAllergyEntry = Allergy.getSample({});
+    //samAllergyEntry.content.subject = {reference:samPatientEntry.id};
 
 
     var samVSEntry = ValueSet.getSample({});
 
+    //bundle.entry.push(samPatientEntry);
+   // bundle.entry.push(samPractitionerEntry);
+    //bundle.entry.push(samEncounterEntry);
 
-    var bundle = {resourceType:"Bundle"};
-    bundle.title = "Adding resources for medication admin project";
-    bundle.updated = moment().format();
-    bundle.entry = [];
+    //bundle.entry.push(samCondition1Entry);
+    //bundle.entry.push(samCondition2Entry);
+    //bundle.entry.push(samAllergyEntry);
 
     bundle.entry.push(samVSEntry);
+
+    res.json(bundle);
+    return;
+
+
     /*
      bundle.entry.push(samPatientEntry);
      bundle.entry.push(samEncounterEntry);

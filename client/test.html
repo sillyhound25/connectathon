@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script type="text/javascript" charset="utf-8">
+    var blobTheBuilder, winUrl, worker;
+    winUrl = window.URL || window.webkitURL;
+    blobTheBuilder = new Blob(
+            ["self.onmessage=function(e){postMessage(Math.round(Math.sqrt(e.data)))}"]);
+
+    worker = new Worker(winUrl.createObjectURL(blobTheBuilder));
+    worker.onmessage = function (e) {
+        return console.log(e.data);
+    };
+    // Find the closest square root of a number
+    // => 6
+    worker.postMessage(9);
+</script>
+</body>
+</html>
+

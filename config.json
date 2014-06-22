@@ -6,6 +6,43 @@
     {"FHIRServerUrl":"https://open-api.fhir.me/"},
     {"FHIRServerUrl":"http://fhir.healthintersections.com.au/open/"},
     {"FHIRServerUrl":"https://his-medicomp-gateway.orionhealth.com/blaze/fhir/"}
- ]
+    ],
+    "sampleData" : {
+        "patient" : {
+            "fname" : "Peter",
+            "lname" : "Rabbit",
+            "identifier" : "acarrot"
+        },
+        "condition" :[
+            {
+                "code": {
+                    "code": "73211009",
+                    "display": "Diabetes",
+                    "system": "http://snomed.info/sct"
+                }
+            },
+            {
+                "code": {
+                    "code": "39065001",
+                    "display": "Burn of Ear",
+                    "system": "http://snomed.info/sct"
+                }
+            }
+        ],
+        "allergy" : [
+            {
+                "substance" : "peanut",
+                "reaction":"hives"
+
+            }
+        ],
+        "encounter" : [
+            {
+                "status" : "finished",
+                "class":"inpatient"
+            }
+        ]
+    }
+
 }
 

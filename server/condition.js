@@ -1,3 +1,6 @@
+
+/*global require,exports */
+
 var _ = require("underscore");
 var moment = require('moment');
 var Common = require('./common.js');
